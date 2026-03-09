@@ -1,0 +1,3 @@
+version: "0.1.0"
+name: "evidence_complete_execution_token_v1"
+description: "Execution token must reference required evidence bundle IDs"

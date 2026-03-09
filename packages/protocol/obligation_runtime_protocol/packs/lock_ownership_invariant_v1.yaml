@@ -1,0 +1,3 @@
+version: "0.1.0"
+name: "lock_ownership_invariant_v1"
+description: "Only one lock holder at a time"

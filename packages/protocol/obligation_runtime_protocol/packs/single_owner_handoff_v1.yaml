@@ -1,0 +1,3 @@
+version: "0.1.0"
+name: "single_owner_handoff_v1"
+description: "A task may have exactly one active owner"

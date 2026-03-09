@@ -1,0 +1,10 @@
+version: "0.1.0"
+name: "engineering_assist_v1"
+description: "Assist mode allows iterative work but still blocks disallowed axioms"
+allow_trust_compiler: true
+block_sorry_ax: true
+block_unexpected_custom_axioms: true
+require_human_if_imports_change: false
+protected_paths: []
+require_human_on_trust_delta: false
+allow_interactive_warnings: true

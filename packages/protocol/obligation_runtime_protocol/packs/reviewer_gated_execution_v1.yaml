@@ -1,0 +1,3 @@
+version: "0.1.0"
+name: "reviewer_gated_execution_v1"
+description: "Execution requires an approval token from an authorized reviewer"
