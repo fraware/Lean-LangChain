@@ -42,3 +42,6 @@ class BatchVerifyResult(VersionedRecord):
     fresh_checker: FreshCheckerResult
     trust_level: Literal["clean", "warning", "blocked"]
     reasons: list[str] = Field(default_factory=list)
+    # Evidence completeness: true when real axiom audit / fresh checker were used.
+    axiom_evidence_real: bool = False
+    fresh_evidence_real: bool = False

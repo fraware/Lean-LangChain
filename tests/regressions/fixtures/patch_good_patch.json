@@ -1,0 +1,12 @@
+{
+  "case_id": "good_patch_1",
+  "obligation_input": {
+    "target_files": ["Main.lean"],
+    "current_patch": {},
+    "session_id": null
+  },
+  "expected_decision": "accepted",
+  "expected_trust_level": "clean",
+  "expected_terminal_status": "accepted",
+  "expected_reason_codes": []
+}

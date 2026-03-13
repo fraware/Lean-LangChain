@@ -1,0 +1,11 @@
+{
+  "case_id": "sorry_case_1",
+  "obligation_input": {
+    "target_files": ["Main.lean"],
+    "interactive_ok": false
+  },
+  "expected_decision": "rejected",
+  "expected_trust_level": "warning",
+  "expected_terminal_status": "rejected",
+  "expected_reason_codes": []
+}

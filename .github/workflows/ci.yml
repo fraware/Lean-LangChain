@@ -1,0 +1,208 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: obr_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/obr_test
+      REVIEW_STORE: postgres
+      CHECKPOINTER: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (full) + Postgres deps
+        run: |
+          make install-dev-full
+          pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
+      - name: Full check
+        run: make check-full
+      - name: Production tracer (mock) tests
+        run: pytest tests/unit/test_production_tracer.py -v
+      - name: Postgres review store and checkpointer tests
+        run: |
+          pytest tests/unit/test_review_store_postgres.py tests/integration/test_checkpointer_postgres.py -v
+
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: obr_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/obr_test
+      REVIEW_STORE: postgres
+      CHECKPOINTER: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (full) + Postgres deps
+        run: |
+          make install-dev-full
+          pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
+      - name: Postgres review store and checkpointer tests
+        run: |
+          pytest tests/unit/test_review_store_postgres.py tests/integration/test_checkpointer_postgres.py -v
+
+  lean:
+    runs-on: ubuntu-latest
+    env:
+      OBR_USE_LEAN_LSP: "1"
+      OBR_USE_REAL_AXIOM_AUDIT: "1"
+      OBR_AXIOM_AUDIT_CMD: "bash -c 'lake build && lake exe axiom_list'"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install elan and Lean 4
+        run: |
+          curl -sSfL https://github.com/leanprover/elan/releases/latest/download/elan-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./elan-init -y --default-toolchain leanprover/lean4:stable
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          echo "PATH=$HOME/.elan/bin:$PATH" >> $GITHUB_ENV
+      - name: Install (full)
+        run: make install-dev-full
+      - name: LSP and full flow integration tests
+        run: |
+          pytest tests/integration/test_goal_retrieval.py tests/integration/test_acceptance_lane.py::test_acceptance_lane_build_runner_real_lake_build tests/integration/test_acceptance_lane.py::test_acceptance_lane_full_flow_with_lsp -v
+      - name: Real axiom audit (collectAxioms producer)
+        run: |
+          pytest tests/integration/test_acceptance_lane.py::test_acceptance_lane_real_axiom_audit tests/integration/test_acceptance_lane.py::test_acceptance_lane_axiom_producer_dependencies_non_empty -v
+  fresh:
+    runs-on: ubuntu-latest
+    env:
+      OBR_USE_REAL_FRESH_CHECKER: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install elan and Lean 4
+        run: |
+          curl -sSfL https://github.com/leanprover/elan/releases/latest/download/elan-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./elan-init -y --default-toolchain leanprover/lean4:stable
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          echo "PATH=$HOME/.elan/bin:$PATH" >> $GITHUB_ENV
+      - name: Install lean4checker
+        run: |
+          git clone --depth 1 https://github.com/leanprover/lean4checker.git /tmp/lean4checker
+          cd /tmp/lean4checker && lake build
+          echo "$(pwd)/.lake/bin" >> $GITHUB_PATH
+          echo "PATH=$(pwd)/.lake/bin:$PATH" >> $GITHUB_ENV
+      - name: Install (full)
+        run: make install-dev-full
+      - name: Fresh checker integration test
+        run: |
+          pytest tests/integration/test_acceptance_lane.py::test_acceptance_lane_real_fresh_checker -v
+
+  container:
+    runs-on: ubuntu-latest
+    env:
+      OBR_WORKER_RUNNER: container
+      OBR_DOCKER_IMAGE: lean-worker:test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build Lean 4 worker image
+        run: |
+          docker build -f infra/docker/lean-worker-lean4.Dockerfile -t lean-worker:test .
+      - name: Install (full)
+        run: make install-dev-full
+      - name: Container runner integration test
+        run: |
+          pytest tests/integration/test_acceptance_lane.py::test_acceptance_lane_container_runner_batch_verify -v
+      - name: Leak check (no leftover OBR containers)
+        run: |
+          python -c "
+          from obligation_runtime_lean_gateway.server.leak_check import list_obr_containers
+          ids = list_obr_containers()
+          assert len(ids) == 0, f'Expected no OBR-labeled containers after run; found: {ids}'
+          "
+
+  gateway-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Gateway image and verify health
+        run: |
+          docker compose -f infra/docker/docker-compose.yml build gateway
+          docker compose -f infra/docker/docker-compose.yml up -d
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -sf http://localhost:8000/health; then break; fi
+            if [ "$i" -eq 10 ]; then exit 1; fi
+            sleep 3
+          done
+          curl -sf http://localhost:8000/ready
+      - name: Teardown
+        if: always()
+        run: docker compose -f infra/docker/docker-compose.yml down -v
+
+  telemetry-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (full) + OTLP extra
+        run: |
+          make install-dev-full
+          pip install "obligation-runtime-telemetry[otlp]"
+      - name: Production tracer unit tests with OTLP path
+        run: pytest tests/unit/test_production_tracer.py -v
+      - name: Tracer E2E (InMemorySpanExporter, assert span received)
+        run: pytest tests/integration/test_tracer_e2e_otlp.py -v
+    continue-on-error: true
+
+  langsmith:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.LANGCHAIN_API_KEY != '' }}
+    env:
+      LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (full)
+        run: make install-dev-full
+      - name: LangSmith experiment on fixed corpus
+        run: |
+          pytest tests/unit/test_langsmith.py tests/integration/test_langsmith_fixed_corpus.py -v
+        continue-on-error: true

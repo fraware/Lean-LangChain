@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "description": "Typed summary of batch (acceptance lane) verification for WitnessBundle.acceptance.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "ok": {
+      "default": true,
+      "title": "Ok",
+      "type": "boolean"
+    },
+    "trust_level": {
+      "default": "clean",
+      "title": "Trust Level",
+      "type": "string"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "build": {
+      "title": "Build",
+      "type": "object"
+    },
+    "axiom_audit": {
+      "title": "Axiom Audit",
+      "type": "object"
+    },
+    "fresh_checker": {
+      "title": "Fresh Checker",
+      "type": "object"
+    }
+  },
+  "title": "AcceptanceSummary",
+  "type": "object"
+}

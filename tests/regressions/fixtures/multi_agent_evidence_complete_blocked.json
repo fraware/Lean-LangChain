@@ -1,0 +1,13 @@
+{
+  "case_id": "evidence_complete_blocked_1",
+  "obligation_input": {
+    "obligation_class": "evidence_complete_execution_token",
+    "events": [
+      {"kind": "claim", "event_id": "e1", "actor": {}, "task": {}},
+      {"kind": "execute", "event_id": "e2", "actor": {}, "task": {}}
+    ]
+  },
+  "expected_decision": "blocked",
+  "expected_trust_level": "blocked",
+  "expected_reason_codes": ["evidence_incomplete"]
+}

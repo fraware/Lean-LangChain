@@ -7,14 +7,26 @@ from obligation_runtime_schemas.interactive import InteractiveCheckResult
 
 from .normalizers import InteractiveNormalizer
 from .session_manager import SessionLease, SessionManager
+from .transport import LeanTransport
 from .worker_pool import WorkerPool
+from .worker_runner import run_with_timeout
 
 
 class InteractiveAPI:
-    def __init__(self, session_manager: SessionManager, worker_pool: WorkerPool) -> None:
+    def __init__(
+        self,
+        session_manager: SessionManager,
+        worker_pool: WorkerPool,
+        transport: LeanTransport | None = None,
+        check_timeout_seconds: float = 300.0,
+    ) -> None:
         self.session_manager = session_manager
         self.worker_pool = worker_pool
         self.normalizer = InteractiveNormalizer()
+        if transport is None:
+            raise ValueError("transport is required; use set_test_transport(TestDoubleTransport()) only in tests")
+        self.transport = transport
+        self.check_timeout_seconds = check_timeout_seconds
 
     def open_session(self, *, session_id: str, fingerprint_id: str, workspace_path: Path) -> SessionLease:
         lease = SessionLease(
@@ -34,11 +46,10 @@ class InteractiveAPI:
 
         start = perf_counter()
 
-        # Placeholder transport. Replace with actual Lean server/LSP integration.
-        raw_diagnostics: list[dict] = []
-        raw_goals: list[dict] = []
-        ok = True
+        def _run() -> tuple[list, list, bool]:
+            return self.transport.check(session_id, file_path)
 
+        raw_diagnostics, raw_goals, ok = run_with_timeout(_run, timeout_seconds=self.check_timeout_seconds)
         elapsed_ms = int((perf_counter() - start) * 1000)
         return self.normalizer.result(
             ok=ok,

@@ -1,0 +1,13 @@
+{
+  "case_id": "delegation_admissibility_good_1",
+  "obligation_input": {
+    "obligation_class": "delegation_admissibility",
+    "events": [
+      {"kind": "claim", "event_id": "e1", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "t1", "task_class": "patch"}},
+      {"kind": "delegate", "event_id": "e2", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "t1", "task_class": "patch"}, "prior_event_ids": ["e1"]}
+    ]
+  },
+  "expected_decision": "accepted",
+  "expected_trust_level": "clean",
+  "expected_reason_codes": []
+}

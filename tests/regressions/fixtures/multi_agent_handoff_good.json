@@ -1,0 +1,11 @@
+{
+  "case_id": "handoff_good_1",
+  "obligation_input": {
+    "events": ["claim", "delegate"],
+    "owner_match": true
+  },
+  "expected_decision": "accepted",
+  "expected_trust_level": "clean",
+  "expected_terminal_status": "accepted",
+  "expected_reason_codes": []
+}

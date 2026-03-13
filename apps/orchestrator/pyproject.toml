@@ -6,4 +6,12 @@ build-backend = "hatchling.build"
 name = "obligation-runtime-orchestrator"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["langgraph", "langchain", "pydantic>=2.8", "fastapi>=0.111"]
+dependencies = [
+  "obligation-runtime-schemas",
+  "obligation-runtime-sdk",
+  "obligation-runtime-policy",
+  "langgraph",
+  "langchain",
+  "pydantic>=2.8",
+  "fastapi>=0.111",
+]

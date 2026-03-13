@@ -7,10 +7,10 @@ def build_witness_bundle(*, bundle_id: str, obligation_id: str, environment_fing
     return WitnessBundle(
         bundle_id=bundle_id,
         obligation_id=obligation_id,
-        environment_fingerprint=environment_fingerprint,
-        interactive=interactive,
+        environment_fingerprint=environment_fingerprint,  # type: ignore[arg-type]
+        interactive=interactive,  # type: ignore[arg-type]
         acceptance=acceptance,
-        policy=policy,
+        policy=policy,  # type: ignore[arg-type]
         approval=approval or {},
         trace=trace or {},
     )

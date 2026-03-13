@@ -10,3 +10,11 @@ protected_paths:
   - "Foo/Policy.lean"
 require_human_on_trust_delta: true
 allow_interactive_warnings: true
+single_owner_handoff: false
+reviewer_gated_execution: false
+lock_ownership_invariant: false
+evidence_complete_execution_token: false
+delegation_admissibility: false
+state_transition_preservation: false
+artifact_admissibility: false
+side_effect_authorization: false

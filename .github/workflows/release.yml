@@ -1,0 +1,45 @@
+# Release: run full check on version tags so releases are protected by the same checks.
+# Trigger: push of a tag matching v* (e.g. v0.1.0). Does not publish; use CI secrets for PyPI if needed.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: obr_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/obr_test
+      REVIEW_STORE: postgres
+      CHECKPOINTER: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (full) + Postgres deps
+        run: |
+          make install-dev-full
+          pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
+      - name: Full check
+        run: make check-full
+      - name: Postgres review store and checkpointer tests
+        run: |
+          pytest tests/unit/test_review_store_postgres.py tests/integration/test_checkpointer_postgres.py -v

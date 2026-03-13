@@ -7,3 +7,22 @@ __pycache__/
 dist/
 build/
 *.pyc
+*.egg-info/
+*.egg
+
+# Environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+*.local
+
+# IDE / OS
+.idea/
+.DS_Store
+
+# Node (e.g. apps/review-ui)
+node_modules/
+
+# Report / output artifacts
+my_report.json
+*_report.json

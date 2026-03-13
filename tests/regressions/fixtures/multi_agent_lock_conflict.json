@@ -1,0 +1,11 @@
+{
+  "case_id": "lock_conflict_1",
+  "obligation_input": {
+    "lock_held": true,
+    "conflict": true
+  },
+  "expected_decision": "rejected",
+  "expected_trust_level": "blocked",
+  "expected_terminal_status": "rejected",
+  "expected_reason_codes": ["lock_conflict"]
+}

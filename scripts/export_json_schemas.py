@@ -1,15 +1,32 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
-from obligation_runtime_schemas.environment import EnvironmentFingerprint
-from obligation_runtime_schemas.obligation import Obligation
-from obligation_runtime_schemas.interactive import InteractiveCheckResult
-from obligation_runtime_schemas.policy import PolicyDecision
-from obligation_runtime_schemas.witness import WitnessBundle
+# Allow running from repo root without pip install -e (e.g. via make export-schemas)
+_root = Path(__file__).resolve().parent.parent
+for _p in (_root, _root / "packages" / "schemas"):
+    if _p not in sys.path:
+        sys.path.insert(0, str(_p))
 
-OUT = Path("packages/schemas/obligation_runtime_schemas/generated")
+try:
+    from obligation_runtime_schemas.environment import EnvironmentFingerprint
+    from obligation_runtime_schemas.obligation import Obligation
+    from obligation_runtime_schemas.interactive import InteractiveCheckResult
+    from obligation_runtime_schemas.policy import PolicyDecision
+    from obligation_runtime_schemas.witness import AcceptanceSummary, WitnessBundle
+except ModuleNotFoundError as e:
+    print(
+        "export_json_schemas: missing dependency. Use the same Python that has the project installed.\n"
+        "  Run: make install-dev-full  (or: python -m pip install -e packages/schemas)\n"
+        "  Venv without pip: python -m ensurepip then python -m pip install -e packages/schemas\n"
+        "  Windows venv: .\\.venv\\Scripts\\python -m pip install -e packages/schemas ...",
+        file=sys.stderr,
+    )
+    raise SystemExit(1) from e
+
+OUT = _root / "packages" / "schemas" / "obligation_runtime_schemas" / "generated"
 OUT.mkdir(parents=True, exist_ok=True)
 
 MODELS = {
@@ -17,6 +34,7 @@ MODELS = {
     "Obligation": Obligation,
     "InteractiveCheckResult": InteractiveCheckResult,
     "PolicyDecision": PolicyDecision,
+    "AcceptanceSummary": AcceptanceSummary,
     "WitnessBundle": WitnessBundle,
 }
 

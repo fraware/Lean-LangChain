@@ -31,6 +31,7 @@ class Obligation(VersionedRecord):
         "artifact_admissibility",
         "side_effect_authorization",
         "trust_audit",
+        "lock_ownership_invariant",
     ]
     status: Literal["pending", "proved", "refuted", "blocked", "needs_review", "failed"] = "pending"
     target: ObligationTarget

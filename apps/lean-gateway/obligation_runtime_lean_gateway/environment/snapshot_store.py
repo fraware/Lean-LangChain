@@ -1,12 +1,43 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
+import stat
 from pathlib import Path
 
 from obligation_runtime_schemas.environment import EnvironmentFingerprint
 
 from .models import SnapshotRecord
+
+
+def _make_readonly(path: Path) -> None:
+    """Make the tree at path read-only (no write bits). Dirs 0o555, files 0o444 on Unix.
+    On Windows, sets read-only flag where supported; see platform docs for limitations."""
+    path = Path(path)
+    if not path.exists():
+        return
+    for root, dirs, files in os.walk(path, topdown=False):
+        root_path = Path(root)
+        for name in files:
+            p = root_path / name
+            try:
+                mode = p.stat().st_mode
+                p.chmod(mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
+            except OSError:
+                pass
+        for name in dirs:
+            p = root_path / name
+            try:
+                mode = p.stat().st_mode
+                p.chmod(mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
+            except OSError:
+                pass
+    try:
+        mode = path.stat().st_mode
+        path.chmod(mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
+    except OSError:
+        pass
 
 
 class SnapshotStore:
@@ -24,6 +55,7 @@ class SnapshotStore:
         if not base_path.exists():
             snapshot_root.mkdir(parents=True, exist_ok=True)
             shutil.copytree(source_repo_root, base_path)
+            _make_readonly(base_path)
             with metadata_path.open("w", encoding="utf-8") as f:
                 json.dump(env.model_dump(mode="json"), f, indent=2)
 

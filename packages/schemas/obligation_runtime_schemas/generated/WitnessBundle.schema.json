@@ -1,0 +1,392 @@
+{
+  "$defs": {
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "hint"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        },
+        "column": {
+          "title": "Column",
+          "type": "integer"
+        },
+        "end_line": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Line"
+        },
+        "end_column": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Column"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "source": {
+          "default": "lean",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "severity",
+        "file",
+        "line",
+        "column",
+        "message"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "EnvironmentFingerprint": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "repo_id": {
+          "title": "Repo Id",
+          "type": "string"
+        },
+        "repo_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repo Url"
+        },
+        "commit_sha": {
+          "title": "Commit Sha",
+          "type": "string"
+        },
+        "lean_toolchain": {
+          "title": "Lean Toolchain",
+          "type": "string"
+        },
+        "lakefile_hash": {
+          "title": "Lakefile Hash",
+          "type": "string"
+        },
+        "manifest_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manifest Hash"
+        },
+        "target_platform": {
+          "default": "linux/amd64",
+          "title": "Target Platform",
+          "type": "string"
+        },
+        "build_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Build Flags",
+          "type": "array"
+        },
+        "os_family": {
+          "default": "linux",
+          "enum": [
+            "linux",
+            "darwin",
+            "windows"
+          ],
+          "title": "Os Family",
+          "type": "string"
+        },
+        "imported_packages": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imported Packages"
+        }
+      },
+      "required": [
+        "repo_id",
+        "commit_sha",
+        "lean_toolchain",
+        "lakefile_hash"
+      ],
+      "title": "EnvironmentFingerprint",
+      "type": "object"
+    },
+    "GoalSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "plainGoal",
+            "plainTermGoal"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Column"
+        }
+      },
+      "required": [
+        "kind",
+        "text"
+      ],
+      "title": "GoalSnapshot",
+      "type": "object"
+    },
+    "InteractiveCheckResult": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "ok": {
+          "title": "Ok",
+          "type": "boolean"
+        },
+        "phase": {
+          "default": "interactive",
+          "title": "Phase",
+          "type": "string"
+        },
+        "diagnostics": {
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "goals": {
+          "items": {
+            "$ref": "#/$defs/GoalSnapshot"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
+        "stdout": {
+          "default": "",
+          "title": "Stdout",
+          "type": "string"
+        },
+        "stderr": {
+          "default": "",
+          "title": "Stderr",
+          "type": "string"
+        },
+        "timing_ms": {
+          "default": 0,
+          "title": "Timing Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ok"
+      ],
+      "title": "InteractiveCheckResult",
+      "type": "object"
+    },
+    "PolicyDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "blocked",
+            "needs_review",
+            "lower_trust",
+            "failed"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "trust_level": {
+          "enum": [
+            "clean",
+            "warning",
+            "blocked"
+          ],
+          "title": "Trust Level",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decision",
+        "trust_level"
+      ],
+      "title": "PolicyDecision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "bundle_id": {
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "obligation_id": {
+      "title": "Obligation Id",
+      "type": "string"
+    },
+    "environment_fingerprint": {
+      "$ref": "#/$defs/EnvironmentFingerprint"
+    },
+    "interactive": {
+      "$ref": "#/$defs/InteractiveCheckResult"
+    },
+    "acceptance": {
+      "title": "Acceptance",
+      "type": "object"
+    },
+    "policy": {
+      "$ref": "#/$defs/PolicyDecision"
+    },
+    "approval": {
+      "title": "Approval",
+      "type": "object"
+    },
+    "trace": {
+      "title": "Trace",
+      "type": "object"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "obligation_id",
+    "environment_fingerprint",
+    "interactive",
+    "policy"
+  ],
+  "title": "WitnessBundle",
+  "type": "object"
+}

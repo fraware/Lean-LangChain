@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "blocked",
+        "needs_review",
+        "lower_trust",
+        "failed"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "trust_level": {
+      "enum": [
+        "clean",
+        "warning",
+        "blocked"
+      ],
+      "title": "Trust Level",
+      "type": "string"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision",
+    "trust_level"
+  ],
+  "title": "PolicyDecision",
+  "type": "object"
+}

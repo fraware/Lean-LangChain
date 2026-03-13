@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "EnvironmentFingerprint": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "repo_id": {
+          "title": "Repo Id",
+          "type": "string"
+        },
+        "repo_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repo Url"
+        },
+        "commit_sha": {
+          "title": "Commit Sha",
+          "type": "string"
+        },
+        "lean_toolchain": {
+          "title": "Lean Toolchain",
+          "type": "string"
+        },
+        "lakefile_hash": {
+          "title": "Lakefile Hash",
+          "type": "string"
+        },
+        "manifest_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manifest Hash"
+        },
+        "target_platform": {
+          "default": "linux/amd64",
+          "title": "Target Platform",
+          "type": "string"
+        },
+        "build_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Build Flags",
+          "type": "array"
+        },
+        "os_family": {
+          "default": "linux",
+          "enum": [
+            "linux",
+            "darwin",
+            "windows"
+          ],
+          "title": "Os Family",
+          "type": "string"
+        },
+        "imported_packages": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imported Packages"
+        }
+      },
+      "required": [
+        "repo_id",
+        "commit_sha",
+        "lean_toolchain",
+        "lakefile_hash"
+      ],
+      "title": "EnvironmentFingerprint",
+      "type": "object"
+    },
+    "ObligationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "must_pass_axiom_audit": {
+          "default": true,
+          "title": "Must Pass Axiom Audit",
+          "type": "boolean"
+        },
+        "allow_trust_compiler": {
+          "default": false,
+          "title": "Allow Trust Compiler",
+          "type": "boolean"
+        },
+        "require_human_if_imports_change": {
+          "default": true,
+          "title": "Require Human If Imports Change",
+          "type": "boolean"
+        },
+        "protected_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Protected Paths",
+          "type": "array"
+        }
+      },
+      "title": "ObligationPolicy",
+      "type": "object"
+    },
+    "ObligationTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "repo_id": {
+          "title": "Repo Id",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "declarations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Declarations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "repo_id",
+        "file"
+      ],
+      "title": "ObligationTarget",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "obligation_id": {
+      "title": "Obligation Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "patch_admissibility",
+        "delegation_admissibility",
+        "handoff_legality",
+        "state_transition_preservation",
+        "artifact_admissibility",
+        "side_effect_authorization",
+        "trust_audit",
+        "lock_ownership_invariant"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "status": {
+      "default": "pending",
+      "enum": [
+        "pending",
+        "proved",
+        "refuted",
+        "blocked",
+        "needs_review",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/ObligationTarget"
+    },
+    "claim": {
+      "title": "Claim",
+      "type": "string"
+    },
+    "inputs": {
+      "title": "Inputs",
+      "type": "object"
+    },
+    "environment_fingerprint": {
+      "$ref": "#/$defs/EnvironmentFingerprint"
+    },
+    "policy": {
+      "$ref": "#/$defs/ObligationPolicy"
+    }
+  },
+  "required": [
+    "obligation_id",
+    "kind",
+    "target",
+    "claim",
+    "inputs",
+    "environment_fingerprint",
+    "policy"
+  ],
+  "title": "Obligation",
+  "type": "object"
+}

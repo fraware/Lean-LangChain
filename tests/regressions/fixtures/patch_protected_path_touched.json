@@ -1,0 +1,13 @@
+{
+  "case_id": "protected_path_touched_1",
+  "obligation_input": {
+    "target_files": ["Mini/Basic.lean"],
+    "current_patch": {"Mini/Basic.lean": "def x := 1\n"},
+    "protected_paths": ["Mini/Basic.lean"],
+    "session_id": null
+  },
+  "expected_decision": "needs_review",
+  "expected_trust_level": "clean",
+  "expected_terminal_status": "awaiting_approval",
+  "expected_reason_codes": ["protected_path_touched"]
+}

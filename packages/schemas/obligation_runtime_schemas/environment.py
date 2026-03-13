@@ -18,6 +18,8 @@ class EnvironmentFingerprint(VersionedRecord):
     target_platform: str = Field(default="linux/amd64")
     build_flags: list[str] = Field(default_factory=list)
     os_family: Literal["linux", "darwin", "windows"] = "linux"
+    # Optional summary of imported packages (e.g. from lake-manifest); fingerprint can leave None.
+    imported_packages: list[str] | None = None
 
     def fingerprint_id(self) -> str:
         payload = self.model_dump(mode="json", exclude={"created_at", "schema_version"})

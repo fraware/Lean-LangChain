@@ -1,0 +1,13 @@
+{
+  "case_id": "state_transition_bad_1",
+  "obligation_input": {
+    "obligation_class": "state_transition_preservation",
+    "events": [
+      {"kind": "claim", "event_id": "e1", "actor": {}, "task": {}},
+      {"kind": "execute", "event_id": "e2", "actor": {}, "task": {}}
+    ]
+  },
+  "expected_decision": "rejected",
+  "expected_trust_level": "blocked",
+  "expected_reason_codes": ["invalid_state_transition"]
+}

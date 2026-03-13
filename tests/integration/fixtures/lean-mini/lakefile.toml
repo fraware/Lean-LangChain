@@ -3,3 +3,7 @@ defaultTargets = ["Mini"]
 
 [[lean_lib]]
 name = "Mini"
+
+[[lean_exe]]
+name = "axiom_list"
+root = "AxiomList"

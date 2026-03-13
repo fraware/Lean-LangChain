@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 
 class ObligationRuntimeState(TypedDict):
@@ -37,3 +37,6 @@ class ObligationRuntimeState(TypedDict):
     max_attempts: int
     artifacts: list[dict]
     trace_events: list[dict]
+    protocol_events: NotRequired[list[dict]]
+    policy_pack_name: NotRequired[str]
+    _repo_path: NotRequired[str]

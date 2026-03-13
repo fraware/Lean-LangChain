@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from uuid import uuid4
 
 try:
     from fastapi import APIRouter
@@ -12,12 +11,14 @@ except Exception:  # pragma: no cover
             def deco(fn): return fn
             return deco
 
+from obligation_runtime_schemas.api_paths import PATH_ENVIRONMENTS_OPEN, PATH_SESSIONS
+
 from obligation_runtime_lean_gateway.api import deps
 
 router = APIRouter()
 
 
-@router.post("/environments/open")
+@router.post(PATH_ENVIRONMENTS_OPEN)
 def open_environment(payload: dict) -> dict:
     repo_id = payload["repo_id"]
     repo_path = payload.get("repo_path")
@@ -28,7 +29,7 @@ def open_environment(payload: dict) -> dict:
     return {"fingerprint": env.model_dump(mode="json"), "fingerprint_id": env.fingerprint_id(), "snapshot_path": str(snap.base_path)}
 
 
-@router.post("/sessions")
+@router.post(PATH_SESSIONS)
 def create_session(payload: dict) -> dict:
     fingerprint_id = payload["fingerprint_id"]
     base_path = deps.snapshots.env_root / fingerprint_id / "base"

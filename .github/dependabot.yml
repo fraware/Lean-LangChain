@@ -1,0 +1,20 @@
+# Dependabot: surface dependency updates. Review and run make check-full after upgrading.
+# https://docs.github.com/en/code-security/dependabot
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    groups:
+      python-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/review-ui"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3

@@ -16,3 +16,12 @@ class PolicyPack(StrictModel):
     protected_paths: list[str] = Field(default_factory=list)
     require_human_on_trust_delta: bool = True
     allow_interactive_warnings: bool = True
+    # V2 protocol packs
+    single_owner_handoff: bool = False
+    reviewer_gated_execution: bool = False
+    lock_ownership_invariant: bool = False
+    evidence_complete_execution_token: bool = False
+    delegation_admissibility: bool = False
+    state_transition_preservation: bool = False
+    artifact_admissibility: bool = False
+    side_effect_authorization: bool = False

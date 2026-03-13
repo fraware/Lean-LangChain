@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-from pathlib import Path
 
 
 def summarize_patch(before: dict[str, str], after: dict[str, str], protected_paths: list[str] | None = None) -> dict:

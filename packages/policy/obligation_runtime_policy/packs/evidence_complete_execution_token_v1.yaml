@@ -1,0 +1,18 @@
+version: "0.1.0"
+name: "evidence_complete_execution_token_v1"
+description: "Execute only when evidence bundle is complete"
+allow_trust_compiler: false
+block_sorry_ax: true
+block_unexpected_custom_axioms: true
+require_human_if_imports_change: true
+protected_paths: []
+require_human_on_trust_delta: true
+allow_interactive_warnings: true
+single_owner_handoff: false
+reviewer_gated_execution: false
+lock_ownership_invariant: false
+evidence_complete_execution_token: true
+delegation_admissibility: false
+state_transition_preservation: false
+artifact_admissibility: false
+side_effect_authorization: false

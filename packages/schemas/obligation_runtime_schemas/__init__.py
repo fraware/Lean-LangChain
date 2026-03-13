@@ -5,7 +5,8 @@ from .obligation import Obligation, ObligationPolicy, ObligationTarget
 from .diagnostics import Diagnostic, GoalSnapshot
 from .interactive import InteractiveCheckResult
 from .policy import PolicyDecision
-from .witness import WitnessBundle
+from .witness import AcceptanceSummary, WitnessBundle
+from .review import ReviewPayload
 from .batch import BatchVerifyResult, BatchBuildResult, AxiomAuditResult, FreshCheckerResult
 
 __all__ = [
@@ -17,7 +18,9 @@ __all__ = [
     "GoalSnapshot",
     "InteractiveCheckResult",
     "PolicyDecision",
+    "AcceptanceSummary",
     "WitnessBundle",
+    "ReviewPayload",
     "BatchVerifyResult",
     "BatchBuildResult",
     "AxiomAuditResult",

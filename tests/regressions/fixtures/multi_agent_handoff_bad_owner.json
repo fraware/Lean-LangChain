@@ -1,0 +1,11 @@
+{
+  "case_id": "handoff_bad_owner_1",
+  "obligation_input": {
+    "events": ["claim", "delegate"],
+    "owner_match": false
+  },
+  "expected_decision": "rejected",
+  "expected_trust_level": "blocked",
+  "expected_terminal_status": "rejected",
+  "expected_reason_codes": ["owner_mismatch"]
+}
