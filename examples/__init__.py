@@ -1,1 +1,1 @@
-# Optional patch producer examples. Not required by the core runtime.
+# Minimal SDK usage example. Not required by the core runtime.

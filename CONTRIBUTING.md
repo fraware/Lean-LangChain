@@ -14,6 +14,8 @@ Thank you for your interest in contributing. This document covers setup, the ful
 
 2. **Environment.** Copy [.env.example](.env.example) to `.env` if you need local overrides. Never commit `.env` or real secrets. For the Review UI, copy `apps/review-ui/.env.example` to `apps/review-ui/.env.local` and set `NEXT_PUBLIC_GATEWAY_URL`.
 
+3. **Demos (optional).** To run the core or full demo, start the Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app` from repo root), then `make demo-core` or `make demo-full`. See [docs/demos/README.md](docs/demos/README.md).
+
 ## Before you submit
 
 Run the full check from the repo root with the same Python you used for install:

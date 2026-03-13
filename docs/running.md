@@ -56,6 +56,10 @@ npm run dev
 
 Set `NEXT_PUBLIC_GATEWAY_URL` to the Gateway URL. Review page: `http://localhost:3000/reviews/[threadId]`. Approve/reject via the UI; use **Resume run** (or `obr resume <thread_id>`) to continue the graph. Resume requires `CHECKPOINTER=postgres` and `DATABASE_URL`.
 
+## Demos
+
+Patch-verification demos require the Gateway to be running. From repo root: `make demo-core` (3 steps: good patch, sorry rejected, protected path) or `make demo-full` (6 steps: proof-preserving gate). See [demos/README.md](demos/README.md) and [demos/main-demo.md](demos/main-demo.md), [demos/full-demo.md](demos/full-demo.md). If the Gateway is not running, the demo scripts skip with exit 0.
+
 ## CLI (obr)
 
 From repo root: `python -m obligation_runtime_orchestrator.cli <cmd>`. Commands: `open-environment`, `create-session`, `run-patch-obligation`, `run-protocol-obligation`, `review`, `resume`, `artifacts`, `regressions`. Use `--protected-paths`, `--policy-pack`, `--protocol-events-file` etc. as needed.

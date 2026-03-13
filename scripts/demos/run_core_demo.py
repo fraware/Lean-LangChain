@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the main demo: scenarios 1, 2, 3 in order (good patch, sorry patch, protected path + review).
+"""Run the core demo: scenarios 1, 2, 3 in order (good patch, sorry patch, protected path + review).
 
 Scenario 1: clean patch -> accepted.
 Scenario 2: sorry patch -> rejected.
@@ -23,7 +23,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-THREAD_ID_SCENARIO_3 = "hero-demo-3"
+THREAD_ID_SCENARIO_3 = "core-demo-3"
 REPO_ID = "lean-mini"
 STATUS_ACCEPTED = "accepted"
 STATUS_REJECTED = "rejected"
@@ -95,7 +95,7 @@ def _get_fid_and_session(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run hero demo: scenarios 1, 2, 3")
+    parser = argparse.ArgumentParser(description="Run core demo: scenarios 1, 2, 3")
     parser.add_argument(
         "--ui-resume",
         action="store_true",
@@ -108,7 +108,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    log = logging.getLogger("hero_demo")
+    log = logging.getLogger("core_demo")
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
     else:

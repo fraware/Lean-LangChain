@@ -9,7 +9,8 @@
 ## Demos
 
 - **demos/run_demo_scenario_1.py** … **run_demo_scenario_5.py** — Reproducible demo scenarios (clean patch, sorry, protected path, batch-fail, reviewer_gated). Run with `make demo-scenario-1` through `make demo-scenario-5`.
-- **demos/run_hero_demo.py** — Main demo (hero): scenarios 1, 2, 3 in order. `make demo-hero` or `make demo-hero-ui`. See `docs/demos/main-demo.md`.
+- **demos/run_core_demo.py** — Core demo: scenarios 1, 2, 3 in order. `make demo-core` or `make demo-core-ui`. See `docs/demos/main-demo.md`.
+- **demos/run_full_demo.py** — Full demo: proof-preserving patch gate (6 steps). `make demo-full` or `make demo-full-ui`. See `docs/demos/full-demo.md`.
 
 ## Root scripts
 

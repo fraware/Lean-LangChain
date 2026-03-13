@@ -1,6 +1,6 @@
 # Workflow and integrations
 
-End-to-end workflow, use cases, and how the Obligation Runtime fits with LangChain, LangSmith, and LangGraph. The runtime runs a formal obligation pipeline: open a Lean environment, run verification, evaluate policy, and optionally pause for human review. The orchestrator (CLI or API) drives a LangGraph state machine that calls the Lean Gateway via the SDK; LangChain tools expose the same operations for agents; LangSmith and OTLP record traces. Key terms are in [glossary.md](glossary.md).
+The runtime runs a formal obligation pipeline: open a Lean environment, run verification, evaluate policy, and optionally pause for human review. The orchestrator (CLI or API) drives a LangGraph state machine that calls the Lean Gateway via the SDK; LangChain tools expose the same operations for agents; LangSmith and OTLP record traces. Key terms are in [glossary.md](glossary.md).
 
 **Concepts at a glance**
 
@@ -33,22 +33,22 @@ The runtime implements a **formal obligation pipeline**: open a Lean environment
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                         OBLIGATION RUNTIME WORKFLOW                               │
+│                         OBLIGATION RUNTIME WORKFLOW                             │
 ├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                  │
+│                                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────────────────┐   │
 │  │ Open         │    │ Create       │    │ LangGraph: init → interactive    │   │
-│  │ environment   │───►│ session      │───►│ check → batch_verify → audit     │   │
-│  │ (fingerprint) │    │ (session_id) │    │ → policy_review → finalize        │   │
+│  │ environment   │───►│ session      │───►│ check → batch_verify → audit    │   │
+│  │ (fingerprint) │    │ (session_id) │    │ → policy_review → finalize      │   │
 │  └──────────────┘    └──────────────┘    └──────────────────────────────────┘   │
 │         │                    │                            │                     │
 │         │                    │                            │                     │
 │         ▼                    ▼                            ▼                     │
-│  ┌──────────────────────────────────────────────────────────────────────────┐  │
-│  │ LEAN GATEWAY (HTTP API)                                                    │  │
-│  │ POST /v1/environments/open | POST /v1/sessions | apply-patch |             │  │
-│  │ interactive-check | batch-verify | GET/POST /v1/reviews/{id} (resume)      │  │
-│  └──────────────────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │ LEAN GATEWAY (HTTP API)                                                  │   │
+│  │ POST /v1/environments/open | POST /v1/sessions | apply-patch |           │   │
+│  │ interactive-check | batch-verify | GET/POST /v1/reviews/{id} (resume)    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
 │         │                    │                            │                     │
 │         ▼                    ▼                            ▼                     │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────────────────┐   │
@@ -56,7 +56,7 @@ The runtime implements a **formal obligation pipeline**: open a Lean environment
 │  │ tools        │    │ SDK          │    │ (spans, runs, datasets, compare) │   │
 │  │ (agent API)  │    │ (graph/CLI)  │    │                                  │   │
 │  └──────────────┘    └──────────────┘    └──────────────────────────────────┘   │
-│                                                                                  │
+│                                                                                 │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -117,7 +117,7 @@ flowchart LR
 
 ### Candidate producer (optional)
 
-The patch is always supplied by the caller (CLI, SDK, or script); the graph never generates Lean. For **demo mode**, an optional **candidate producer** can propose a patch before the run: implement the `CandidateProducer` protocol (`propose_patch(context) -> dict[str, str]`) and pass the result into state as `current_patch`, then invoke the same graph. The producer interface lives in `obligation_runtime_orchestrator.producer` (`ProducerContext`, `CandidateProducer`, `context_from_state`). Example implementations (fixture, OpenAI, Anthropic) are in **examples/**; the demo script is `examples/run_demo_with_producer.py`. The core verification path is unchanged; generation stays in examples or a companion repo.
+The patch is always supplied by the caller (CLI, SDK, or script); the graph never generates Lean. For custom patch sources, an optional **candidate producer** can propose a patch before the run: implement the `CandidateProducer` protocol (`propose_patch(context) -> dict[str, str]`) and pass the result into state as `current_patch`, then invoke the same graph. The producer interface lives in `obligation_runtime_orchestrator.producer` (`ProducerContext`, `CandidateProducer`, `context_from_state`). Implement in adapters or a companion repo; the core verification path is unchanged.
 
 ---
 
@@ -320,6 +320,8 @@ These tests validate the full LangGraph flow against the Gateway (mocked or real
 |------------------------------|----------------------------------------|--------------------|
 | test_acceptance_lane.py       | Batch verify, evidence flags, strict  | Gateway            |
 | test_graph_runtime.py        | Full graph, reviewer-gated, protected | LangGraph, Gateway |
+| test_full_demo.py     | Full demo: valid edit, sorry, false theorem, protected approve/reject | LangGraph, Gateway |
+| test_full_demo_script.py | Demo script: --help, gateway unreachable skip, flags | Subprocess         |
 | test_tools.py                | Open → session → apply → check → batch | LangChain tools    |
 | test_mcp_session_affinity.py | Session-bound flow via MCP            | LangChain/MCP       |
 | test_review_resume_flow.py    | Resume endpoint, errors                | Gateway, graph     |

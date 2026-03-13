@@ -2,7 +2,11 @@
 
 Reproducible scenarios for patch verification and for protocol (multi-agent) rules. Use these to see how the runtime accepts good patches, rejects bad ones, and pauses for human review when configured.
 
+**Examples vs demos:** Minimal SDK usage (open env, session, batch-verify only) is in **examples/** ([minimal_sdk_gateway.py](../examples/minimal_sdk_gateway.py)). The **demos** here are full flows run via the CLI (`obr` / `make demo-*`) and scripts in **scripts/demos/**.
+
 **Before you start:** Run the Gateway from the repo root (`uvicorn obligation_runtime_lean_gateway.api.app:app`). If it is not at `http://localhost:8000`, set `OBR_GATEWAY_URL`. Run the CLI from the repo root as `python -m obligation_runtime_orchestrator.cli` (or `obr` if installed).
+
+**When demos skip:** The core demo, full demo, and scenarios 1–4 require a running Gateway. If the Gateway is not reachable (or fixtures are missing), their scripts exit with code 0 and print a skip message to stderr. Scenario 5 (reviewer gated) runs without the Gateway and always executes.
 
 ---
 
@@ -22,8 +26,15 @@ Reproducible scenarios for patch verification and for protocol (multi-agent) rul
 
 The most useful end-to-end path is: good patch accepted, bad patch rejected, then protected path with human review and resume. That flow is documented in **[main-demo.md](main-demo.md)**.
 
-- **`make demo-hero`** — Runs scenarios 1–3 in order. Scenario 3 uses CLI resume when `CHECKPOINTER=postgres` and `DATABASE_URL` are set; otherwise step 3 is skipped. Exits successfully if the Gateway is down or fixtures are missing.
-- **`make demo-hero-ui`** — Runs 1 and 2, then 3 up to the pause; prints the Review UI URL so you can Approve and click **Resume run** in the browser.
+- **`make demo-core`** — Runs scenarios 1–3 in order. Scenario 3 uses CLI resume when `CHECKPOINTER=postgres` and `DATABASE_URL` are set; otherwise step 3 is skipped. Exits successfully if the Gateway is down or fixtures are missing.
+- **`make demo-core-ui`** — Runs 1 and 2, then 3 up to the pause; prints the Review UI URL so you can Approve and click **Resume run** in the browser.
+
+### Full demo
+
+Proof-preserving patch gate: valid proof edit accepted, sorry and false theorem rejected, protected path with approve/reject, evidence bundle export. See **[full-demo.md](full-demo.md)**.
+
+- **`make demo-full`** — Runs all 6 steps (steps 5–6 require Postgres).
+- **`make demo-full-ui`** — Runs steps 1–4, then step 5a up to the pause; prints the Review UI URL for manual approve/reject and resume.
 
 ---
 
@@ -118,4 +129,4 @@ Runs the regression suite under `tests/regressions/`. Cases are loaded from `pac
 
 ---
 
-**See also:** [workflow.md](../workflow.md), [main-demo.md](main-demo.md), [running.md](../running.md).
+**See also:** [workflow.md](../workflow.md), [main-demo.md](main-demo.md), [full-demo.md](full-demo.md), [running.md](../running.md).

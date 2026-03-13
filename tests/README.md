@@ -42,6 +42,8 @@ Some tests skip when required tooling or services are unavailable. This is inten
 | test_review_resume_flow.py | Review API: resume endpoint and error handling |
 | test_interrupt_resume.py | Interrupt/resume with MemorySaver; protected path → needs_review → approve → finalize |
 | test_checkpointer_postgres.py | Postgres checkpointer: invoke then resume; resume after interrupt to accepted |
+| test_full_demo.py | Full demo scenarios at graph level: valid proof edit accepted, sorry/false-theorem rejected, protected approve/reject, fixture existence; real lake build for demo patches when lake in PATH |
+| test_full_demo_script.py | Full demo script: --help, gateway unreachable skips, -v and --ui-resume flags |
 
 Integration tests use shared fixtures from `tests/conftest.py` and `tests/integration/conftest.py` (`gateway_app`, `gateway_client`, `gateway_tc`, `sdk_client`, `obr_graph`).
 

@@ -6,7 +6,7 @@ Navigation for all docs in this repo. Start from your goal below.
 
 | Goal | Start here |
 |------|------------|
-| **New to the project** | Root [README](../README.md) → [workflow.md](workflow.md) → [demos/main-demo.md](demos/main-demo.md) |
+| **New to the project** | Root [README](../README.md) → [workflow.md](workflow.md) → [demos/main-demo.md](demos/main-demo.md) or [demos/full-demo.md](demos/full-demo.md) |
 | **Integrate the runtime** | [integrate.md](integrate.md) → [architecture/gateway-api.md](architecture/gateway-api.md) → [running.md](running.md) |
 | **Deploy to production** | [deployment.md](deployment.md) → [running.md](running.md) |
 | **Contribute or run tests** | [CONTRIBUTING.md](../CONTRIBUTING.md) → [tests-and-ci.md](tests-and-ci.md) |
@@ -26,8 +26,9 @@ See [architecture/README.md](architecture/README.md) for an index. Main entries:
 
 ## Demos
 
-- **[demos/main-demo.md](demos/main-demo.md)** — Main demo: verification and human review; `make demo-hero`, `make demo-hero-ui`.
-- **[demos/README.md](demos/README.md)** — Reproducible scenarios and regression commands.
+- **[demos/main-demo.md](demos/main-demo.md)** — Core demo: verification and human review (good patch, sorry rejected, protected path); `make demo-core`, `make demo-core-ui`.
+- **[demos/full-demo.md](demos/full-demo.md)** — Full demo: proof-preserving patch gate (6 steps; valid edit, sorry, false theorem, protected approve/reject, evidence export); `make demo-full`, `make demo-full-ui`.
+- **[demos/README.md](demos/README.md)** — All scenarios (1–5), protocol demos, and regression commands.
 
 ## Runbooks (advanced)
 

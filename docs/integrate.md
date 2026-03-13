@@ -42,7 +42,7 @@ client = ObligationRuntimeClient(base_url="http://localhost:8000")
 resp = client.open_environment(repo_id="my-repo", repo_path="/path/to/repo")
 ```
 
-This is the **best single entry point** for reusers: one client, one base URL. See `examples/hello_sdk_gateway.py` for a minimal script; see `examples/README.md` for producer-based demos.
+This is the **best single entry point** for reusers: one client, one base URL. See `examples/minimal_sdk_gateway.py` for a minimal script. For runnable demos (patch verification, review), see [docs/demos/](demos/README.md) and `make demo-core` / `make demo-full`.
 
 ---
 
@@ -145,7 +145,7 @@ OpenAPI at `/docs` and `/redoc`. See [running.md](running.md) for full setup.
 
 - **evals** — Evaluation corpus, experiments, and regression runners.
 - **telemetry** — Tracer and LangSmith integration; optional OTLP and langsmith extras.
-- **examples** — Optional patch producers (fixture, OpenAI, Anthropic) and demo script. Not required for core verification; see `examples/README.md`.
+- **examples** — Minimal SDK script only. Not required for core verification; see `examples/README.md`. Demos are in scripts/demos and docs/demos.
 - **review-ui** — Next.js UI for review/approve/reject and resume. Consumes the Gateway API; run from `apps/review-ui`.
 
 ---

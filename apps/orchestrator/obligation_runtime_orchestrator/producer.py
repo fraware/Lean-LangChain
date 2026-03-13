@@ -22,7 +22,7 @@ class ProducerContext(TypedDict, total=False):
 
 
 class CandidateProducer(Protocol):
-    """Protocol for a candidate patch producer. Implement in examples/ or adapters."""
+    """Protocol for a candidate patch producer. Implement in adapters or a companion repo."""
 
     def propose_patch(self, context: ProducerContext) -> dict[str, str]:
         """Propose a patch: path -> content (workspace-relative)."""

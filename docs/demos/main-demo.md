@@ -12,21 +12,21 @@ This demo walks through the most important path in the Obligation Runtime: verif
 
 ## Run the demo
 
-With the Gateway running (see [Prerequisites](#prerequisites)):
+With the Gateway running (see [Prerequisites](#prerequisites)). If the Gateway is not running, the script skips with exit 0 and prints a message to stderr.
 
 ```bash
-make demo-hero
+make demo-core
 ```
 
 This runs all three steps. Step 3 uses the CLI to resume when Postgres is configured. To finish step 3 in the browser instead:
 
 ```bash
-make demo-hero-ui
+make demo-core-ui
 ```
 
 Then open the URL printed by the script, click **Approve**, then **Resume run**.
 
-For more control: `python scripts/demos/run_hero_demo.py --help` (e.g. `-v` for verbose output).
+For more control: `python scripts/demos/run_core_demo.py --help` (e.g. `-v` for verbose output).
 
 ---
 
@@ -113,17 +113,17 @@ Run the patch flow with a protected path so the run is paused for review. Then c
 obr open-environment --repo-id lean-mini --repo-path tests/integration/fixtures/lean-mini
 obr create-session <fingerprint_id>
 obr run-patch-obligation --repo-id lean-mini --repo-path tests/integration/fixtures/lean-mini \
-  --thread-id hero-demo-3 \
+  --thread-id core-demo-3 \
   --protected-paths Mini/Basic.lean
 ```
 
 Expected: run stops with `"status": "awaiting_approval"`. Then:
 
-1. Open **http://localhost:3000/reviews/hero-demo-3** in the Review UI.
+1. Open **http://localhost:3000/reviews/core-demo-3** in the Review UI.
 2. Click **Approve** (or Reject).
 3. Click **Resume run**. The run continues and completes (e.g. `accepted` if you approved).
 
-From the CLI instead: `obr resume hero-demo-3 --decision approved` (same Postgres checkpointer must be used so the CLI and Gateway share state).
+From the CLI instead: `obr resume core-demo-3 --decision approved` (same Postgres checkpointer must be used so the CLI and Gateway share state).
 
 ---
 
@@ -159,7 +159,7 @@ After an accepted run, export the evidence bundles for that run:
 obr artifacts --thread-id <thread_id> --output witness.json
 ```
 
-The file includes environment fingerprint, interactive and batch results (with evidence flags), policy decision, and approval data if the run went through review. Use the same `thread_id` as for `run-patch-obligation` (e.g. `hero-demo-3` for step 3). Requires a checkpointer (Postgres or in-process). See `obr artifacts --help`.
+The file includes environment fingerprint, interactive and batch results (with evidence flags), policy decision, and approval data if the run went through review. Use the same `thread_id` as for `run-patch-obligation` (e.g. `core-demo-3` for step 3). Requires a checkpointer (Postgres or in-process). See `obr artifacts --help`.
 
 ---
 
@@ -167,9 +167,9 @@ The file includes environment fingerprint, interactive and batch results (with e
 
 | Command | Effect |
 |--------|--------|
-| `make demo-hero` | Run all three steps (step 3 uses CLI resume when Postgres is set). Exits successfully even if Gateway is down or fixtures are missing (demo is skipped). |
-| `make demo-hero-ui` | Run steps 1 and 2, then step 3 up to the pause; print the Review UI URL and tell you to Approve and click **Resume run**. |
-| `python scripts/demos/run_hero_demo.py -v` | Same as `demo-hero` with verbose logging. |
+| `make demo-core` | Run all three steps (step 3 uses CLI resume when Postgres is set). Exits successfully even if Gateway is down or fixtures are missing (demo is skipped). |
+| `make demo-core-ui` | Run steps 1 and 2, then step 3 up to the pause; print the Review UI URL and tell you to Approve and click **Resume run**. |
+| `python scripts/demos/run_core_demo.py -v` | Same as `demo-core` with verbose logging. |
 
 More scenarios and regression commands: [README.md](README.md).
 
@@ -184,5 +184,7 @@ More scenarios and regression commands: [README.md](README.md).
 | “Resume run” in the UI returns 503 or does nothing | Gateway not using Postgres for state | Start the Gateway with `CHECKPOINTER=postgres` and `DATABASE_URL`. |
 | “invalid JSON” or “empty stdout” from run-patch-obligation | Gateway returned HTML (e.g. 502) or non-JSON | Run with `-v` to inspect output; ensure the Gateway is up and the request reaches it. |
 | Step 2 expected rejected but got accepted | Sorry patch not applied or wrong paths | Use `--patch-apply-path Mini/Basic.lean` and `--target-files Mini/Basic.lean`; fixture repo: `tests/integration/fixtures/lean-mini`. |
+
+For a longer narrative that includes valid proof edits, false-theorem rejection, human reject path, and evidence export, see [full-demo.md](full-demo.md).
 
 **See also:** [README.md](README.md), [workflow.md](../workflow.md), [running.md](../running.md).

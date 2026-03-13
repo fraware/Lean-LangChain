@@ -1,4 +1,4 @@
-.PHONY: lint format typecheck test test-schemas test-integration test-regressions export-schemas install-dev install-dev-full check check-full demo-scenario-1 demo-scenario-2 demo-scenario-3 demo-scenario-4 demo-scenario-5 demo-hero demo-hero-ui install-lean4checker test-fresh test-axiom-producer test-tracer-e2e benchmark benchmark-report
+.PHONY: lint format typecheck test test-schemas test-integration test-regressions export-schemas install-dev install-dev-full check check-full demo-scenario-1 demo-scenario-2 demo-scenario-3 demo-scenario-4 demo-scenario-5 demo-core demo-core-ui demo-full demo-full-ui install-lean4checker test-fresh test-axiom-producer test-tracer-e2e benchmark benchmark-report
 
 # Use python -m pip so install and gates use the same interpreter (e.g. .venv or conda)
 install-dev:
@@ -48,10 +48,15 @@ demo-scenario-4:
 demo-scenario-5:
 	python scripts/demos/run_demo_scenario_5.py
 
-demo-hero:
-	python scripts/demos/run_hero_demo.py
-demo-hero-ui:
-	python scripts/demos/run_hero_demo.py --ui-resume
+demo-core:
+	python scripts/demos/run_core_demo.py
+demo-core-ui:
+	python scripts/demos/run_core_demo.py --ui-resume
+
+demo-full:
+	python scripts/demos/run_full_demo.py
+demo-full-ui:
+	python scripts/demos/run_full_demo.py --ui-resume
 
 test-langsmith:
 	pytest tests/unit/test_langsmith.py tests/integration/test_langsmith_fixed_corpus.py -v

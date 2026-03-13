@@ -39,6 +39,8 @@ Other targets: `make test-axiom-producer` (axiom producer in lean-mini), `make t
 | `test-langsmith` | LangSmith unit and fixed-corpus integration tests. |
 | `test-axiom-producer` | Axiom producer test (lean-mini; skips if lake absent). |
 | `test-tracer-e2e` | Tracer E2E (requires obligation-runtime-telemetry[otlp]). |
+| `demo-core` | Core demo (good patch, sorry, protected path); requires Gateway. See [demos/README.md](demos/README.md). |
+| `demo-full` | Full demo (6-step proof-preserving gate); requires Gateway and Postgres for steps 5–6. |
 
 To run the same as CI locally: activate venv, then `make install-dev-full` and `make check-full`. For Postgres tests locally: start Postgres, set `DATABASE_URL`, `REVIEW_STORE=postgres`, `CHECKPOINTER=postgres`, then run the Postgres test modules. See **tests/README.md** for environment-dependent skips.
 
