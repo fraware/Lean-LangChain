@@ -1,7 +1,7 @@
 # lean-langchain
 
 <div align="center">
-  <img src="Logo.png" alt="Lean LangChain" width="280" />
+  <img src="assets/Logo.png" alt="Lean LangChain" width="280" />
 </div>
 
 <div align="center">
