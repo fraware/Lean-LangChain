@@ -1,8 +1,16 @@
 # lean-langchain
 
+<div align="center">
+  <img src="Logo.png" alt="Lean LangChain" width="280" />
+</div>
+
+<div align="center">
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**A semantic control plane for high-stakes agent workflows.** When agents or tools propose changes to formal code, something has to decide whether those changes are correct. This project makes **Lean** that single authority: every patch is verified by Lean (build, axiom audit, fresh checker), policy can require human review for sensitive paths, and every decision produces auditable evidence. Integrates with LangChain, LangGraph, and LangSmith so you can run, integrate, or extend verification and approval without reimplementing the pipeline.
+**A semantic control plane for high-stakes agent workflows.**
+
+</div> When agents or tools propose changes to formal code, something has to decide whether those changes are correct. This project makes **Lean** that single authority: every patch is verified by Lean (build, axiom audit, fresh checker), policy can require human review for sensitive paths, and every decision produces auditable evidence. Integrates with LangChain, LangGraph, and LangSmith so you can run, integrate, or extend verification and approval without reimplementing the pipeline.
 
 ---
 
@@ -12,17 +20,10 @@ Agents and automation are increasingly able to draft and edit code. For formal a
 
 ---
 
-## Vision and how you can help
-
-We want this to become the default way teams gate formal and proof-relevant changes: one pipeline, one semantic authority (Lean), optional human review, and evidence for every decision. Getting there needs more adopters, more backends (e.g. other provers or typecheckers), and more integrations. If you care about trustworthy automation around formal code, we would value your help: try the demos, integrate the Gateway or SDK into your workflow, report issues, or contribute code and docs. See [Contributing](#contributing) and [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
 ## Table of contents
 
 - [lean-langchain](#lean-langchain)
   - [Why this exists](#why-this-exists)
-  - [Vision and how you can help](#vision-and-how-you-can-help)
   - [Table of contents](#table-of-contents)
   - [What's in this repo](#whats-in-this-repo)
   - [Quick start](#quick-start)
@@ -142,6 +143,8 @@ Further: [docs/architecture/](docs/architecture/), [docs/demos/](docs/demos/), [
 ---
 
 ## Contributing
+
+We want this to become the default way teams gate formal and proof-relevant changes: one pipeline, one semantic authority (Lean), optional human review, and evidence for every decision. Getting there needs more adopters, more backends (e.g. other provers or typecheckers), and more integrations. 
 
 We welcome contributions: code, documentation, feedback, and ideas. Run the full check before submitting (`make check-full`). See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and pull request process. If you use this in production or research, we would love to hear how; opening an issue or discussion is a good way to share.
 
