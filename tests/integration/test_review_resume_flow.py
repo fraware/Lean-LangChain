@@ -38,22 +38,25 @@ def test_resume_endpoint_400_when_no_decision(gateway_client) -> None:
     assert "Approve or reject" in str(body.get("error", {}).get("message", ""))
 
 
-def test_resume_endpoint_503_when_no_checkpointer(gateway_client) -> None:
-    """POST /v1/reviews/{thread_id}/resume returns 503 when no checkpointer (and orchestrator available)."""
+def test_resume_endpoint_503_when_no_orchestrator_or_checkpointer(gateway_client) -> None:
+    """POST /v1/reviews/{thread_id}/resume returns 503 when OBR_ORCHESTRATOR_URL is unset or orchestrator has no checkpointer."""
+    prev_orch = os.environ.pop("OBR_ORCHESTRATOR_URL", None)
     prev_checkpointer = os.environ.pop("CHECKPOINTER", None)
     prev_db = os.environ.pop("DATABASE_URL", None)
     try:
+        os.environ.pop("OBR_ORCHESTRATOR_URL", None)
         os.environ.pop("CHECKPOINTER", None)
         os.environ.pop("DATABASE_URL", None)
         client = gateway_client
         client.post("/v1/reviews", json={"thread_id": "resume-no-cp", "status": "awaiting_review"})
         client.post("/v1/reviews/resume-no-cp/approve", json={})
         r = client.post("/v1/reviews/resume-no-cp/resume", json={})
-        if r.status_code == 503:
-            assert "checkpointer" in str(r.json().get("detail", {}).get("message", "")).lower()
-        else:
-            assert r.status_code in (200, 503)
+        assert r.status_code == 503
+        msg = str(r.json().get("error", {}).get("message", "")).lower()
+        assert "obr_orchestrator_url" in msg or "checkpointer" in msg
     finally:
+        if prev_orch is not None:
+            os.environ["OBR_ORCHESTRATOR_URL"] = prev_orch
         if prev_checkpointer is not None:
             os.environ["CHECKPOINTER"] = prev_checkpointer
         if prev_db is not None:

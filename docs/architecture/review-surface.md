@@ -29,4 +29,17 @@ The Review UI (`apps/review-ui`) is a Next.js app that:
 
 For cross-process resume (e.g. run in one shell, approve in UI, resume in another), set `CHECKPOINTER=postgres` and `DATABASE_URL` so the graph state is shared.
 
+## Webhooks
+
+When `OBR_WEBHOOK_URL` is set, the gateway POSTs a JSON payload to that URL for lifecycle events. Delivery uses up to 2 retries with backoff (1s, 2s). Failures after retries are logged only.
+
+**Payload shape:**
+- **review.created** — After `POST /v1/reviews` creates a pending review. Body: `{ "event": "review.created", "thread_id": "<id>", "timestamp": "<ISO8601>", "payload": { ... } }`.
+- **review.decision** — After approve or reject. Body: `{ "event": "review.decision", "thread_id": "<id>", "timestamp": "<ISO8601>", "decision": "approved" | "rejected" }`.
+- **review.resumed** — After resume completes. Body: `{ "event": "review.resumed", "thread_id": "<id>", "timestamp": "<ISO8601>", "status": "<graph_status>", "artifacts_count": <n> }`.
+
+**Signing (optional):** Set `OBR_WEBHOOK_SECRET`; the gateway sends `X-Webhook-Signature: sha256=<HMAC-SHA256(secret, body)>` so receivers can verify authenticity.
+
+**Idempotency:** Each event includes `event`, `thread_id`, and `timestamp`. Receivers should deduplicate by `(event, thread_id)` or `(event, thread_id, timestamp)` and process at most once per logical event.
+
 **See also:** [gateway-api.md](gateway-api.md), [runtime-graph.md](runtime-graph.md), [running.md](../running.md).

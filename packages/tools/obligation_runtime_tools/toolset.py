@@ -71,6 +71,11 @@ def build_toolset(base_url: str, client: ObligationRuntimeClient | None = None) 
         """Submit approve or reject for a thread. decision must be 'approve' or 'reject'."""
         return client.submit_review_decision(thread_id=thread_id, decision=decision)
 
+    @tool
+    def resume_tool(thread_id: str) -> dict:
+        """Resume the graph after approve/reject. Requires checkpointer (e.g. Postgres) and OBR_ORCHESTRATOR_URL."""
+        return client.resume(thread_id=thread_id)
+
     return [
         open_environment_tool,
         create_session_tool,
@@ -82,4 +87,5 @@ def build_toolset(base_url: str, client: ObligationRuntimeClient | None = None) 
         batch_verify_tool,
         get_review_payload_tool,
         submit_review_decision_tool,
+        resume_tool,
     ]

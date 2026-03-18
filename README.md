@@ -104,7 +104,7 @@ To call an existing Obligation Runtime Gateway from Python, install the SDK and 
 | **packages/** | `schemas`, `sdk-py`, `sdk-ts`, `tools` (LangChain), `policy`, `evals`, `telemetry`. |
 | **docs/** | Architecture, runbooks, demos; [docs/README.md](docs/README.md) (index). |
 | **tests/** | Unit, integration, and regression tests; [tests/README.md](tests/README.md). |
-| **examples/** | Minimal SDK usage ([minimal_sdk_gateway.py](examples/minimal_sdk_gateway.py)); [examples/README.md](examples/README.md). Demos live in **scripts/demos/** and [docs/demos/](docs/demos/). |
+| **examples/** | Minimal SDK ([minimal_sdk_gateway.py](examples/minimal_sdk_gateway.py)); integration starters (MCP, LangGraph, policy pack) in [examples/integrations/](examples/integrations/README.md); [examples/README.md](examples/README.md). Demos: **scripts/demos/** and [docs/demos/](docs/demos/). |
 
 ---
 
@@ -137,6 +137,7 @@ Start at [docs/README.md](docs/README.md) for the full index. By goal:
 | Integration tiers | [integrate.md](docs/integrate.md) |
 | Run and operate | [running.md](docs/running.md) |
 | Production deploy | [deployment.md](docs/deployment.md) |
+| Releases and compatibility | [releasing.md](docs/releasing.md) (versioning, compatibility policy, artifact publication) |
 
 Further: [docs/architecture/](docs/architecture/), [docs/demos/](docs/demos/), [docs/tests-and-ci.md](docs/tests-and-ci.md), [docs/glossary.md](docs/glossary.md).
 

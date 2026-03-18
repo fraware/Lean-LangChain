@@ -37,7 +37,7 @@ See [architecture/README.md](architecture/README.md) for an index. Main entries:
 
 ## For maintainers
 
-- **[releasing.md](releasing.md)** — Versioning, tagging, release workflow, optional PyPI.
+- **[releasing.md](releasing.md)** — Versioning, compatibility policy, tagging, release workflow, artifact publication (PyPI, npm, OCI).
 - **adrs/** — Architecture decision records: Lean as authority, two-lane execution, obligation policy, tools-first, snapshots, interactive transport.
 
 **See also:** [README](../README.md), [CONTRIBUTING.md](../CONTRIBUTING.md), [SECURITY.md](../SECURITY.md).

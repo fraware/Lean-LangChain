@@ -56,3 +56,43 @@ def make_initial_state(
         state["protocol_events"] = protocol_events
     state.update(overrides)
     return state  # type: ignore[return-value]
+
+
+def make_resume_state(
+    *,
+    thread_id: str,
+    decision: str,
+    **overrides: Any,
+) -> ObligationRuntimeState:
+    """Build state for resuming the graph after human approval (approve/reject).
+
+    Use this from the orchestrator resume API and CLI so resume state is defined in one place.
+    """
+    if decision not in ("approved", "rejected"):
+        raise ValueError(f"decision must be 'approved' or 'rejected', got {decision!r}")
+    state: dict[str, Any] = {
+        "thread_id": thread_id,
+        "obligation_id": "",
+        "session_id": None,
+        "environment_fingerprint": {},
+        "obligation": {},
+        "target_files": [],
+        "target_declarations": [],
+        "current_patch": {},
+        "patch_history": [],
+        "interactive_result": None,
+        "goal_snapshots": [],
+        "batch_result": None,
+        "policy_decision": None,
+        "trust_level": None,
+        "approval_required": True,
+        "approval_decision": decision,
+        "status": "awaiting_approval",
+        "attempt_count": 0,
+        "max_attempts": 3,
+        "artifacts": [],
+        "trace_events": [],
+        "_repo_path": "",
+    }
+    state.update(overrides)
+    return state  # type: ignore[return-value]

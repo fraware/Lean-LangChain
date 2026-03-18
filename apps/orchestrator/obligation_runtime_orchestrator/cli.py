@@ -142,6 +142,7 @@ def cmd_resume(args: argparse.Namespace) -> int:
     """Resume a run after human approval; uses same thread_id and checkpointer so graph continues from checkpoint."""
     try:
         from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
+        from obligation_runtime_orchestrator.runtime.initial_state import make_resume_state
     except ImportError:
         print(json.dumps({"error": "langgraph not installed", "status": "failed"}, indent=2))
         return 1
@@ -155,30 +156,7 @@ def cmd_resume(args: argparse.Namespace) -> int:
     client = _client()
     checkpointer = _get_checkpointer()
     graph = build_patch_admissibility_graph(client=client, checkpointer=checkpointer)
-    resume_state: dict = {
-        "thread_id": thread_id,
-        "obligation_id": "",
-        "session_id": None,
-        "environment_fingerprint": {},
-        "obligation": {},
-        "target_files": [],
-        "target_declarations": [],
-        "current_patch": {},
-        "patch_history": [],
-        "interactive_result": None,
-        "goal_snapshots": [],
-        "batch_result": None,
-        "policy_decision": None,
-        "trust_level": None,
-        "approval_required": True,
-        "approval_decision": decision,
-        "status": "awaiting_approval",
-        "attempt_count": 0,
-        "max_attempts": 3,
-        "artifacts": [],
-        "trace_events": [],
-        "_repo_path": "",
-    }
+    resume_state = make_resume_state(thread_id=thread_id, decision=decision)
     config = {"configurable": {"thread_id": thread_id}}
     result = graph.invoke(resume_state, config=config)
     print(json.dumps({"status": result.get("status"), "artifacts_count": len(result.get("artifacts") or [])}, indent=2))

@@ -12,7 +12,8 @@ High-level design and reference for the Obligation Runtime. Start with [core-pri
 | [environment-model.md](environment-model.md) | Snapshots, overlays, workspace lifecycle. |
 | [acceptance-lane.md](acceptance-lane.md) | Batch verification: build, axiom audit, fresh checker. |
 | [interactive-lane.md](interactive-lane.md) | Per-file Lean check; informs repair, not the final gate. |
-| [review-surface.md](review-surface.md) | Review API, UI, approve/reject, resume. |
+| [review-surface.md](review-surface.md) | Review API, UI, approve/reject, resume, webhooks. |
+| [plugin-contract.md](plugin-contract.md) | Policy pack plugin contract (v1): load by name/path, versioning, stability. |
 | [reviewer-gated-execution.md](reviewer-gated-execution.md) | When approval is required and how it is enforced. |
 | [worker-isolation.md](worker-isolation.md) | Local, container, and microVM runners; resource limits. |
 | [mcp-adapter.md](mcp-adapter.md) | MCP server: session affinity, tools, persistent store. |

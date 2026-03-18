@@ -102,6 +102,38 @@ def build_mcp_tools(
     def submit_review_decision(thread_id: str, decision: str) -> dict:
         return client.submit_review_decision(thread_id=thread_id, decision=decision)
 
+    def hover(
+        session_id: str | None = None,
+        thread_id: str | None = None,
+        file_path: str = "",
+        line: int = 0,
+        column: int = 0,
+    ) -> dict:
+        return client.hover(
+            session_id=_session_id(session_id, thread_id),
+            file_path=file_path,
+            line=line,
+            column=column,
+        )
+
+    def definition(
+        session_id: str | None = None,
+        thread_id: str | None = None,
+        file_path: str = "",
+        line: int = 0,
+        column: int = 0,
+    ) -> dict:
+        return client.definition(
+            session_id=_session_id(session_id, thread_id),
+            file_path=file_path,
+            line=line,
+            column=column,
+        )
+
+    def resume(thread_id: str) -> dict:
+        """Resume the graph after approve/reject. Requires OBR_ORCHESTRATOR_URL on gateway side and checkpointer."""
+        return client.resume(thread_id=thread_id)
+
     return {
         "obligation/open_environment": open_environment,
         "obligation/create_session": create_session,
@@ -111,4 +143,7 @@ def build_mcp_tools(
         "obligation/batch_verify": batch_verify,
         "obligation/get_review_payload": get_review_payload,
         "obligation/submit_review_decision": submit_review_decision,
+        "obligation/hover": hover,
+        "obligation/definition": definition,
+        "obligation/resume": resume,
     }

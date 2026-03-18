@@ -19,4 +19,6 @@ python examples/minimal_sdk_gateway.py --repo-path /path/to/lean-repo
 
 Use it as a starting point when you only need the API client. For the full verification and review demos, see [docs/demos/README.md](../docs/demos/README.md).
 
+**Integration starters** (MCP tool builder, LangGraph embed, policy pack extension): see [examples/integrations/](integrations/README.md).
+
 **See also:** [docs/integrate.md](../docs/integrate.md), [docs/demos/](../docs/demos/).

@@ -18,9 +18,21 @@ Default: `http://127.0.0.1:8000`. OpenAPI: `http://127.0.0.1:8000/docs`. Health:
 
 **Docker Compose (Gateway + Postgres):** From repo root, `docker compose -f infra/docker/docker-compose.yml up -d`. Set `OBR_CORS_ORIGINS` for the Review UI origin. For local UI: `NEXT_PUBLIC_GATEWAY_URL=http://localhost:8000`.
 
+## Builder configuration (Gateway, Orchestrator, MCP)
+
+| Component | Startup | Key env |
+|-----------|---------|--------|
+| **Gateway** | `uvicorn obligation_runtime_lean_gateway.api.app:app` | `OBR_GATEWAY_URL` (default `http://localhost:8000`), `OBR_USE_LEAN_LSP` or `OBR_USE_REAL_LEAN`, `REVIEW_STORE`, `DATABASE_URL` |
+| **Orchestrator HTTP** | `uvicorn obligation_runtime_orchestrator.http_server:app --port 8001` | `OBR_GATEWAY_URL`, `OBR_ORCHESTRATOR_URL` (for gateway resume), `CHECKPOINTER`, `DATABASE_URL` |
+| **CLI (obr)** | `python -m obligation_runtime_orchestrator.cli <cmd>` | `OBR_GATEWAY_URL`, `CHECKPOINTER`, `DATABASE_URL`, `OBR_POLICY_PACK` |
+| **MCP server** | `python -m obligation_runtime_orchestrator.mcp_server_main` | `OBR_GATEWAY_URL` (or `OBLIGATION_GATEWAY_URL`) |
+
+Use the same `OBR_GATEWAY_URL` for CLI, MCP, and Orchestrator so they all talk to the same Gateway. For resume across processes, run the Orchestrator HTTP service and set `OBR_ORCHESTRATOR_URL` on the Gateway (e.g. `http://localhost:8001`).
+
 ## Environment variables
 
-- **OBR_GATEWAY_URL** — Gateway base URL (e.g. `http://localhost:8000`). Used by `obr` CLI and SDK. Default: `http://localhost:8000`.
+- **OBR_GATEWAY_URL** — Gateway base URL (e.g. `http://localhost:8000`). Used by CLI, SDK, MCP, and Orchestrator. Default: `http://localhost:8000`.
+- **OBR_ORCHESTRATOR_URL** — Orchestrator service base URL. Set on the Gateway when using HTTP resume (e.g. `http://localhost:8001`).
 - **NEXT_PUBLIC_GATEWAY_URL** — Review UI: Gateway URL for API calls. Set in `apps/review-ui/.env.local` or shell before `npm run dev`.
 - **OBR_USE_REAL_LEAN** — Gateway uses subprocess: interactive check runs `lake build`; goal/hover/definition empty. Use for batch verification without LSP.
 - **OBR_USE_LEAN_LSP** — Gateway uses LSP: interactive check and goal/hover/definition talk to Lean 4 LSP. Requires `lean` in PATH.
@@ -88,10 +100,10 @@ Never log `DATABASE_URL`, `LANGCHAIN_API_KEY`, or other secrets. Use env or a se
 With the Gateway running:
 
 ```bash
-OBLIGATION_GATEWAY_URL=http://localhost:8000 python -m obligation_runtime_orchestrator.mcp_server_main
+OBR_GATEWAY_URL=http://localhost:8000 python -m obligation_runtime_orchestrator.mcp_server_main
 ```
 
-Exposes obligation tools to MCP clients (e.g. Cursor). Session affinity is in-process.
+Exposes obligation tools to MCP clients (e.g. Cursor). Session affinity is in-process. `OBLIGATION_GATEWAY_URL` is still supported for backward compatibility.
 
 ## Resume from checkpoint
 

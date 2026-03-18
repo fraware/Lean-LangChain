@@ -1,4 +1,4 @@
-"""MCP server entrypoint: stdio transport, exposes obligation tools. Set OBLIGATION_GATEWAY_URL to point at the Lean Gateway."""
+"""MCP server entrypoint: stdio transport, exposes obligation tools. Set OBR_GATEWAY_URL (or OBLIGATION_GATEWAY_URL) to point at the Lean Gateway."""
 
 from __future__ import annotations
 
@@ -32,17 +32,9 @@ def _write_message(msg: dict) -> None:
 
 
 def _tool_schemas() -> list[dict]:
-    """Return MCP tool list schema for obligation tools."""
-    return [
-        {"name": "obligation/open_environment", "description": "Open a Lean environment by repo_id", "inputSchema": {"type": "object", "properties": {"repo_id": {"type": "string"}, "repo_path": {"type": "string"}, "repo_url": {"type": "string"}, "commit_sha": {"type": "string"}}}},
-        {"name": "obligation/create_session", "description": "Create a session for a fingerprint", "inputSchema": {"type": "object", "properties": {"fingerprint_id": {"type": "string"}, "thread_id": {"type": "string"}}}},
-        {"name": "obligation/apply_patch", "description": "Apply patch (files) to session", "inputSchema": {"type": "object", "properties": {"session_id": {"type": "string"}, "thread_id": {"type": "string"}, "files": {"type": "object"}}}},
-        {"name": "obligation/check_interactive", "description": "Run interactive check on file", "inputSchema": {"type": "object", "properties": {"session_id": {"type": "string"}, "thread_id": {"type": "string"}, "file_path": {"type": "string"}}}},
-        {"name": "obligation/get_goal", "description": "Get goal at position", "inputSchema": {"type": "object", "properties": {"session_id": {"type": "string"}, "thread_id": {"type": "string"}, "file_path": {"type": "string"}, "line": {"type": "integer"}, "column": {"type": "integer"}}}},
-        {"name": "obligation/batch_verify", "description": "Run batch verification", "inputSchema": {"type": "object", "properties": {"session_id": {"type": "string"}, "thread_id": {"type": "string"}, "target_files": {"type": "array", "items": {"type": "string"}}, "target_declarations": {"type": "array"}}}},
-        {"name": "obligation/get_review_payload", "description": "Get review payload for thread", "inputSchema": {"type": "object", "properties": {"thread_id": {"type": "string"}}}},
-        {"name": "obligation/submit_review_decision", "description": "Submit approve/reject for thread", "inputSchema": {"type": "object", "properties": {"thread_id": {"type": "string"}, "decision": {"type": "string"}}}},
-    ]
+    """Return MCP tool list schema from canonical operation catalog (parity with Gateway/SDK)."""
+    from obligation_runtime_schemas.operation_catalog import build_mcp_tool_schemas
+    return build_mcp_tool_schemas()
 
 
 def handle_mcp_request(
@@ -72,6 +64,19 @@ def handle_mcp_request(
         except TypeError as e:
             return {"error": {"code": -32602, "message": f"Invalid arguments: {e}"}}
         except Exception as e:
+            # Align with Gateway/SDK error envelope when SDK raises API error
+            try:
+                from obligation_runtime_sdk.exceptions import ObligationRuntimeAPIError
+                if isinstance(e, ObligationRuntimeAPIError):
+                    return {
+                        "error": {
+                            "code": -32000,
+                            "message": str(e),
+                            "data": {"api_code": e.code, "api_message": e.message, "status_code": e.status_code},
+                        }
+                    }
+            except ImportError:
+                pass
             return {"error": {"code": -32000, "message": str(e)}}
     err_msg = f"Method not found: {method}"
     return {"error": {"code": -32601, "message": err_msg}}
@@ -86,7 +91,7 @@ def _run_server() -> None:
     )
     from obligation_runtime_orchestrator.mcp_session_store import get_mcp_session_store
 
-    base_url = os.environ.get("OBLIGATION_GATEWAY_URL", "http://localhost:8000")
+    base_url = os.environ.get("OBR_GATEWAY_URL") or os.environ.get("OBLIGATION_GATEWAY_URL", "http://localhost:8000")
     client = ObligationRuntimeClient(base_url=base_url)
     context = MCPSessionContext()
     store = get_mcp_session_store()

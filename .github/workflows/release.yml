@@ -40,6 +40,9 @@ jobs:
           pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
       - name: Full check
         run: make check-full
+      - name: Gateway-orchestrator boundary and contract parity
+        run: |
+          pytest tests/unit/test_gateway_orchestrator_boundary.py tests/contract/test_surface_parity.py -v
       - name: Postgres review store and checkpointer tests
         run: |
           pytest tests/unit/test_review_store_postgres.py tests/integration/test_checkpointer_postgres.py -v

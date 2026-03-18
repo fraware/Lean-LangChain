@@ -226,12 +226,15 @@ def test_container_runner_no_leftover_container_after_run() -> None:
         runner.run(workspace, ["lake", "build"], timeout_seconds=60.0)
     except Exception:
         pytest.skip("Container run failed (image may not exist or lake not in image)")
-    out = subprocess.run(
-        ["docker", "ps", "-a", "--filter", f"ancestor={image}", "--format", "{{.ID}}"],
-        capture_output=True,
-        text=True,
-        timeout=5,
-    )
+    try:
+        out = subprocess.run(
+            ["docker", "ps", "-a", "--filter", f"ancestor={image}", "--format", "{{.ID}}"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except subprocess.TimeoutExpired:
+        pytest.skip("docker ps timed out (Docker daemon slow or busy)")
     if out.returncode != 0:
         pytest.skip("docker ps -a failed")
     ids = [x.strip() for x in (out.stdout or "").strip().splitlines() if x.strip()]

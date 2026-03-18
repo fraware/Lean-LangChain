@@ -1,5 +1,29 @@
 {
   "name": "obligation-runtime-sdk-ts",
   "version": "0.1.0",
-  "private": true
+  "description": "TypeScript/JavaScript client for the Obligation Runtime Gateway API (Lean + LLM verification)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node scripts/verify-surface.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["obligation-runtime", "lean", "langchain", "gateway", "sdk"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
 }

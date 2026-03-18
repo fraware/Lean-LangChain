@@ -44,6 +44,10 @@ resp = client.open_environment(repo_id="my-repo", repo_path="/path/to/repo")
 
 This is the **best single entry point** for reusers: one client, one base URL. See `examples/minimal_sdk_gateway.py` for a minimal script. For runnable demos (patch verification, review), see [docs/demos/](demos/README.md) and `make demo-core` / `make demo-full`.
 
+**TypeScript/JavaScript:** Use the `obligation-runtime-sdk-ts` package from `packages/sdk-ts`. Build with `npm run build`; the client mirrors the Python SDK (openEnvironment, createSession, applyPatch, interactiveCheck, getGoal, hover, definition, batchVerify, getReviewPayload, submitReviewDecision, resume). See `packages/sdk-ts/README.md` for install and usage.
+
+**Builder quickstart (cookbook):** For one-command runnable paths (minimal SDK, MCP tools, LangGraph embed, custom policy pack), see [examples/integrations/README.md](../examples/integrations/README.md). Configuration for Gateway, Orchestrator, and MCP is in [docs/running.md](running.md) (builder configuration table).
+
 ---
 
 ## Tier 3 — LangChain tools

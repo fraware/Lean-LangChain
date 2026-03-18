@@ -37,6 +37,11 @@ This runs lint (Ruff), typecheck (Mypy), schema tests, unit tests, integration t
 - **Python:** Ruff and Black (see root [pyproject.toml](pyproject.toml): line-length 100, target Python 3.12). Mypy is run in the full check; strictness and overrides are in the root `pyproject.toml`.
 - **Public API:** Prefer the stable imports listed in [docs/integrate.md](docs/integrate.md) (Public API table) so reusers and type-checkers see a consistent surface.
 
+## Plugins and extensions
+
+- **Policy packs (plugin contract v1):** Custom YAML packs can be loaded by name or path. Contract, schema, and versioning are documented in [docs/architecture/plugin-contract.md](docs/architecture/plugin-contract.md). Use `load_pack_from_path(path)` or `load_pack(name)`; set `OBR_POLICY_PACK` to a pack name or absolute path.
+- **Starter templates:** [examples/integrations/](examples/integrations/README.md) — MCP tool builder, LangGraph embed, policy pack extension. Use these as copy-paste bases for your integration.
+
 ## Optional tooling
 
 - **Dependabot:** The repo may have a Dependabot config for dependency updates. Review and run the full check after upgrading.

@@ -365,6 +365,7 @@
       "$ref": "#/$defs/InteractiveCheckResult"
     },
     "acceptance": {
+      "additionalProperties": true,
       "title": "Acceptance",
       "type": "object"
     },
@@ -372,10 +373,12 @@
       "$ref": "#/$defs/PolicyDecision"
     },
     "approval": {
+      "additionalProperties": true,
       "title": "Approval",
       "type": "object"
     },
     "trace": {
+      "additionalProperties": true,
       "title": "Trace",
       "type": "object"
     }
