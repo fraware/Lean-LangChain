@@ -1,7 +1,7 @@
 # lean-langchain
 
 <div align="center">
-  <img src="assets/Logo.png" alt="Lean LangChain" width="280" />
+  <img src="assets/Logo.png" alt="Lean LangChain" width="200" />
 </div>
 
 <div align="center">
@@ -17,24 +17,6 @@
 ## Why this exists
 
 Agents and automation are increasingly able to draft and edit code. For formal and proof-relevant code, "does it typecheck?" is not enough: you need a **reproducible, unambiguous verdict** and, for critical changes, a human in the loop. This repo provides that layer: a Gateway that runs Lean, an orchestrator that drives the verification graph, policy packs for protected paths and reviewer gating, and a Review UI. You supply the patch (from a human, a script, or an LLM); the runtime tells you accept or reject and gives you a WitnessBundle for every run. Full agentic loops (LLM-driven drafting, repair, multi-agent workflows) can live in a separate repo; this one stays focused on **verification and approval**.
-
----
-
-## Table of contents
-
-- [lean-langchain](#lean-langchain)
-  - [Why this exists](#why-this-exists)
-  - [Table of contents](#table-of-contents)
-  - [What's in this repo](#whats-in-this-repo)
-  - [Quick start](#quick-start)
-  - [Running the stack](#running-the-stack)
-  - [Demos](#demos)
-  - [Reusing this repo](#reusing-this-repo)
-  - [Repository layout](#repository-layout)
-  - [Development](#development)
-  - [Documentation](#documentation)
-  - [Contributing](#contributing)
-  - [License and design principles](#license-and-design-principles)
 
 ---
 
