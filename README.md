@@ -1,55 +1,64 @@
-# lean-langchain
+<p align="center">
+  <img src="assets/Logo.png" alt="Lean-LangChain" width="200" />
+</p>
 
-<div align="center">
-  <img src="assets/Logo.png" alt="Lean LangChain" width="200" />
-</div>
+<p align="center">
+  <strong>Lean-LangChain</strong> — A semantic control plane for high-stakes agent workflows.
+</p>
 
-<div align="center">
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**Lean-LangChain** — a semantic control plane for high-stakes agent workflows.
-
-**Canonical naming:** The product and package family are **Lean-LangChain**; PyPI root is **lean-langchain**; npm TypeScript SDK is **`@lean-langchain/sdk`**.
-
-</div> When agents or tools propose changes to formal code, something has to decide whether those changes are correct. This project makes **Lean** that single authority: every patch is verified by Lean (build, axiom audit, fresh checker), policy can require human review for sensitive paths, and every decision produces auditable evidence. Integrates with LangChain, LangGraph, and LangSmith so you can run, integrate, or extend verification and approval without reimplementing the pipeline.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+  <a href="https://www.python.org"><img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python 3.12+" /></a>
+</p>
 
 ---
 
-## Why this exists
+When agents or tools propose changes to formal code, something must decide whether those changes are correct. This project makes **Lean** that single authority: every patch is verified by Lean (build, axiom audit, fresh checker), policy can require human review for sensitive paths, and every decision produces auditable evidence. It integrates with LangChain, LangGraph, and LangSmith so you can run, integrate, or extend verification and approval without reimplementing the pipeline.
 
-Agents and automation are increasingly able to draft and edit code. For formal and proof-relevant code, "does it typecheck?" is not enough: you need a **reproducible, unambiguous verdict** and, for critical changes, a human in the loop. This repo provides that layer: a Gateway that runs Lean, an orchestrator that drives the verification graph, policy packs for protected paths and reviewer gating, and a Review UI. You supply the patch (from a human, a script, or an LLM); the runtime tells you accept or reject and gives you a WitnessBundle for every run. Full agentic loops (LLM-driven drafting, repair, multi-agent workflows) can live in a separate repo; this one stays focused on **verification and approval**.
+**Names:** Product and packages are **Lean-LangChain**; PyPI root is **lean-langchain**; npm SDK is **`@lean-langchain/sdk`**.
 
 ---
 
-## What's in this repo
+## Why Lean-LangChain
+
+Agents and automation increasingly draft and edit code. For formal and proof-relevant code, “does it typecheck?” is not enough: you need a **reproducible, unambiguous verdict** and, for critical changes, a human in the loop. This repo provides that layer:
+
+- **Gateway** — Runs Lean and exposes an HTTP API for environments, sessions, patches, and batch verification.
+- **Orchestrator** — CLI and LangGraph runtime that drive the patch-admissibility graph and call the Gateway.
+- **Policy packs** — Protected paths, reviewer gating, and versioned protocol obligations.
+- **Review UI** — Approve or reject runs that touch protected paths, then resume the graph.
+
+You supply the patch (from a human, a script, or an LLM); the runtime returns accept or reject and a **WitnessBundle** for every run. Full agentic loops can live elsewhere; this repo stays focused on **verification and approval**.
+
+---
+
+## What’s in this repo
 
 | Component | Description |
 |-----------|-------------|
 | **Lean Gateway** | HTTP API: open environment, create session, apply patch, interactive check, batch verify, reviews and resume. |
-| **Orchestrator** | CLI (`obr`) and LangGraph runtime that drive the patch-admissibility graph and call the Gateway. |
-| **Review UI** | Next.js app to approve or reject runs that touch protected paths, then resume the graph. |
-| **SDKs and tools** | Python and TypeScript SDKs; LangChain tools so agents can call the same operations. |
-| **Policy and protocol** | Versioned policy packs (protected paths, reviewer gating); protocol obligations (handoff, lock, etc.). |
-| **Demos** | Core demo (good patch, sorry rejected, protected path + review) and full demo (6-step proof-preserving gate). |
+| **Orchestrator** | CLI (`obr`) and LangGraph runtime for the patch-admissibility graph. |
+| **Review UI** | Next.js app to approve/reject runs on protected paths and resume the graph. |
+| **SDKs and tools** | Python and TypeScript SDKs; LangChain tools for the same operations. |
+| **Policy and protocol** | Versioned packs (protected paths, reviewer gating); protocol obligations (handoff, lock, etc.). |
+| **Demos** | Core demo (good patch, sorry rejected, protected path + review) and full 6-step proof-preserving demo. |
 
 ---
 
 ## Quick start
 
-All commands assume you are at the repository root and use a single Python (e.g. an activated venv). If your venv has no pip, run `python -m ensurepip` once, then activate and install.
+Use a single Python environment (e.g. activated venv) from the repo root. If your venv has no pip, run `python -m ensurepip` once.
 
 ```bash
-# Minimal install (schemas + gateway)
+# Minimal: schemas + gateway
 pip install -e packages/schemas -e apps/lean-gateway
 
-# Full stack (recommended for development): all packages + dev tools (mypy, ruff, black)
+# Full stack (recommended for development)
 make install-dev-full
 
 # Run checks
-make check        # Lint, tests, schema/OpenAPI export (no typecheck or regressions)
-make check-full   # Same as main CI: lint, mypy, strict-core mypy, tests, regressions,
-                  # JSON schema export, OpenAPI export, TS SDK codegen parity (needs Node)
+make check        # Lint, tests, schema/OpenAPI export
+make check-full   # Full CI gate (includes mypy, regressions, TS SDK parity; needs Node)
 ```
 
 ---
@@ -59,39 +68,41 @@ make check-full   # Same as main CI: lint, mypy, strict-core mypy, tests, regres
 | Component | Command |
 |-----------|---------|
 | **Gateway** | `uvicorn lean_langchain_gateway.api.app:app --reload` — API docs at `/docs`, `/redoc`. |
-| **Review UI** | From `apps/review-ui`: `npm install && npm run dev`. Set `NEXT_PUBLIC_GATEWAY_URL=http://localhost:8000`. Review at `http://localhost:3000/reviews/[threadId]`; use **Resume run** after Approve/Reject (or `obr resume <thread_id>` with a checkpointer). |
+| **Review UI** | From `apps/review-ui`: `npm install && npm run dev`. Set `NEXT_PUBLIC_GATEWAY_URL=http://localhost:8000`. |
 | **CLI** | `python -m lean_langchain_orchestrator.cli` or `obr` — `open-environment`, `create-session`, `run-patch-obligation`, `review`, `resume`, `artifacts`, `regressions`. |
 
-With the project venv activated, `make check-full` runs the full CI gate (see Quick start above), including OpenAPI/TS SDK parity when Node is installed. For benchmarks: `make benchmark` or `make benchmark-report` (see [docs/tests-and-ci.md](docs/tests-and-ci.md)).
+With the venv activated, `make check-full` runs the full CI gate. Benchmarks: `make benchmark` or `make benchmark-report` ([docs/tests-and-ci.md](docs/tests-and-ci.md)).
 
 ---
 
 ## Demos
 
-- **Core demo** — Good patch accepted, sorry patch rejected, protected path paused for human review. [docs/demos/main-demo.md](docs/demos/main-demo.md). Run: `make demo-core` or `make demo-core-ui`.
-- **Full demo** — Six steps: no patch, valid proof edit, sorry, false theorem, protected approve/reject, evidence export. [docs/demos/full-demo.md](docs/demos/full-demo.md). Run: `make demo-full` or `make demo-full-ui`.
+| Demo | Description | Run |
+|------|-------------|-----|
+| **Core** | Good patch accepted, sorry rejected, protected path paused for review. | `make demo-core` or `make demo-core-ui` |
+| **Full** | Six steps: no patch, valid proof edit, sorry, false theorem, protected approve/reject, evidence export. | `make demo-full` or `make demo-full-ui` |
 
-Both require the Gateway to be running; scenario 3 (core) and steps 5–6 (full) need Postgres for resume. Individual scenarios: `make demo-scenario-1` … `make demo-scenario-5` ([docs/demos/README.md](docs/demos/README.md)).
+Both require the Gateway. Scenario 3 (core) and steps 5–6 (full) need Postgres for resume. Details: [docs/demos/main-demo.md](docs/demos/main-demo.md), [docs/demos/full-demo.md](docs/demos/full-demo.md). Individual scenarios: `make demo-scenario-1` … `make demo-scenario-5` ([docs/demos/README.md](docs/demos/README.md)).
 
 ---
 
 ## Reusing this repo
 
-To call an existing Lean-LangChain Gateway from Python, install the SDK and use `ObligationRuntimeClient`. [docs/integrate.md](docs/integrate.md) describes integration tiers: data contracts only, API client (recommended), LangChain tools, full graph, or hosting the Gateway. It also lists the public API and per-package imports.
+To call an existing Lean-LangChain Gateway from Python, install the SDK and use `ObligationRuntimeClient`. [docs/integrate.md](docs/integrate.md) covers integration tiers: data contracts only, API client (recommended), LangChain tools, full graph, or hosting the Gateway, plus the public API and per-package imports.
 
 ---
 
 ## Repository layout
 
-| Directory | Contents |
-|-----------|----------|
-| **Root** | [pyproject.toml](pyproject.toml): workspace metapackage `lean_langchain` (enables `pip install -e ".[dev]"`), shared Ruff/Black/mypy/pytest config, optional extras (`dev`, `full`). |
-| **apps/** | `lean-gateway` (FastAPI), `orchestrator` (CLI, LangGraph runtime, MCP server), `review-ui` (Next.js). |
-| **packages/** | `schemas`, `sdk-py`, `sdk-ts`, `tools` (LangChain), `policy`, `protocol`, `evals`, `telemetry`. |
-| **contracts/** | Checked-in OpenAPI snapshot and JSON schemas; regenerated by `make export-openapi` / `make export-schemas`. |
-| **docs/** | Architecture, runbooks, demos; [docs/README.md](docs/README.md) (index). |
-| **tests/** | Unit, integration, and regression tests; [tests/README.md](tests/README.md). |
-| **examples/** | Minimal SDK ([minimal_sdk_gateway.py](examples/minimal_sdk_gateway.py)); integration starters (MCP, LangGraph, policy pack) in [examples/integrations/](examples/integrations/README.md); [examples/README.md](examples/README.md). Demos: **scripts/demos/** and [docs/demos/](docs/demos/). |
+| Path | Contents |
+|------|----------|
+| **Root** | [pyproject.toml](pyproject.toml): workspace metapackage `lean_langchain`, shared Ruff/Black/mypy/pytest config, optional extras. |
+| **apps/** | `lean-gateway` (FastAPI), `orchestrator` (CLI, LangGraph, MCP), `review-ui` (Next.js). |
+| **packages/** | `schemas`, `sdk-py`, `sdk-ts`, `tools`, `policy`, `protocol`, `evals`, `telemetry`. |
+| **contracts/** | OpenAPI snapshot and JSON schemas; regenerated via `make export-openapi` / `make export-schemas`. |
+| **docs/** | Architecture, runbooks, demos — [docs/README.md](docs/README.md). |
+| **tests/** | Unit, integration, regression — [tests/README.md](tests/README.md). |
+| **examples/** | [minimal_sdk_gateway.py](examples/minimal_sdk_gateway.py); integration starters in [examples/integrations/](examples/integrations/README.md). |
 
 ---
 
@@ -104,19 +115,15 @@ To call an existing Lean-LangChain Gateway from Python, install the SDK and use 
 | `make test` | Unit tests. |
 | `make test-integration` | Integration tests. |
 | `make test-regressions` | Regression golden tests. |
-| `make test-axiom-producer` | Axiom producer test (requires `lake` in PATH; skips otherwise). |
-| `make test-tracer-e2e` | Tracer E2E (requires `lean-langchain-telemetry[otlp]`). |
 | `make export-schemas` | Export JSON schemas. |
-| `make check` | Quick check: lint, schema tests, unit, integration, export-schemas. |
-| `make check-full` | Full CI gate: lint, `typecheck`, `typecheck-strict-core`, schema tests, unit/integration/regression tests, export schemas/OpenAPI, verify TS SDK types match OpenAPI (requires Node). |
+| `make check` | Lint, schema tests, unit, integration, export-schemas. |
+| `make check-full` | Full CI: lint, typecheck, strict-core mypy, all tests, export schemas/OpenAPI, verify TS SDK (needs Node). |
 
-Demos: `make demo-core`, `make demo-full`. Setup: `make install-lean4checker` or `python scripts/setup/install_lean4checker.py`. Environment variables: [docs/running.md](docs/running.md). Production: [docs/deployment.md](docs/deployment.md).
+Demos: `make demo-core`, `make demo-full`. Environment: [docs/running.md](docs/running.md). Production: [docs/deployment.md](docs/deployment.md).
 
 ---
 
 ## Documentation
-
-Start at [docs/README.md](docs/README.md) for the full index. By goal:
 
 | Goal | Document |
 |------|----------|
@@ -124,27 +131,25 @@ Start at [docs/README.md](docs/README.md) for the full index. By goal:
 | Integration tiers | [integrate.md](docs/integrate.md) |
 | Run and operate | [running.md](docs/running.md), [runtime capabilities](docs/operations/runtime-capabilities.md) |
 | Production deploy | [deployment.md](docs/deployment.md) |
-| Releases and compatibility | [releasing.md](docs/releasing.md) (versioning, compatibility policy, artifact publication) |
+| Releases | [releasing.md](docs/releasing.md) |
 
-Further: [docs/architecture/](docs/architecture/), [docs/demos/](docs/demos/), [docs/tests-and-ci.md](docs/tests-and-ci.md), [docs/glossary.md](docs/glossary.md).
+More: [docs/architecture/](docs/architecture/), [docs/demos/](docs/demos/), [docs/tests-and-ci.md](docs/tests-and-ci.md), [docs/glossary.md](docs/glossary.md).
 
 ---
 
 ## Contributing
 
-We want this to become the default way teams gate formal and proof-relevant changes: one pipeline, one semantic authority (Lean), optional human review, and evidence for every decision. Getting there needs more adopters, more backends (e.g. other provers or typecheckers), and more integrations. 
+We want this to become the default way teams gate formal and proof-relevant changes: one pipeline, one semantic authority (Lean), optional human review, and evidence for every decision.
 
-We welcome contributions: code, documentation, feedback, and ideas. Run the full check before submitting (`make check-full`). See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and pull request process. If you use this in production or research, we would love to hear how; opening an issue or discussion is a good way to share.
+Contributions are welcome: code, documentation, feedback, and ideas. Run `make check-full` before submitting. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and pull request process.
 
 ---
 
 ## License and design principles
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE).
+**License:** [MIT](LICENSE).
 
-Design principles:
-
-- Lean is the only semantic authority.
+- **Lean is the only semantic authority.**
 - The interactive lane is never the final acceptance gate; batch verification is.
 - The environment is the unit of reuse; every terminal decision emits a WitnessBundle.
 - Human approval is triggered only by policy deltas.
