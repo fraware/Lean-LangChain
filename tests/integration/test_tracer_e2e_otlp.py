@@ -1,21 +1,21 @@
 """E2E test: emit a span via OtlpTracer and assert it is received by an in-memory exporter.
 
-Requires obligation-runtime-telemetry[otlp]. Run with the telemetry-e2e CI job or:
-  pip install obligation-runtime-telemetry[otlp] && pytest tests/integration/test_tracer_e2e_otlp.py -v
+Requires lean-langchain-telemetry[otlp]. Run with the telemetry-e2e CI job or:
+  pip install lean-langchain-telemetry[otlp] && pytest tests/integration/test_tracer_e2e_otlp.py -v
 """
 
 from __future__ import annotations
 
 import pytest
 
-from obligation_runtime_telemetry.events import RuntimeNodeEvent
-from obligation_runtime_telemetry.tracer import get_production_tracer
+from lean_langchain_telemetry.events import RuntimeNodeEvent
+from lean_langchain_telemetry.tracer import get_production_tracer
 
 
 def test_tracer_e2e_emitted_span_received_by_in_memory_exporter() -> None:
     """E2E: TracerProvider + InMemorySpanExporter; get_production_tracer(provider); emit; assert span received."""
     pytest.importorskip(
-        "opentelemetry.sdk.trace", reason="install obligation-runtime-telemetry[otlp]"
+        "opentelemetry.sdk.trace", reason="install lean-langchain-telemetry[otlp]"
     )
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import SimpleSpanProcessor

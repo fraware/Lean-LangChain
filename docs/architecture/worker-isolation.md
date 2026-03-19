@@ -10,7 +10,7 @@ Lean execution (build, axiom audit, fresh check, interactive lane when using sub
 
 ### Runner abstraction
 
-- **Protocol:** [LeanRunner](apps/lean-gateway/obligation_runtime_lean_gateway/server/runner.py) in `apps/lean-gateway/.../server/runner.py` defines `run(workspace_path, command, timeout_seconds)` returning `(stdout, stderr, returncode, timing_ms)`.
+- **Protocol:** [LeanRunner](apps/lean-gateway/lean_langchain_gateway/server/runner.py) in `apps/lean-gateway/.../server/runner.py` defines `run(workspace_path, command, timeout_seconds)` returning `(stdout, stderr, returncode, timing_ms)`.
 - **LocalRunner:** Runs commands via subprocess on the host. Default for development and CI when `OBR_WORKER_RUNNER` is not set to `container` or `microvm`. Wall-clock timeout is enforced by `subprocess.run(..., timeout=timeout_seconds)`.
 - **ContainerRunner:** Runs `docker run --rm -v <workspace>:/workspace -w /workspace <image> <command>`. The workspace is mounted read-write so that `lake build` and tools can write build artifacts; the host view of the workspace is the same as the container view (no separate overlay in the current design). Enable with `OBR_WORKER_RUNNER=container` and optionally `OBR_DOCKER_IMAGE` (default: `lean-worker:latest`).
 - **MicroVMRunner (runsc):** Runs the same OCI image as the container runner but with `docker run --runtime=runsc`, using [gVisor runsc](https://gvisor.dev/) for stronger isolation (user-space kernel). Enable with `OBR_WORKER_RUNNER=microvm` and `OBR_MICROVM_RUNTIME=runsc` (default). Uses `OBR_DOCKER_IMAGE` or `OBR_MICROVM_IMAGE`. Requires Docker configured with the runsc runtime (e.g. add runsc to `/etc/docker/daemon.json`).
@@ -50,7 +50,7 @@ Lean execution (build, axiom audit, fresh check, interactive lane when using sub
 
 ### Cleanup and leak detection
 
-- **Container:** Each run uses `docker run --rm --label obr=1`, so the container is removed when the command exits and all OBR-started containers are tagged for querying. Use [leak_check.list_obr_containers](apps/lean-gateway/obligation_runtime_lean_gateway/server/leak_check.py) to list any OBR-labeled containers (e.g. after tests); the **container** CI job runs a leak-check step that fails the job if any such containers remain after the container runner test.
+- **Container:** Each run uses `docker run --rm --label obr=1`, so the container is removed when the command exits and all OBR-started containers are tagged for querying. Use [leak_check.list_obr_containers](apps/lean-gateway/lean_langchain_gateway/server/leak_check.py) to list any OBR-labeled containers (e.g. after tests); the **container** CI job runs a leak-check step that fails the job if any such containers remain after the container runner test.
 - **Local subprocess:** Subprocess is started and waited on; no orphan processes from the runner itself. Any child processes left by the command (e.g. a stuck Lean process) are not reaped by the Gateway; operators should set timeouts and, if needed, use cgroups or container runs to guarantee cleanup.
 - **Sessions:** SessionManager tracks leases; releasing a session does not by itself kill any running Lean process. Ensure runs are always bound by timeout so that resources are released.
 

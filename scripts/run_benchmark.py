@@ -209,10 +209,10 @@ def _run_workload(n: int, metrics: dict) -> None:
     latencies_ms: list[float] = []
     try:
         from fastapi.testclient import TestClient
-        from obligation_runtime_lean_gateway.api.app import create_app
-        from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-        from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
-        from obligation_runtime_sdk.client import ObligationRuntimeClient
+        from lean_langchain_gateway.api.app import create_app
+        from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+        from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
+        from lean_langchain_sdk.client import ObligationRuntimeClient
     except ImportError:
         metrics["workload_skipped"] = "import failed"
         return
@@ -323,7 +323,7 @@ def main() -> int:
     args = ap.parse_args()
 
     python_exe = _get_project_python(root)
-    metrics = {"benchmark": "obligation-runtime", "pipeline": {}}
+    metrics = {"benchmark": "lean-langchain", "pipeline": {}}
     wall_start = time.perf_counter()
 
     ok = _run_pipeline(metrics, python_exe, skip_tests=False)

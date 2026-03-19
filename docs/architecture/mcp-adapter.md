@@ -9,7 +9,7 @@ The MCP server exposes the same Gateway operations as tools, with session affini
 
 ## Persistence
 
-- **MCPSessionStore** (see `obligation_runtime_orchestrator.mcp_session_store`): backends are **memory** (default), **redis**, or **postgres**. Set `OBR_MCP_SESSION_STORE=redis` or `postgres`; Redis uses `OBR_REDIS_URL`; Postgres uses `DATABASE_URL` or `REVIEW_STORE_POSTGRES_URI`. On `create_session`, the gateway returns `session_id` and the store records `session_id`, `thread_id` (if provided), `fingerprint_id`, `workspace_path`. Lookup supports both `session_id` and `thread_id` so that clients can restore by either after a restart.
+- **MCPSessionStore** (see `lean_langchain_orchestrator.mcp_session_store`): backends are **memory** (default), **redis**, or **postgres**. Set `OBR_MCP_SESSION_STORE=redis` or `postgres`; Redis uses `OBR_REDIS_URL`; Postgres uses `DATABASE_URL` or `REVIEW_STORE_POSTGRES_URI`. On `create_session`, the gateway returns `session_id` and the store records `session_id`, `thread_id` (if provided), `fingerprint_id`, `workspace_path`. Lookup supports both `session_id` and `thread_id` so that clients can restore by either after a restart.
 
 ## Tool parameters
 

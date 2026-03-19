@@ -1,6 +1,6 @@
 # Review UI
 
-**Purpose:** Next.js app for human approval: view review payloads, Approve/Reject, and **Resume run**. **Audience:** operators and integrators. Consumes the Obligation Runtime Gateway API.
+**Purpose:** Next.js app for human approval: view review payloads, Approve/Reject, and **Resume run**. **Audience:** operators and integrators. Consumes the Lean-LangChain Gateway API.
 
 ## Development
 

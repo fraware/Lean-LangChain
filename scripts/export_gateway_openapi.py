@@ -13,7 +13,7 @@ sys.path.insert(0, str(_REPO / "apps" / "lean-gateway"))
 
 # Ensure app can import without production-only env (conftest-style doubles optional).
 def main() -> int:
-    from obligation_runtime_lean_gateway.api.app import create_app
+    from lean_langchain_gateway.api.app import create_app
 
     app = create_app()
     schema = app.openapi()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Minimal example: call the Obligation Runtime Gateway from the Python SDK.
 
-Run a Gateway first (e.g. uvicorn obligation_runtime_lean_gateway.api.app:app),
+Run a Gateway first (e.g. uvicorn lean_langchain_gateway.api.app:app),
 then from repo root:
 
   python examples/minimal_sdk_gateway.py
@@ -80,7 +80,7 @@ def main() -> int:
         return 1
 
     try:
-        from obligation_runtime_sdk import (
+        from lean_langchain_sdk import (
             ObligationRuntimeAPIError,
             ObligationRuntimeClient,
         )

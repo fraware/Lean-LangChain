@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from obligation_runtime_lean_gateway.batch.build_runner import BuildRunner
+from lean_langchain_gateway.batch.build_runner import BuildRunner
 
 
 class _MockRunner:

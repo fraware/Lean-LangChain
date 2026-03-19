@@ -39,7 +39,7 @@ See [architecture/README.md](architecture/README.md) for an index. Main entries:
 ## Contracts and generated artifacts
 
 - **[contracts/openapi/lean-gateway.json](../contracts/openapi/lean-gateway.json)** — Gateway OpenAPI snapshot; regenerate with `make export-openapi`. The TypeScript SDK types under `packages/sdk-ts/src/generated/` are derived from this file; `make check-full` fails if they drift.
-- **Exported JSON schemas** — Produced by `make export-schemas` into `packages/schemas/obligation_runtime_schemas/generated/`.
+- **Exported JSON schemas** — Produced by `make export-schemas` into `packages/schemas/lean_langchain_schemas/generated/`.
 
 ## For maintainers
 

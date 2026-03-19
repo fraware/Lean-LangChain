@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from obligation_runtime_lean_gateway.api.path_safety import resolve_under_root
+from lean_langchain_gateway.api.path_safety import resolve_under_root
 
 
 def test_resolve_under_root_allows_valid_relative_path(tmp_path: Path) -> None:

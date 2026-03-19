@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from obligation_runtime_lean_gateway.api import deps
+from lean_langchain_gateway.api import deps
 
 
 def test_get_review_404_when_no_pending(gateway_client) -> None:

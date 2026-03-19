@@ -23,7 +23,7 @@ def main() -> int:
 
     env = os.environ.copy()
     env.setdefault("OBR_GATEWAY_URL", "http://localhost:8000")
-    cli = [sys.executable, "-m", "obligation_runtime_orchestrator.cli"]
+    cli = [sys.executable, "-m", "lean_langchain_orchestrator.cli"]
     cwd = str(repo_root)
 
     try:

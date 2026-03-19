@@ -2,7 +2,7 @@
 
 Integration tiers (data contracts only, API client, LangChain tools, full graph, host the Gateway) and public API reference. **Recommended entry point:** Tier 2 (API client).
 
-Choose a tier based on what you need. All install commands assume you are in the repo root and use the same Python (e.g. an activated venv). When installing from this repo, install in order or use `make install-dev-full` for the full stack. If packages are published, you can depend on them by name (e.g. `obligation-runtime-sdk`).
+Choose a tier based on what you need. All install commands assume you are in the repo root and use the same Python (e.g. an activated venv). When installing from this repo, install in order or use `make install-dev-full` for the full stack. If packages are published, you can depend on them by name (e.g. `lean-langchain-sdk`).
 
 **Local install order:** schemas, evals, telemetry, protocol, policy, sdk-py, tools, lean-gateway, orchestrator. Running `make install-dev-full` does this in one step. Tier 4 and protocol-related flows require the `protocol` package; `make install-dev-full` includes it.
 
@@ -18,13 +18,13 @@ Choose a tier based on what you need. All install commands assume you are in the
 python -m pip install -e packages/schemas
 ```
 
-**Usage:** Import from `obligation_runtime_schemas` (see `packages/schemas/obligation_runtime_schemas/__init__.py` for exports).
+**Usage:** Import from `lean_langchain_schemas` (see `packages/schemas/lean_langchain_schemas/__init__.py` for exports).
 
 ---
 
 ## Tier 2 — API client (recommended entry point)
 
-**When to use:** You want to call an existing Obligation Runtime Gateway from your Python app. You do not need to host the Gateway or run the full graph; you only need a client that talks to a running Gateway.
+**When to use:** You want to call an existing Lean-LangChain Gateway from your Python app. You do not need to host the Gateway or run the full graph; you only need a client that talks to a running Gateway.
 
 **Install:**
 
@@ -35,7 +35,7 @@ python -m pip install -e packages/schemas -e packages/sdk-py
 **Usage:** Create a client and point it at the Gateway base URL:
 
 ```python
-from obligation_runtime_sdk import ObligationRuntimeClient
+from lean_langchain_sdk import ObligationRuntimeClient
 
 client = ObligationRuntimeClient(base_url="http://localhost:8000")
 # Methods return validated Pydantic models (aligned with the gateway OpenAPI surface).
@@ -43,7 +43,7 @@ open_resp = client.open_environment(repo_id="my-repo", repo_path="/path/to/repo"
 fingerprint_id = open_resp.fingerprint_id  # or open_resp.model_dump(mode="json") for a dict
 ```
 
-**Response types:** `open_environment` → `OpenEnvironmentResponse`; `create_session` → `CreateSessionResponse`; `apply_patch` → `ApplyPatchResponse`; `interactive_check` → `InteractiveCheckApiResponse`; `batch_verify` → `BatchVerifyResult`; review helpers → `ReviewPayload` / decision models. Import these from `obligation_runtime_schemas.gateway_api` and `obligation_runtime_schemas.batch` when you need explicit types. LangChain tools in `obligation_runtime_tools` return the same model instances from the underlying client (use `.model_dump(mode="json")` if an agent pipeline needs plain JSON).
+**Response types:** `open_environment` → `OpenEnvironmentResponse`; `create_session` → `CreateSessionResponse`; `apply_patch` → `ApplyPatchResponse`; `interactive_check` → `InteractiveCheckApiResponse`; `batch_verify` → `BatchVerifyResult`; review helpers → `ReviewPayload` / decision models. Import these from `lean_langchain_schemas.gateway_api` and `lean_langchain_schemas.batch` when you need explicit types. LangChain tools in `lean_langchain_tools` return the same model instances from the underlying client (use `.model_dump(mode="json")` if an agent pipeline needs plain JSON).
 
 This is the **best single entry point** for reusers: one client, one base URL. See `examples/minimal_sdk_gateway.py` for a minimal script. For runnable demos (patch verification, review), see [docs/demos/](demos/README.md) and `make demo-core` / `make demo-full`.
 
@@ -63,13 +63,13 @@ This is the **best single entry point** for reusers: one client, one base URL. S
 python -m pip install -e packages/tools
 ```
 
-This pulls in `obligation-runtime-sdk` and `obligation-runtime-schemas`.
+This pulls in `lean-langchain-sdk` and `lean-langchain-schemas`.
 
 **Usage:** Build a toolset from a client and pass the tools to your agent:
 
 ```python
-from obligation_runtime_sdk import ObligationRuntimeClient
-from obligation_runtime_tools import build_toolset
+from lean_langchain_sdk import ObligationRuntimeClient
+from lean_langchain_tools import build_toolset
 
 client = ObligationRuntimeClient(base_url="http://localhost:8000")
 tools = build_toolset("http://localhost:8000", client=client)
@@ -88,7 +88,7 @@ tools = build_toolset("http://localhost:8000", client=client)
 python -m pip install -e apps/orchestrator
 ```
 
-This pulls in `obligation-runtime-schemas`, `obligation-runtime-sdk`, and `obligation-runtime-policy`.
+This pulls in `lean-langchain-schemas`, `lean-langchain-sdk`, and `lean-langchain-policy`.
 
 **Usage:** Use the CLI (`obr`) or import the graph builder:
 
@@ -101,7 +101,7 @@ obr run-patch-obligation ...
 Or programmatically:
 
 ```python
-from obligation_runtime_orchestrator import (
+from lean_langchain_orchestrator import (
     build_patch_admissibility_graph,
     ObligationRuntimeState,
     make_initial_state,
@@ -117,14 +117,14 @@ Recommended top-level imports per package:
 
 | Package | Import | Purpose |
 |---------|--------|---------|
-| **obligation_runtime_schemas** | `EnvironmentFingerprint`, `BatchVerifyResult`, `WitnessBundle`, etc. | Data contracts and Pydantic models for Gateway payloads. |
-| **obligation_runtime_sdk** | `ObligationRuntimeClient`, `RequestAdapter` | Call the Gateway from Python; methods return validated Pydantic models. Optional `RequestAdapter` for tests or in-process use. |
-| **obligation_runtime_tools** | `build_toolset` | Build LangChain tools that call the Gateway. Fixed order: open_environment, create_session, apply_patch, check_interactive, get_goal, hover, definition, batch_verify, get_review_payload, submit_review_decision. |
-| **obligation_runtime_orchestrator** | `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state`, `CandidateProducer`, `context_from_state` | Run the patch-admissibility graph; build initial state; implement or use producers. |
-| **obligation_runtime_policy** | Policy pack loading and decision types | Policy engine and pack evaluation. |
-| **obligation_runtime_protocol** | Protocol event types and evaluation | Protocol compliance and evaluator. |
-| **obligation_runtime_telemetry** | Tracer and span types | Observability and LangSmith integration. |
-| **obligation_runtime_evals** | Golden cases, loaders | Evaluation corpus and regression harness. |
+| **lean_langchain_schemas** | `EnvironmentFingerprint`, `BatchVerifyResult`, `WitnessBundle`, etc. | Data contracts and Pydantic models for Gateway payloads. |
+| **lean_langchain_sdk** | `ObligationRuntimeClient`, `RequestAdapter` | Call the Gateway from Python; methods return validated Pydantic models. Optional `RequestAdapter` for tests or in-process use. |
+| **lean_langchain_tools** | `build_toolset` | Build LangChain tools that call the Gateway. Fixed order: open_environment, create_session, apply_patch, check_interactive, get_goal, hover, definition, batch_verify, get_review_payload, submit_review_decision. |
+| **lean_langchain_orchestrator** | `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state`, `CandidateProducer`, `context_from_state` | Run the patch-admissibility graph; build initial state; implement or use producers. |
+| **lean_langchain_policy** | Policy pack loading and decision types | Policy engine and pack evaluation. |
+| **lean_langchain_protocol** | Protocol event types and evaluation | Protocol compliance and evaluator. |
+| **lean_langchain_telemetry** | Tracer and span types | Observability and LangSmith integration. |
+| **lean_langchain_evals** | Golden cases, loaders | Evaluation corpus and regression harness. |
 
 ---
 
@@ -141,7 +141,7 @@ python -m pip install -e packages/schemas -e apps/lean-gateway
 **Usage:** Start the server:
 
 ```bash
-uvicorn obligation_runtime_lean_gateway.api.app:app --reload
+uvicorn lean_langchain_gateway.api.app:app --reload
 ```
 
 OpenAPI at `/docs` and `/redoc`. A checked-in snapshot for tooling and SDK alignment lives at [contracts/openapi/lean-gateway.json](../contracts/openapi/lean-gateway.json); regenerate with `make export-openapi`. See [running.md](running.md) for full setup.

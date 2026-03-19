@@ -11,7 +11,7 @@ Run all commands from the repository root. Use the same Python for install and f
 ## Starting the Gateway
 
 ```bash
-uvicorn obligation_runtime_lean_gateway.api.app:app --reload
+uvicorn lean_langchain_gateway.api.app:app --reload
 ```
 
 Default: `http://127.0.0.1:8000`. OpenAPI: `http://127.0.0.1:8000/docs`. Health: `GET /health` (liveness), `GET /ready` (readiness).
@@ -22,10 +22,10 @@ Default: `http://127.0.0.1:8000`. OpenAPI: `http://127.0.0.1:8000/docs`. Health:
 
 | Component | Startup | Key env |
 |-----------|---------|--------|
-| **Gateway** | `uvicorn obligation_runtime_lean_gateway.api.app:app` | `OBR_GATEWAY_URL` (default `http://localhost:8000`), `OBR_USE_LEAN_LSP` or `OBR_USE_REAL_LEAN`, `REVIEW_STORE`, `DATABASE_URL` |
-| **Orchestrator HTTP** | `uvicorn obligation_runtime_orchestrator.http_server:app --port 8001` | `OBR_GATEWAY_URL`, `OBR_ORCHESTRATOR_URL` (for gateway resume), `CHECKPOINTER`, `DATABASE_URL` |
-| **CLI (obr)** | `python -m obligation_runtime_orchestrator.cli <cmd>` | `OBR_GATEWAY_URL`, `CHECKPOINTER`, `DATABASE_URL`, `OBR_POLICY_PACK` |
-| **MCP server** | `python -m obligation_runtime_orchestrator.mcp_server_main` | `OBR_GATEWAY_URL` (or `OBLIGATION_GATEWAY_URL`) |
+| **Gateway** | `uvicorn lean_langchain_gateway.api.app:app` | `OBR_GATEWAY_URL` (default `http://localhost:8000`), `OBR_USE_LEAN_LSP` or `OBR_USE_REAL_LEAN`, `REVIEW_STORE`, `DATABASE_URL` |
+| **Orchestrator HTTP** | `uvicorn lean_langchain_orchestrator.http_server:app --port 8001` | `OBR_GATEWAY_URL`, `OBR_ORCHESTRATOR_URL` (for gateway resume), `CHECKPOINTER`, `DATABASE_URL` |
+| **CLI (obr)** | `python -m lean_langchain_orchestrator.cli <cmd>` | `OBR_GATEWAY_URL`, `CHECKPOINTER`, `DATABASE_URL`, `OBR_POLICY_PACK` |
+| **MCP server** | `python -m lean_langchain_orchestrator.mcp_server_main` | `OBR_GATEWAY_URL` (or `OBLIGATION_GATEWAY_URL`) |
 
 Use the same `OBR_GATEWAY_URL` for CLI, MCP, and Orchestrator so they all talk to the same Gateway. For resume across processes, run the Orchestrator HTTP service and set `OBR_ORCHESTRATOR_URL` on the Gateway (e.g. `http://localhost:8001`).
 
@@ -44,7 +44,7 @@ Use the same `OBR_GATEWAY_URL` for CLI, MCP, and Orchestrator so they all talk t
 - **OBR_CONTAINER_NETWORK** — Default `none`. Set `bridge` or `host` if runs need network (e.g. Lake).
 - **OBR_CONTAINER_MEMORY_MB** / **OBR_CONTAINER_CPUS** — Resource limits for container runs.
 - **OBR_INTERACTIVE_RUNNER_MAX** / **OBR_BATCH_RUNNER_MAX** — Max concurrent runs per runner kind (semaphore).
-- **REVIEW_STORE** — `memory` (default) or `postgres`. For Postgres use **DATABASE_URL** and `pip install obligation-runtime-lean-gateway[postgres]`.
+- **REVIEW_STORE** — `memory` (default) or `postgres`. For Postgres use **DATABASE_URL** and `pip install lean-langchain-gateway[postgres]`.
 - **CHECKPOINTER** — In CLI, set to `postgres` for persistent checkpoints (resume across invocations). Requires `langgraph-checkpoint-postgres`.
 - **OBR_POLICY_PACK** — Default policy pack (e.g. `strict_patch_gate_v1`, `reviewer_gated_execution_v1`).
 - **OBR_CORS_ORIGINS** — Comma-separated allowed origins for the Review UI.
@@ -74,14 +74,14 @@ Patch-verification demos require the Gateway to be running. From repo root: `mak
 
 ## CLI (obr)
 
-From repo root: `python -m obligation_runtime_orchestrator.cli <cmd>`. Commands: `open-environment`, `create-session`, `run-patch-obligation`, `run-protocol-obligation`, `review`, `resume`, `artifacts`, `regressions`. Use `--protected-paths`, `--policy-pack`, `--protocol-events-file` etc. as needed.
+From repo root: `python -m lean_langchain_orchestrator.cli <cmd>`. Commands: `open-environment`, `create-session`, `run-patch-obligation`, `run-protocol-obligation`, `review`, `resume`, `artifacts`, `regressions`. Use `--protected-paths`, `--policy-pack`, `--protocol-events-file` etc. as needed.
 
 ## Regressions
 
 ```bash
 make test-regressions
 # or
-python -m obligation_runtime_orchestrator.cli regressions
+python -m lean_langchain_orchestrator.cli regressions
 ```
 
 Fixtures under `tests/regressions/fixtures/`. For LangSmith experiments: `make test-langsmith` (requires `LANGCHAIN_API_KEY`).
@@ -93,14 +93,14 @@ Never log `DATABASE_URL`, `LANGCHAIN_API_KEY`, or other secrets. Use env or a se
 ## Logs and traces
 
 - **Gateway:** Logs to stdout. Use a process manager or redirect.
-- **Runtime:** When a tracer is configured, node events are emitted. Use `get_production_tracer()` from `obligation_runtime_telemetry.tracer` (OTLP or LangSmith via env). See `packages/telemetry/obligation_runtime_telemetry/README.md`.
+- **Runtime:** When a tracer is configured, node events are emitted. Use `get_production_tracer()` from `lean_langchain_telemetry.tracer` (OTLP or LangSmith via env). See `packages/telemetry/lean_langchain_telemetry/README.md`.
 
 ## MCP server (stdio)
 
 With the Gateway running:
 
 ```bash
-OBR_GATEWAY_URL=http://localhost:8000 python -m obligation_runtime_orchestrator.mcp_server_main
+OBR_GATEWAY_URL=http://localhost:8000 python -m lean_langchain_orchestrator.mcp_server_main
 ```
 
 Exposes obligation tools to MCP clients (e.g. Cursor). Session affinity is in-process. `OBLIGATION_GATEWAY_URL` is still supported for backward compatibility.

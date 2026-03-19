@@ -39,7 +39,7 @@ def test_mcp_server_list_tools() -> None:
     pp = [str(repo_root), str(orchestrator_dir), str(sdk_dir), str(schemas_dir)]
     env["PYTHONPATH"] = os.pathsep.join(pp)
     proc = subprocess.Popen(
-        [sys.executable, "-m", "obligation_runtime_orchestrator.mcp_server_main"],
+        [sys.executable, "-m", "lean_langchain_orchestrator.mcp_server_main"],
         cwd=str(repo_root),
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
@@ -59,7 +59,7 @@ def test_mcp_server_list_tools() -> None:
             in_ci = os.environ.get("CI") == "true"
             orchestrator_importable = False
             try:
-                __import__("obligation_runtime_orchestrator.mcp_server_main")
+                __import__("lean_langchain_orchestrator.mcp_server_main")
                 orchestrator_importable = True
             except ImportError:
                 pass
@@ -70,7 +70,7 @@ def test_mcp_server_list_tools() -> None:
             stderr = (proc.stderr.read() or "") if proc.stderr else ""
             in_ci = os.environ.get("CI") == "true"
             try:
-                __import__("obligation_runtime_orchestrator.mcp_server_main")
+                __import__("lean_langchain_orchestrator.mcp_server_main")
                 orchestrator_importable = True
             except ImportError:
                 orchestrator_importable = False
@@ -78,7 +78,7 @@ def test_mcp_server_list_tools() -> None:
                 pytest.fail(f"MCP server exited without result in CI; stderr: {stderr[:500]!r}")
             pytest.skip(f"MCP server exited: {stderr[:300]}")
         assert "result" in init_resp, f"Expected result in response: {init_resp}"
-        assert init_resp["result"].get("serverInfo", {}).get("name") == "obligation-runtime"
+        assert init_resp["result"].get("serverInfo", {}).get("name") == "lean-langchain"
 
         list_resp = _send_mcp(proc, "tools/list", {}, msg_id=2)
         assert "result" in list_resp, f"Expected result in response: {list_resp}"

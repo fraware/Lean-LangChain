@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 # Root is a metapackage (no app code here). Explicit wheel layout so ``pip install -e ".[dev]"`` works.
 [tool.hatch.build.targets.wheel]
-packages = ["obligation_runtime"]
+packages = ["lean_langchain"]
 
 [project]
-name = "obligation-runtime"
+name = "lean-langchain"
 version = "0.1.0"
-description = "Lean-LangChain: semantic control plane (Obligation Runtime) for high-stakes agent workflows"
+description = "Lean-LangChain: semantic control plane for high-stakes agent workflows"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
@@ -23,17 +23,17 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-schemas = ["obligation-runtime-schemas"]
-sdk = ["obligation-runtime-schemas", "obligation-runtime-sdk"]
-tools = ["obligation-runtime-tools"]
-gateway = ["obligation-runtime-lean-gateway"]
-orchestrator = ["obligation-runtime-orchestrator"]
+schemas = ["lean-langchain-schemas"]
+sdk = ["lean-langchain-schemas", "lean-langchain-sdk"]
+tools = ["lean-langchain-tools"]
+gateway = ["lean-langchain-gateway"]
+orchestrator = ["lean-langchain-orchestrator"]
 full = [
-  "obligation-runtime-orchestrator",
-  "obligation-runtime-tools",
-  "obligation-runtime-lean-gateway",
-  "obligation-runtime-evals",
-  "obligation-runtime-telemetry",
+  "lean-langchain-orchestrator",
+  "lean-langchain-tools",
+  "lean-langchain-gateway",
+  "lean-langchain-evals",
+  "lean-langchain-telemetry",
 ]
 # Local dev: pip install -e ".[dev]" so `python -m mypy` works inside .venv (see Makefile typecheck).
 dev = ["mypy>=1.8", "ruff>=0.4", "black>=24"]
@@ -43,7 +43,7 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint.per-file-ignores]
-# Path must be set before importing obligation_runtime_schemas when run without pip install -e
+# Path must be set before importing lean_langchain_schemas when run without pip install -e
 "scripts/export_json_schemas.py" = ["E402"]
 # Inject test doubles before importing app; imports must run in this order
 "tests/conftest.py" = ["E402"]
@@ -65,12 +65,12 @@ ignore_missing_imports = true
 # Gateway route modules use try/except fallback classes; allow redef.
 [[tool.mypy.overrides]]
 module = [
-  "obligation_runtime_lean_gateway.api.app",
-  "obligation_runtime_lean_gateway.api.routes_sessions",
-  "obligation_runtime_lean_gateway.api.routes_reviews",
-  "obligation_runtime_lean_gateway.api.routes_environment",
-  "obligation_runtime_lean_gateway.api.routes_batch",
-  "obligation_runtime_lean_gateway.api.routes_health",
-  "obligation_runtime_lean_gateway.api.routes_metrics",
+  "lean_langchain_gateway.api.app",
+  "lean_langchain_gateway.api.routes_sessions",
+  "lean_langchain_gateway.api.routes_reviews",
+  "lean_langchain_gateway.api.routes_environment",
+  "lean_langchain_gateway.api.routes_batch",
+  "lean_langchain_gateway.api.routes_health",
+  "lean_langchain_gateway.api.routes_metrics",
 ]
 disable_error_code = ["no-redef"]

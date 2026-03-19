@@ -1,6 +1,6 @@
 # Runtime capabilities and degraded mode
 
-Gateway and orchestrator expose machine-readable capability snapshots and **degraded reason codes** so operators can alert on partial stacks. Codes are defined in `packages/schemas/obligation_runtime_schemas/degraded_reasons.py` (`ALL_DEGRADED_REASON_CODES`).
+Gateway and orchestrator expose machine-readable capability snapshots and **degraded reason codes** so operators can alert on partial stacks. Codes are defined in `packages/schemas/lean_langchain_schemas/degraded_reasons.py` (`ALL_DEGRADED_REASON_CODES`).
 
 ## Gateway
 

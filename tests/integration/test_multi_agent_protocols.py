@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from obligation_runtime_policy.models import PolicyPack
-from obligation_runtime_policy.protocol_evaluator import evaluate_protocol_obligation
+from lean_langchain_policy.models import PolicyPack
+from lean_langchain_policy.protocol_evaluator import evaluate_protocol_obligation
 
 
 def test_multi_agent_protocols_handoff_legality_same_owner_accepted() -> None:

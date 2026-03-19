@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from obligation_runtime_lean_gateway.batch.combine import (
+from lean_langchain_gateway.batch.combine import (
     REASON_STRICT_REQUIRES_REAL_AXIOM,
     REASON_STRICT_REQUIRES_REAL_FRESH,
     apply_acceptance_strict,
     combine_batch_results,
 )
-from obligation_runtime_schemas.batch import (
+from lean_langchain_schemas.batch import (
     AxiomAuditResult,
     BatchBuildResult,
     FreshCheckerResult,

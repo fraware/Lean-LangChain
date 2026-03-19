@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from obligation_runtime_orchestrator.producer import (
+from lean_langchain_orchestrator.producer import (
     CandidateProducer,
     ProducerContext,
     context_from_state,

@@ -1,6 +1,6 @@
 # Reviewer-gated execution
 
-When an approval token is required, how it is supplied, and where it is enforced. Constants: `packages/policy/obligation_runtime_policy/constants.py` (e.g. `REASON_MISSING_APPROVAL_TOKEN`, `DECISION_BLOCKED`).
+When an approval token is required, how it is supplied, and where it is enforced. Constants: `packages/policy/lean_langchain_policy/constants.py` (e.g. `REASON_MISSING_APPROVAL_TOKEN`, `DECISION_BLOCKED`).
 
 ## Contract
 

@@ -7,11 +7,11 @@ from pathlib import Path
 
 import pytest
 
-from obligation_runtime_evals.fixtures import MULTI_AGENT_FAMILIES
-from obligation_runtime_evals.golden import load_golden_cases
-from obligation_runtime_policy.pack_loader import load_pack
-from obligation_runtime_policy.models import PolicyPack
-from obligation_runtime_policy.protocol_evaluator import (
+from lean_langchain_evals.fixtures import MULTI_AGENT_FAMILIES
+from lean_langchain_evals.golden import load_golden_cases
+from lean_langchain_policy.pack_loader import load_pack
+from lean_langchain_policy.models import PolicyPack
+from lean_langchain_policy.protocol_evaluator import (
     evaluate_protocol_obligation,
 )
 

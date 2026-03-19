@@ -20,10 +20,10 @@ try:
 except ImportError:
     StateGraph = None
 
-from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
-from obligation_runtime_policy.constants import REASON_MISSING_APPROVAL_TOKEN
-from obligation_runtime_sdk.client import ObligationRuntimeClient
+from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
+from lean_langchain_policy.constants import REASON_MISSING_APPROVAL_TOKEN
+from lean_langchain_sdk.client import ObligationRuntimeClient
 
 from tests.integration.conftest import make_testclient_request_adapter
 

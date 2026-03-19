@@ -26,7 +26,7 @@ Reference for the Lean Gateway HTTP API: endpoints, request/response, health, an
 
 CORS is configurable via `OBR_CORS_ORIGINS` (comma-separated origins). When set, the Gateway adds CORS middleware for those origins; when unset, no CORS headers are sent (same-origin only).
 
-- **GET /metrics** — Prometheus text format (request count, latency histogram). Only registered when `OBR_METRICS_ENABLED=1` and the `prometheus_client` package is installed (e.g. `pip install obligation-runtime-lean-gateway[metrics]`). Use for alerting and dashboards.
+- **GET /metrics** — Prometheus text format (request count, latency histogram). Only registered when `OBR_METRICS_ENABLED=1` and the `prometheus_client` package is installed (e.g. `pip install lean-langchain-gateway[metrics]`). Use for alerting and dashboards.
 
 ## Endpoints
 
@@ -56,10 +56,10 @@ CORS is configurable via `OBR_CORS_ORIGINS` (comma-separated origins). When set,
 
 When the Gateway is running, OpenAPI docs: `http://localhost:8000/docs` (Swagger UI), `http://localhost:8000/redoc`, `http://localhost:8000/openapi.json`.
 
-A checked-in snapshot lives at `contracts/openapi/lean-gateway.json` (`make export-openapi`). The **Python SDK** validates responses with Pydantic models derived from the same surface (`obligation_runtime_schemas.gateway_api`, `batch`, etc.). The **TypeScript SDK** (`@lean-langchain/sdk`) types are generated from that JSON (`packages/sdk-ts`: `npm run generate:types`). Monorepo `make check-full` runs **`verify-openapi-sdk-contract`** so the snapshot and generated TS file cannot drift without an intentional regen.
+A checked-in snapshot lives at `contracts/openapi/lean-gateway.json` (`make export-openapi`). The **Python SDK** validates responses with Pydantic models derived from the same surface (`lean_langchain_schemas.gateway_api`, `batch`, etc.). The **TypeScript SDK** (`@lean-langchain/sdk`) types are generated from that JSON (`packages/sdk-ts`: `npm run generate:types`). Monorepo `make check-full` runs **`verify-openapi-sdk-contract`** so the snapshot and generated TS file cannot drift without an intentional regen.
 
 ## Error handling
 
-The API uses HTTP status codes and structured error responses. Stable error codes are documented in the Gateway module; see `obligation_runtime_lean_gateway.api.errors` for consistent error shapes.
+The API uses HTTP status codes and structured error responses. Stable error codes are documented in the Gateway module; see `lean_langchain_gateway.api.errors` for consistent error shapes.
 
 **See also:** [workflow.md](../workflow.md), [runtime-graph.md](runtime-graph.md), [running.md](../running.md).

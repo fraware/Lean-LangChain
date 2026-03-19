@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from obligation_runtime_orchestrator.mcp_server_main import handle_mcp_request
+from lean_langchain_orchestrator.mcp_server_main import handle_mcp_request
 
 
-def test_mcp_handler_initialize_returns_obligation_runtime() -> None:
-    """handle_mcp_request(initialize) returns result with serverInfo.name == obligation-runtime."""
+def test_mcp_handler_initialize_returns_lean_langchain_server_info() -> None:
+    """handle_mcp_request(initialize) returns result with serverInfo.name == lean-langchain."""
     resp = handle_mcp_request("initialize", {}, {})
     assert "result" in resp
     assert "error" not in resp
     result = resp["result"]
-    assert result.get("serverInfo", {}).get("name") == "obligation-runtime"
+    assert result.get("serverInfo", {}).get("name") == "lean-langchain"
     assert result.get("protocolVersion") == "0.1"
     assert "capabilities" in result
 

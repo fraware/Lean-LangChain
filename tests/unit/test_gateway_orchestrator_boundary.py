@@ -1,6 +1,6 @@
 """Enforce gateway-orchestrator boundary: gateway must not import orchestrator runtime.
 
-Prevents regressions where lean-gateway would depend on obligation_runtime_orchestrator
+Prevents regressions where lean-gateway would depend on lean_langchain_orchestrator
 (e.g. for resume flow). Resume is delegated via OBR_ORCHESTRATOR_URL HTTP calls.
 """
 
@@ -13,15 +13,15 @@ from pathlib import Path
 def _gateway_api_source_paths() -> list[Path]:
     """Return paths of gateway API Python modules that must not import orchestrator."""
     repo_root = Path(__file__).resolve().parent.parent.parent
-    gateway_api = repo_root / "apps" / "lean-gateway" / "obligation_runtime_lean_gateway" / "api"
+    gateway_api = repo_root / "apps" / "lean-gateway" / "lean_langchain_gateway" / "api"
     if not gateway_api.is_dir():
         return []
     return list(gateway_api.glob("*.py"))
 
 
 def test_gateway_api_does_not_import_orchestrator_runtime() -> None:
-    """Gateway API modules must not import obligation_runtime_orchestrator."""
-    forbidden = "obligation_runtime_orchestrator"
+    """Gateway API modules must not import lean_langchain_orchestrator."""
+    forbidden = "lean_langchain_orchestrator"
     for path in _gateway_api_source_paths():
         if path.name.startswith("__"):
             continue

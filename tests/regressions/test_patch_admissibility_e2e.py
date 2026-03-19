@@ -17,9 +17,9 @@ def test_patch_admissibility_e2e_one_golden_run(gateway_app) -> None:
     """Run full graph with gateway_app and one good_patch golden case; assert terminal status."""
     from fastapi.testclient import TestClient
 
-    from obligation_runtime_evals.golden import load_golden_cases
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_evals.golden import load_golden_cases
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     from tests.integration.conftest import make_testclient_request_adapter
     from tests.regressions.test_patch_admissibility_golden import _build_initial_state

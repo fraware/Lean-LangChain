@@ -6,7 +6,7 @@ Versioned contract for external policy packs and extensions. Safe to depend on f
 
 **Stability:** v1 is stable. New optional fields may be added to the pack schema with defaults; existing fields are not removed. A future v2 may introduce breaking changes under a new contract version.
 
-**What you implement:** A YAML file that validates as `PolicyPack` (see `packages/policy/obligation_runtime_policy/models.py`). Required keys: `version`, `name`, `description`. Optional keys (with defaults): `allow_trust_compiler`, `block_sorry_ax`, `block_unexpected_custom_axioms`, `require_human_if_imports_change`, `protected_paths`, `require_human_on_trust_delta`, `allow_interactive_warnings`, and the protocol flags (`single_owner_handoff`, `reviewer_gated_execution`, etc.).
+**What you implement:** A YAML file that validates as `PolicyPack` (see `packages/policy/lean_langchain_policy/models.py`). Required keys: `version`, `name`, `description`. Optional keys (with defaults): `allow_trust_compiler`, `block_sorry_ax`, `block_unexpected_custom_axioms`, `require_human_if_imports_change`, `protected_paths`, `require_human_on_trust_delta`, `allow_interactive_warnings`, and the protocol flags (`single_owner_handoff`, `reviewer_gated_execution`, etc.).
 
 **How the runtime loads it:**
 
@@ -50,12 +50,12 @@ Load order and precedence (see `pack_loader._merge_pack_layers`):
 
 **Trust gates (`trust_gates`):** List of rules `{ rule_id?, when_trust_level[], path_globs[], require_human?, reason_code? }`. After batch verification succeeds, if the batch `trust_level` is in `when_trust_level` and any `changed_files` entry matches a `path_globs` entry (empty `path_globs` means “any change”), policy returns `needs_review` with the given `reason_code`. Evaluated together with `path_rules` and import/protected-path gates.
 
-**Example:** [composed_v1_1.yaml](../../examples/integrations/policy_pack_extension/composed_v1_1.yaml), built-in [loose_imports_v1.yaml](../../packages/policy/obligation_runtime_policy/packs/loose_imports_v1.yaml).
+**Example:** [composed_v1_1.yaml](../../examples/integrations/policy_pack_extension/composed_v1_1.yaml), built-in [loose_imports_v1.yaml](../../packages/policy/lean_langchain_policy/packs/loose_imports_v1.yaml).
 
 ## Extension stability notes
 
-- Built-in packs in `packages/policy/obligation_runtime_policy/packs/` are part of the repo and may change between releases.
+- Built-in packs in `packages/policy/lean_langchain_policy/packs/` are part of the repo and may change between releases.
 - External packs loaded by path are not validated for signature or provenance; use your own supply-chain controls if required.
 - For protocol evaluation, the runtime uses additional pack attributes (e.g. `single_owner_handoff`). Omitted keys default to `false`; see `PolicyPack` for the full list.
 
-**See also:** [CONTRIBUTING.md](../../CONTRIBUTING.md) (Plugins and extensions), [pack_loader.py](../../packages/policy/obligation_runtime_policy/pack_loader.py), [examples/integrations/](../../examples/integrations/README.md).
+**See also:** [CONTRIBUTING.md](../../CONTRIBUTING.md) (Plugins and extensions), [pack_loader.py](../../packages/policy/lean_langchain_policy/pack_loader.py), [examples/integrations/](../../examples/integrations/README.md).

@@ -1,6 +1,6 @@
 """Unit tests for policy pack loader."""
 
-from obligation_runtime_policy.pack_loader import load_pack, list_packs
+from lean_langchain_policy.pack_loader import load_pack, list_packs
 
 
 def test_load_pack_strict_patch_gate_v1() -> None:

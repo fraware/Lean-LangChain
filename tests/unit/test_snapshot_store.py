@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from obligation_runtime_lean_gateway.environment.fingerprint import FingerprintService
-from obligation_runtime_lean_gateway.environment.snapshot_store import SnapshotStore
+from lean_langchain_gateway.environment.fingerprint import FingerprintService
+from lean_langchain_gateway.environment.snapshot_store import SnapshotStore
 
 
 def test_snapshot_reuse(tmp_path: Path) -> None:

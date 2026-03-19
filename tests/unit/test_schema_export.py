@@ -29,7 +29,7 @@ def test_export_json_schemas_produces_valid_files() -> None:
     )
     assert result.returncode == 0, (result.stdout or "") + (result.stderr or "")
 
-    out_dir = repo_root / "packages" / "schemas" / "obligation_runtime_schemas" / "generated"
+    out_dir = repo_root / "packages" / "schemas" / "lean_langchain_schemas" / "generated"
     assert out_dir.is_dir(), f"Expected directory {out_dir}"
 
     for name in EXPECTED_SCHEMAS:

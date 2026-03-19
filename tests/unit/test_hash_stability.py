@@ -1,5 +1,5 @@
-from obligation_runtime_schemas.environment import EnvironmentFingerprint
-from obligation_runtime_schemas.hashing import canonical_sha256
+from lean_langchain_schemas.environment import EnvironmentFingerprint
+from lean_langchain_schemas.hashing import canonical_sha256
 
 
 def test_hash_stability_for_dict_order() -> None:

@@ -4,7 +4,7 @@ Reproducible scenarios for patch verification and for protocol (multi-agent) rul
 
 **Examples vs demos:** Minimal SDK usage (open env, session, batch-verify only) is in **examples/** ([minimal_sdk_gateway.py](../examples/minimal_sdk_gateway.py)). The **demos** here are full flows run via the CLI (`obr` / `make demo-*`) and scripts in **scripts/demos/**.
 
-**Before you start:** Run the Gateway from the repo root (`uvicorn obligation_runtime_lean_gateway.api.app:app`). If it is not at `http://localhost:8000`, set `OBR_GATEWAY_URL`. Run the CLI from the repo root as `python -m obligation_runtime_orchestrator.cli` (or `obr` if installed).
+**Before you start:** Run the Gateway from the repo root (`uvicorn lean_langchain_gateway.api.app:app`). If it is not at `http://localhost:8000`, set `OBR_GATEWAY_URL`. Run the CLI from the repo root as `python -m lean_langchain_orchestrator.cli` (or `obr` if installed).
 
 **When demos skip:** The core demo, full demo, and scenarios 1–4 require a running Gateway. If the Gateway is not reachable (or fixtures are missing), their scripts exit with code 0 and print a skip message to stderr. Scenario 5 (reviewer gated) runs without the Gateway and always executes.
 
@@ -125,7 +125,7 @@ obr run-protocol-obligation --obligation-class lock_ownership_invariant --pack l
 obr regressions
 ```
 
-Runs the regression suite under `tests/regressions/`. Cases are loaded from `packages/evals/obligation_runtime_evals/fixtures.py` and from JSON in `tests/regressions/fixtures/` (e.g. `multi_agent_handoff_good.json`, `patch_sorry_case.json`). Reason codes and expected decisions are defined in `packages/policy/obligation_runtime_policy/constants.py`.
+Runs the regression suite under `tests/regressions/`. Cases are loaded from `packages/evals/lean_langchain_evals/fixtures.py` and from JSON in `tests/regressions/fixtures/` (e.g. `multi_agent_handoff_good.json`, `patch_sorry_case.json`). Reason codes and expected decisions are defined in `packages/policy/lean_langchain_policy/constants.py`.
 
 ---
 

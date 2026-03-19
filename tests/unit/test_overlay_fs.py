@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from obligation_runtime_lean_gateway.environment.fingerprint import FingerprintService
-from obligation_runtime_lean_gateway.environment.overlay_fs import OverlayFS
-from obligation_runtime_lean_gateway.environment.snapshot_store import SnapshotStore
+from lean_langchain_gateway.environment.fingerprint import FingerprintService
+from lean_langchain_gateway.environment.overlay_fs import OverlayFS
+from lean_langchain_gateway.environment.snapshot_store import SnapshotStore
 
 
 def test_overlay_does_not_mutate_base(tmp_path: Path) -> None:

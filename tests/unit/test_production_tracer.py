@@ -13,8 +13,8 @@ from __future__ import annotations
 import os
 from unittest.mock import MagicMock, patch
 
-from obligation_runtime_telemetry.events import RuntimeNodeEvent
-from obligation_runtime_telemetry.tracer import (
+from lean_langchain_telemetry.events import RuntimeNodeEvent
+from lean_langchain_telemetry.tracer import (
     LangSmithTracer,
     OtlpTracer,
     get_production_tracer,
@@ -46,7 +46,7 @@ def test_get_production_tracer_otlp_env_but_no_deps_returns_none_or_otlp() -> No
     for k in ("LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2"):
         env[k] = ""
     with patch.dict(os.environ, env, clear=False):
-        with patch("obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=None):
+        with patch("lean_langchain_telemetry.tracer._make_otlp_tracer", return_value=None):
             result = get_production_tracer()
     assert result is None
 
@@ -54,7 +54,7 @@ def test_get_production_tracer_otlp_env_but_no_deps_returns_none_or_otlp() -> No
 def test_get_production_tracer_langsmith_env_but_no_deps_returns_none() -> None:
     """With LANGCHAIN_API_KEY set but langsmith not installed, returns None."""
     with patch.dict(os.environ, {"LANGCHAIN_API_KEY": "test-key"}, clear=False):
-        with patch("obligation_runtime_telemetry.tracer._langsmith_client", return_value=None):
+        with patch("lean_langchain_telemetry.tracer._langsmith_client", return_value=None):
             result = get_production_tracer()
     assert result is None
 
@@ -65,7 +65,7 @@ def test_otlp_tracer_emit_with_mock_tracer_calls_start_span_and_end() -> None:
     mock_tracer = MagicMock()
     mock_tracer.start_span.return_value = mock_span
 
-    with patch("obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer):
+    with patch("lean_langchain_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer):
         otlp = OtlpTracer()
     event = RuntimeNodeEvent(
         event_type="node_exit",
@@ -86,7 +86,7 @@ def test_otlp_tracer_emit_with_mock_tracer_calls_start_span_and_end() -> None:
 
 def test_otlp_tracer_emit_with_none_tracer_does_not_raise() -> None:
     """OtlpTracer.emit does nothing when _tracer is None (no opentelemetry)."""
-    with patch("obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=None):
+    with patch("lean_langchain_telemetry.tracer._make_otlp_tracer", return_value=None):
         otlp = OtlpTracer()
     event = RuntimeNodeEvent(
         event_type="node_enter",
@@ -102,7 +102,7 @@ def test_otlp_tracer_emit_with_none_tracer_does_not_raise() -> None:
 def test_langsmith_tracer_emit_with_mock_client_calls_create_run() -> None:
     """LangSmithTracer.emit calls client.create_run with expected inputs when _client is set."""
     mock_client = MagicMock()
-    with patch("obligation_runtime_telemetry.tracer._langsmith_client", return_value=mock_client):
+    with patch("lean_langchain_telemetry.tracer._langsmith_client", return_value=mock_client):
         ls = LangSmithTracer()
     event = RuntimeNodeEvent(
         event_type="node_exit",
@@ -126,7 +126,7 @@ def test_langsmith_tracer_emit_with_mock_client_calls_create_run() -> None:
 
 def test_langsmith_tracer_emit_with_none_client_does_not_raise() -> None:
     """LangSmithTracer.emit does nothing when _client is None."""
-    with patch("obligation_runtime_telemetry.tracer._langsmith_client", return_value=None):
+    with patch("lean_langchain_telemetry.tracer._langsmith_client", return_value=None):
         ls = LangSmithTracer()
     event = RuntimeNodeEvent(
         event_type="node_enter",
@@ -144,7 +144,7 @@ def test_get_production_tracer_returns_otlp_when_mock_tracer_injected() -> None:
     mock_tracer = MagicMock()
     with patch.dict(os.environ, {"OBR_OTLP_ENDPOINT": "http://localhost:4317"}, clear=False):
         with patch(
-            "obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
+            "lean_langchain_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
         ):
             result = get_production_tracer()
     assert result is not None
@@ -156,7 +156,7 @@ def test_get_production_tracer_returns_langsmith_when_mock_client_injected() -> 
     mock_client = MagicMock()
     with patch.dict(os.environ, {"LANGCHAIN_API_KEY": "key"}, clear=False):
         with patch(
-            "obligation_runtime_telemetry.tracer._langsmith_client", return_value=mock_client
+            "lean_langchain_telemetry.tracer._langsmith_client", return_value=mock_client
         ):
             result = get_production_tracer()
     assert result is not None
@@ -170,7 +170,7 @@ def test_production_tracer_with_env_emits_to_mock_exporter() -> None:
     mock_tracer.start_span.return_value = mock_span
     with patch.dict(os.environ, {"OBR_OTLP_ENDPOINT": "http://test:4317"}, clear=False):
         with patch(
-            "obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
+            "lean_langchain_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
         ):
             tracer = get_production_tracer()
     assert tracer is not None
@@ -195,7 +195,7 @@ def test_otlp_tracer_emit_propagates_event_fields_to_span_attributes() -> None:
     mock_tracer.start_span.return_value = mock_span
 
     with patch(
-        "obligation_runtime_telemetry.tracer._make_otlp_tracer",
+        "lean_langchain_telemetry.tracer._make_otlp_tracer",
         return_value=mock_tracer,
     ):
         otlp = OtlpTracer()
@@ -222,7 +222,7 @@ def test_langsmith_tracer_multiple_emit_calls_create_multiple_runs() -> None:
     """LangSmithTracer.emit twice results in two create_run calls."""
     mock_client = MagicMock()
     with patch(
-        "obligation_runtime_telemetry.tracer._langsmith_client",
+        "lean_langchain_telemetry.tracer._langsmith_client",
         return_value=mock_client,
     ):
         ls = LangSmithTracer()

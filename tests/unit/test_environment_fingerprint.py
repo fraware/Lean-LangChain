@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from obligation_runtime_lean_gateway.environment.fingerprint import FingerprintService
+from lean_langchain_gateway.environment.fingerprint import FingerprintService
 
 
 def test_same_repo_same_fingerprint() -> None:

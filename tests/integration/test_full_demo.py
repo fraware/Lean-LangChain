@@ -21,10 +21,10 @@ try:
 except ImportError:
     StateGraph = None
 
-from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
+from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
 from tests.integration.api_stubs import STUB_INTERACTIVE_CHECK_SORRY
-from obligation_runtime_sdk.client import ObligationRuntimeClient
+from lean_langchain_sdk.client import ObligationRuntimeClient
 
 from tests.integration.conftest import make_testclient_request_adapter
 

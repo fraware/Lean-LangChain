@@ -317,9 +317,9 @@ def test_acceptance_lane_clean_theorem(gateway_client) -> None:
 
 def test_acceptance_lane_theorem_using_sorry(gateway_tc) -> None:
     """E2E: graph run with adapter that simulates interactive check failing (sorry); assert rejected."""
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     tc = gateway_tc
     base = make_testclient_request_adapter(tc)
@@ -345,9 +345,9 @@ def test_acceptance_lane_theorem_using_sorry(gateway_tc) -> None:
 
 def test_acceptance_lane_custom_axiom_case(gateway_tc) -> None:
     """E2E: graph run with adapter that returns batch_verify with trust_level blocked (custom axioms); assert blocked."""
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     tc = gateway_tc
     base = make_testclient_request_adapter(tc)
@@ -387,9 +387,9 @@ def test_acceptance_lane_custom_axiom_case(gateway_tc) -> None:
 
 def test_acceptance_lane_interactive_pass_batch_fail(gateway_tc) -> None:
     """E2E: interactive-check ok, batch-verify fails; assert terminal status rejected."""
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     tc = gateway_tc
     base = make_testclient_request_adapter(tc)

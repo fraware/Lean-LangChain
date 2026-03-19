@@ -11,4 +11,4 @@ export OBR_GATEWAY_URL=http://localhost:8000
 python examples/integrations/langgraph_embed/run_graph.py
 ```
 
-To embed in your app: use `build_patch_admissibility_graph(gateway_base_url=...)` and `make_initial_state(...)` from `obligation_runtime_orchestrator.runtime`; invoke or stream with your thread_id and config.
+To embed in your app: use `build_patch_admissibility_graph(gateway_base_url=...)` and `make_initial_state(...)` from `lean_langchain_orchestrator.runtime`; invoke or stream with your thread_id and config.

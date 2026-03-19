@@ -1,7 +1,7 @@
 """Integration tests for PolicyEngine with canned evidence."""
 
-from obligation_runtime_policy.engine import PolicyEngine
-from obligation_runtime_policy.models import PolicyPack
+from lean_langchain_policy.engine import PolicyEngine
+from lean_langchain_policy.models import PolicyPack
 
 
 def test_policy_engine_integration_accepted() -> None:

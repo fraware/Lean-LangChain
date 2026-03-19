@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from obligation_runtime_sdk import ObligationRuntimeClient, RequestAdapter
+from lean_langchain_sdk import ObligationRuntimeClient, RequestAdapter
 
 
 @pytest.fixture
@@ -43,6 +43,6 @@ def sdk_client(gateway_app) -> Any:
 @pytest.fixture
 def obr_graph(sdk_client: ObligationRuntimeClient) -> Any:
     """Patch-admissibility graph built with sdk_client. Use in integration tests that invoke the graph."""
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
 
     return build_patch_admissibility_graph(client=sdk_client)

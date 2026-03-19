@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 def test_dataset_promotion_with_mock_returns_promoted() -> None:
     """With mocked LangSmith client, trace_to_dataset returns status promoted and promoted_count."""
-    from obligation_runtime_telemetry.langsmith import trace_to_dataset
+    from lean_langchain_telemetry.langsmith import trace_to_dataset
 
     mock_run = MagicMock()
     mock_ds = MagicMock()
@@ -16,7 +16,7 @@ def test_dataset_promotion_with_mock_returns_promoted() -> None:
     mock_client.list_datasets.return_value = [mock_ds]
     mock_client.read_run.return_value = mock_run
 
-    with patch("obligation_runtime_telemetry.langsmith.LangSmithClient", return_value=mock_client):
+    with patch("lean_langchain_telemetry.langsmith.LangSmithClient", return_value=mock_client):
         result = trace_to_dataset(["run-1", "run-2"], "my-dataset")
 
     assert result.get("status") == "promoted"

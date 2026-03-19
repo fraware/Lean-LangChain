@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from obligation_runtime_policy.engine import PolicyEngine
-from obligation_runtime_policy.models import PolicyPack, TrustGateRule
-from obligation_runtime_policy.patch_metadata import summarize_patch
+from lean_langchain_policy.engine import PolicyEngine
+from lean_langchain_policy.models import PolicyPack, TrustGateRule
+from lean_langchain_policy.patch_metadata import summarize_patch
 
 
 def _strict_pack() -> PolicyPack:

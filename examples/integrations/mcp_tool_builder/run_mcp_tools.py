@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import os
 
-from obligation_runtime_sdk.client import ObligationRuntimeClient
-from obligation_runtime_orchestrator.mcp_server import MCPSessionContext, build_mcp_tools
+from lean_langchain_sdk.client import ObligationRuntimeClient
+from lean_langchain_orchestrator.mcp_server import MCPSessionContext, build_mcp_tools
 
 
 def main() -> None:

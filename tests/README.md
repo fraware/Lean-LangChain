@@ -1,12 +1,12 @@
 # Tests
 
-**Purpose:** Test layout, how to run them, and environment-dependent skips. **Audience:** contributors and CI. Tests validate the Obligation Runtime workflow, use cases, and LangChain / LangSmith / LangGraph integrations. For a full mapping of test files to workflow steps, see **docs/workflow.md** (section "Tests: mapping to workflow and integrations").
+**Purpose:** Test layout, how to run them, and environment-dependent skips. **Audience:** contributors and CI. Tests validate the Lean-LangChain workflow, use cases, and LangChain / LangSmith / LangGraph integrations. For a full mapping of test files to workflow steps, see **docs/workflow.md** (section "Tests: mapping to workflow and integrations").
 
 ## Layout
 
 - **unit/** — Unit tests for policy, batch combine, axiom audit, axiom producer (`test_axiom_producer_lean.py` when lake in PATH), Gateway production assertions, LangSmith helpers (create_dataset, run_experiment, compare_runs, trace_to_dataset), and production tracer (OTLP, LangSmith mocks).
 - **integration/** — Integration tests against the Gateway (TestClient or live): acceptance lane, graph runtime (LangGraph patch-admissibility), tools (LangChain toolset), MCP session affinity, review/resume flow, LangSmith fixed-corpus experiment, tracer E2E.
-- **regressions/** — Golden-case regression suite; fixtures in `packages/evals/obligation_runtime_evals/fixtures.py` and `tests/regressions/fixtures/`.
+- **regressions/** — Golden-case regression suite; fixtures in `packages/evals/lean_langchain_evals/fixtures.py` and `tests/regressions/fixtures/`.
 
 ## Running
 
@@ -26,7 +26,7 @@ Some tests skip when required tooling or services are unavailable. This is inten
 | **Postgres** | `test_checkpointer_postgres.py`, `test_review_store_postgres.py`, and any test that uses `@pytest.mark.skipif(not database_url)` | Set `DATABASE_URL` (and `CHECKPOINTER=postgres`, `REVIEW_STORE=postgres` where needed). CI main job runs with a Postgres service. |
 | **Lean / LSP** | Acceptance-lane tests that need real `lake` or LSP; axiom producer (`test_axiom_producer_lean.py`) | Set `OBR_USE_LEAN_LSP=1` or `OBR_USE_REAL_FRESH_CHECKER=1` and have `lean` / `lake` / `lean4checker` in PATH. Axiom producer test runs when `lake` is in PATH and skips when build fails. See `docs/ci.md` (lean, fresh jobs); `make test-axiom-producer`. |
 | **Docker** | Container runner and microVM tests in acceptance lane and worker isolation | Set `OBR_WORKER_RUNNER=container` (or `microvm`) and have Docker in PATH. See [docs/tests-and-ci.md](../docs/tests-and-ci.md) (container job). |
-| **OTLP / tracer E2E** | `test_tracer_e2e_otlp.py` | Requires `obligation-runtime-telemetry[otlp]`. Local: `make test-tracer-e2e`. CI **telemetry-e2e** job runs it with continue-on-error. |
+| **OTLP / tracer E2E** | `test_tracer_e2e_otlp.py` | Requires `lean-langchain-telemetry[otlp]`. Local: `make test-tracer-e2e`. CI **telemetry-e2e** job runs it with continue-on-error. |
 | **MCP stdio** | `test_mcp_server_stdio.py` | Skips when MCP server or stdio transport not available in env. |
 
 `make check-full` runs with no optional env; expect roughly a dozen integration skips. With Postgres (as in CI), checkpointer and review-store tests run; with Lean/Docker in optional CI jobs, additional acceptance and worker tests run.

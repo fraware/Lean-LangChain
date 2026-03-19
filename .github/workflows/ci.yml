@@ -179,7 +179,7 @@ jobs:
       - name: Leak check (no leftover OBR containers)
         run: |
           python -c "
-          from obligation_runtime_lean_gateway.server.leak_check import list_obr_containers
+          from lean_langchain_gateway.server.leak_check import list_obr_containers
           ids = list_obr_containers()
           assert len(ids) == 0, f'Expected no OBR-labeled containers after run; found: {ids}'
           "
@@ -212,7 +212,7 @@ jobs:
       - name: Install (full) + OTLP extra
         run: |
           make install-dev-full
-          pip install "obligation-runtime-telemetry[otlp]"
+          pip install "lean-langchain-telemetry[otlp]"
       - name: Production tracer unit tests with OTLP path
         run: pytest tests/unit/test_production_tracer.py -v
       - name: Tracer E2E (InMemorySpanExporter, assert span received)

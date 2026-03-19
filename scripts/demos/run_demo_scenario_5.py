@@ -8,12 +8,12 @@ import sys
 
 def main() -> int:
     try:
-        from obligation_runtime_policy.constants import (
+        from lean_langchain_policy.constants import (
             DECISION_BLOCKED,
             REASON_MISSING_APPROVAL_TOKEN,
         )
-        from obligation_runtime_policy.pack_loader import load_pack
-        from obligation_runtime_policy.protocol_evaluator import (
+        from lean_langchain_policy.pack_loader import load_pack
+        from lean_langchain_policy.protocol_evaluator import (
             evaluate_protocol_obligation,
         )
     except ImportError as e:

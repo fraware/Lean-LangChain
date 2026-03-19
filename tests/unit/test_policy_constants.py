@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from obligation_runtime_policy.constants import (
+from lean_langchain_policy.constants import (
     APPROVAL_APPROVED,
     APPROVAL_PENDING,
     APPROVAL_REJECTED,

@@ -10,25 +10,25 @@ except ImportError:
     StateGraph = None
 
 try:
-    from obligation_runtime_telemetry.tracer import InMemoryTracer
+    from lean_langchain_telemetry.tracer import InMemoryTracer
 except ImportError:
     InMemoryTracer = None
 
 
 @pytest.mark.skipif(
     StateGraph is None or InMemoryTracer is None,
-    reason="langgraph or obligation_runtime_telemetry not installed",
+    reason="langgraph or lean_langchain_telemetry not installed",
 )
 def test_graph_emits_span_events_with_tracer(gateway_app) -> None:
     """Build graph with InMemoryTracer; invoke; assert node_enter/node_exit events emitted."""
     from fastapi.testclient import TestClient
 
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     from tests.integration.conftest import make_testclient_request_adapter
 
-    from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
+    from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
 
     tracer = InMemoryTracer()
     with TestClient(gateway_app) as tc:
@@ -55,7 +55,7 @@ def test_graph_emits_span_events_with_tracer(gateway_app) -> None:
 def test_span_by_node_covers_graph_nodes() -> None:
     """SPAN_BY_NODE in graph has an entry for every graph node name (traces cover all nodes)."""
     try:
-        from obligation_runtime_orchestrator.runtime.graph import SPAN_BY_NODE
+        from lean_langchain_orchestrator.runtime.graph import SPAN_BY_NODE
     except ImportError:
         pytest.skip("orchestrator not installed")
         return

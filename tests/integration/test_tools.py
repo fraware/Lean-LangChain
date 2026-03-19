@@ -11,8 +11,8 @@ apply -> interactive check -> batch verify) works via tools. See docs/workflow.m
 from pathlib import Path
 from typing import Any
 
-from obligation_runtime_sdk.client import ObligationRuntimeClient
-from obligation_runtime_tools.toolset import build_toolset
+from lean_langchain_sdk.client import ObligationRuntimeClient
+from lean_langchain_tools.toolset import build_toolset
 
 
 def test_tools_e2e_against_gateway(sdk_client: ObligationRuntimeClient) -> None:

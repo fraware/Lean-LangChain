@@ -4,7 +4,7 @@ Protocol events and obligation classes for multi-agent coordination: handoff leg
 
 ## ProtocolEvent
 
-`packages/protocol/obligation_runtime_protocol/models.py` — Event shape: `event_id`, `kind` (claim, delegate, approve, reject, lock, release, execute, recover), `actor` (AgentRef: agent_id, role), `task` (TaskRef: task_id, task_class), optional `payload`, `prior_event_ids`.
+`packages/protocol/lean_langchain_protocol/models.py` — Event shape: `event_id`, `kind` (claim, delegate, approve, reject, lock, release, execute, recover), `actor` (AgentRef: agent_id, role), `task` (TaskRef: task_id, task_class), optional `payload`, `prior_event_ids`.
 
 Events are supplied as a list of dicts (or models) to the protocol evaluator; they are normalized to dicts with `kind`, `actor`, `task` before evaluation.
 
@@ -19,7 +19,7 @@ Events are supplied as a list of dicts (or models) to the protocol evaluator; th
 - **side_effect_authorization** — When pack has `side_effect_authorization`, execute and recover only after approve. Otherwise rejected with `REASON_SIDE_EFFECT_UNAUTHORIZED`.
 - **evidence_complete_execution_token** — When pack has `evidence_complete_execution_token`, events or payload must indicate evidence bundle complete (e.g. execute event with `evidence_complete: true`). Otherwise blocked with `REASON_EVIDENCE_INCOMPLETE`.
 
-Reason codes and decisions are in `packages/policy/obligation_runtime_policy/constants.py`.
+Reason codes and decisions are in `packages/policy/lean_langchain_policy/constants.py`.
 
 ## Policy packs
 

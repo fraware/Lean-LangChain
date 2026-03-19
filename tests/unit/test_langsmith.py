@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 
 def test_create_dataset_no_exception() -> None:
     """create_dataset with minimal args returns a dict and does not raise. Error when SDK not installed."""
-    from obligation_runtime_telemetry.langsmith import create_dataset
+    from lean_langchain_telemetry.langsmith import create_dataset
 
     result = create_dataset("test-dataset", description="test")
     assert isinstance(result, dict)
@@ -28,7 +28,7 @@ def test_create_dataset_no_exception() -> None:
 
 def test_run_experiment_no_exception() -> None:
     """run_experiment with minimal args returns a dict and does not raise. Error when SDK not installed."""
-    from obligation_runtime_telemetry.langsmith import run_experiment
+    from lean_langchain_telemetry.langsmith import run_experiment
 
     def dummy_runnable():
         return lambda x: x
@@ -41,7 +41,7 @@ def test_run_experiment_no_exception() -> None:
 
 def test_run_experiment_on_fixed_corpus_returns_expected_status() -> None:
     """Build minimal dataset from fixed corpus (one example), run_experiment with identity runnable; assert status."""
-    from obligation_runtime_telemetry.langsmith import create_dataset, run_experiment
+    from lean_langchain_telemetry.langsmith import create_dataset, run_experiment
 
     # One example in the format expected by patch-admissibility (input) and output (decision).
     examples = [
@@ -76,7 +76,7 @@ def test_run_experiment_on_fixed_corpus_returns_expected_status() -> None:
 
 def test_compare_runs_with_mock_client_returns_expected_structure() -> None:
     """With mocked LangSmith client, compare_runs returns runs, summary, status compare."""
-    from obligation_runtime_telemetry.langsmith import compare_runs
+    from lean_langchain_telemetry.langsmith import compare_runs
 
     mock_run = MagicMock()
     mock_run.inputs = {"x": 1}
@@ -87,7 +87,7 @@ def test_compare_runs_with_mock_client_returns_expected_structure() -> None:
     mock_client = MagicMock()
     mock_client.read_run.return_value = mock_run
 
-    with patch("obligation_runtime_telemetry.langsmith.LangSmithClient", return_value=mock_client):
+    with patch("lean_langchain_telemetry.langsmith.LangSmithClient", return_value=mock_client):
         result = compare_runs(["run-1", "run-2"])
 
     assert result.get("status") == "compare"
@@ -104,7 +104,7 @@ def test_compare_runs_with_mock_client_returns_expected_structure() -> None:
 
 def test_compare_runs_fewer_than_two_returns_error() -> None:
     """compare_runs with fewer than two run_ids returns error."""
-    from obligation_runtime_telemetry.langsmith import compare_runs
+    from lean_langchain_telemetry.langsmith import compare_runs
 
     result = compare_runs(["only-one"])
     assert result.get("status") == "error"
@@ -114,7 +114,7 @@ def test_compare_runs_fewer_than_two_returns_error() -> None:
 
 def test_trace_to_dataset_with_mock_calls_create_example_from_run() -> None:
     """With mocked client, trace_to_dataset calls create_example_from_run per trace_id."""
-    from obligation_runtime_telemetry.langsmith import trace_to_dataset
+    from lean_langchain_telemetry.langsmith import trace_to_dataset
 
     mock_run = MagicMock()
     mock_dataset = MagicMock()
@@ -125,7 +125,7 @@ def test_trace_to_dataset_with_mock_calls_create_example_from_run() -> None:
     mock_client.create_dataset.return_value = mock_dataset
     mock_client.read_run.return_value = mock_run
 
-    with patch("obligation_runtime_telemetry.langsmith.LangSmithClient", return_value=mock_client):
+    with patch("lean_langchain_telemetry.langsmith.LangSmithClient", return_value=mock_client):
         result = trace_to_dataset(["trace-a", "trace-b"], "my-dataset")
 
     assert result.get("status") == "promoted"

@@ -1,4 +1,4 @@
-# Contributing to Lean-LangChain (Obligation Runtime)
+# Contributing to Lean-LangChain
 
 Thank you for your interest in contributing. This document covers setup, the full check, and how to submit changes.
 
@@ -16,7 +16,7 @@ Thank you for your interest in contributing. This document covers setup, the ful
 
 2. **Environment.** Copy [.env.example](.env.example) to `.env` if you need local overrides. Never commit `.env` or real secrets. For the Review UI, copy `apps/review-ui/.env.example` to `apps/review-ui/.env.local` and set `NEXT_PUBLIC_GATEWAY_URL`.
 
-3. **Demos (optional).** To run the core or full demo, start the Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app` from repo root), then `make demo-core` or `make demo-full`. See [docs/demos/README.md](docs/demos/README.md).
+3. **Demos (optional).** To run the core or full demo, start the Gateway (`uvicorn lean_langchain_gateway.api.app:app` from repo root), then `make demo-core` or `make demo-full`. See [docs/demos/README.md](docs/demos/README.md).
 
 ## Before you submit
 
@@ -36,13 +36,12 @@ This runs lint (Ruff), Mypy (`typecheck` and `typecheck-strict-core`), schema te
 
 ## Code style
 
-- **Python:** Ruff and Black (see root [pyproject.toml](pyproject.toml): line-length 100, target Python 3.12). `make format` runs Black and `ruff check --fix`. `make typecheck` runs Mypy on schemas, gateway, and orchestrator. `make typecheck-strict-core` runs **strict** Mypy on `obligation_runtime_schemas`, `obligation_runtime_policy`, gateway `batch`, gateway API route modules (`routes_*.py`, `fastapi_shim.py`), session/worker/errors, orchestrator graph/handlers/MCP, and orchestrator `runtime.state` / `initial_state` / `routes`; new code in those areas should pass the strict gate.
+- **Python:** Ruff and Black (see root [pyproject.toml](pyproject.toml): line-length 100, target Python 3.12). `make format` runs Black and `ruff check --fix`. `make typecheck` runs Mypy on schemas, gateway, and orchestrator. `make typecheck-strict-core` runs **strict** Mypy on `lean_langchain_schemas`, `lean_langchain_policy`, gateway `batch`, gateway API route modules (`routes_*.py`, `fastapi_shim.py`), session/worker/errors, orchestrator graph/handlers/MCP, and orchestrator `runtime.state` / `initial_state` / `routes`; new code in those areas should pass the strict gate.
 - **Public API:** Prefer the stable imports listed in [docs/integrate.md](docs/integrate.md) (Public API table) so reusers and type-checkers see a consistent surface.
 
 ## Plugins and extensions
 
 - **Policy packs (plugin contract v1 / v1.1):** Custom YAML packs can use `extends`, `import`, and `path_rules` (see plugin contract doc). Use `load_pack_from_path(path)` or `load_pack(name)`; set `OBR_POLICY_PACK` to a pack name or absolute path. [docs/architecture/plugin-contract.md](docs/architecture/plugin-contract.md).
-- **Naming:** Repo brand vs PyPI/npm names are summarized in [docs/architecture/naming.md](docs/architecture/naming.md).
 - **Starter templates:** [examples/integrations/](examples/integrations/README.md) — MCP tool builder, LangGraph embed, policy pack extension. Use these as copy-paste bases for your integration.
 
 ## Optional tooling

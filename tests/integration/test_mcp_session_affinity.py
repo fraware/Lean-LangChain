@@ -11,8 +11,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from obligation_runtime_orchestrator.mcp_server import MCPSessionContext, build_mcp_tools
-from obligation_runtime_sdk.client import ObligationRuntimeClient
+from lean_langchain_orchestrator.mcp_server import MCPSessionContext, build_mcp_tools
+from lean_langchain_sdk.client import ObligationRuntimeClient
 
 
 def test_mcp_session_affinity_apply_and_check_use_context(
@@ -45,7 +45,7 @@ def test_mcp_get_review_payload_and_submit_decision(
     sdk_client: ObligationRuntimeClient, gateway_app
 ) -> None:
     """get_review_payload and submit_review_decision work when review is pending."""
-    from obligation_runtime_lean_gateway.api import deps
+    from lean_langchain_gateway.api import deps
 
     deps.review_store.put(
         "mcp-thread-1", {"thread_id": "mcp-thread-1", "status": "awaiting_review"}

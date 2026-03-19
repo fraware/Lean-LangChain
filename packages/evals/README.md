@@ -1,6 +1,6 @@
 # Evals
 
-**Purpose:** Regression fixtures, golden cases, and experiment helpers for the obligation runtime. **Audience:** contributors.
+**Purpose:** Regression fixtures, golden cases, and experiment helpers for Lean-LangChain. **Audience:** contributors.
 
 This package hosts fixtures and helpers used by the regression suite and LangSmith experiments. See [docs/runbooks/evaluation.md](../../docs/runbooks/evaluation.md) and [docs/workflow.md](../../docs/workflow.md).
 

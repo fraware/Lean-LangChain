@@ -1,4 +1,4 @@
-from obligation_runtime_schemas.environment import EnvironmentFingerprint
+from lean_langchain_schemas.environment import EnvironmentFingerprint
 
 
 def test_environment_roundtrip() -> None:

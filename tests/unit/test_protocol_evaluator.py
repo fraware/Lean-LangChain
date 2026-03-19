@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from obligation_runtime_policy.constants import (
+from lean_langchain_policy.constants import (
     REASON_ARTIFACT_NOT_ADMISSIBLE,
     REASON_DELEGATE_WITHOUT_PRIOR_CLAIM,
     REASON_EVIDENCE_INCOMPLETE,
@@ -12,8 +12,8 @@ from obligation_runtime_policy.constants import (
     REASON_RELEASE_WITHOUT_LOCK,
     REASON_SIDE_EFFECT_UNAUTHORIZED,
 )
-from obligation_runtime_policy.models import PolicyPack
-from obligation_runtime_policy.protocol_evaluator import (
+from lean_langchain_policy.models import PolicyPack
+from lean_langchain_policy.protocol_evaluator import (
     evaluate_artifact_admissibility,
     evaluate_delegation_admissibility,
     evaluate_evidence_complete_execution_token,

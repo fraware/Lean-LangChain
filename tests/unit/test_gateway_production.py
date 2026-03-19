@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import pytest
 
-from obligation_runtime_lean_gateway.api.errors import redact_secrets
+from lean_langchain_gateway.api.errors import redact_secrets
 
 
 def test_redact_secrets_redacts_database_url() -> None:
@@ -32,7 +32,7 @@ def test_redact_secrets_leaves_safe_text() -> None:
 def test_production_state_assertion_raises_when_memory_and_obr_env_production() -> None:
     from fastapi.testclient import TestClient
 
-    from obligation_runtime_lean_gateway.api.app import create_app
+    from lean_langchain_gateway.api.app import create_app
 
     with patch.dict(
         os.environ,
@@ -53,7 +53,7 @@ def test_lean_transport_required_in_production() -> None:
         [
             sys.executable,
             "-c",
-            "from obligation_runtime_lean_gateway.api import deps; _ = deps.interactive_api",
+            "from lean_langchain_gateway.api import deps; _ = deps.interactive_api",
         ],
         env=env,
         capture_output=True,

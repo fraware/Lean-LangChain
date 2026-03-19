@@ -1,8 +1,8 @@
 [project]
-name = "obligation-runtime-telemetry"
+name = "lean-langchain-telemetry"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["obligation-runtime-schemas"]
+dependencies = ["lean-langchain-schemas"]
 
 [project.optional-dependencies]
 otlp = [

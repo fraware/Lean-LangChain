@@ -7,7 +7,7 @@ import pytest
 pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 
-from obligation_runtime_orchestrator.http_server import create_app
+from lean_langchain_orchestrator.http_server import create_app
 
 
 def test_health_returns_capabilities() -> None:

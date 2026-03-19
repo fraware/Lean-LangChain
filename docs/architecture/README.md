@@ -1,6 +1,6 @@
 # Architecture
 
-High-level design and reference for the Obligation Runtime. Start with [core-primitives.md](core-primitives.md) and [runtime-graph.md](runtime-graph.md) to understand the flow; use the rest as needed.
+High-level design and reference for Lean-LangChain. Start with [core-primitives.md](core-primitives.md) and [runtime-graph.md](runtime-graph.md) to understand the flow; use the rest as needed.
 
 | Document | Contents |
 |----------|----------|

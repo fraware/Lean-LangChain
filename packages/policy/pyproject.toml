@@ -1,5 +1,5 @@
 [project]
-name = "obligation-runtime-policy"
+name = "lean-langchain-policy"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["obligation-runtime-schemas", "obligation-runtime-protocol", "pydantic>=2.8", "pyyaml>=6.0"]
+dependencies = ["lean-langchain-schemas", "lean-langchain-protocol", "pydantic>=2.8", "pyyaml>=6.0"]

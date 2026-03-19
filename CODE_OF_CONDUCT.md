@@ -1,6 +1,6 @@
 # Contributor Covenant Code of Conduct
 
-**Purpose:** Community standards and enforcement for participation in the Obligation Runtime project. **Audience:** everyone (contributors, maintainers, users). This document is the Contributor Covenant, version 2.1.
+**Purpose:** Community standards and enforcement for participation in the Lean-LangChain project. **Audience:** everyone (contributors, maintainers, users). This document is the Contributor Covenant, version 2.1.
 
 ## Our Pledge
 

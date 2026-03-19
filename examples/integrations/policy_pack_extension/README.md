@@ -4,7 +4,7 @@ Ship your own policy pack (YAML) and load it by path. The pack must conform to t
 
 **Option 1 — Path:** Set `OBR_POLICY_PACK` to an absolute path to a `.yaml` file (or a path containing a directory separator). The orchestrator and graph will load it via `load_pack`.
 
-**Option 2 — Copy:** Copy your pack into the built-in packs dir of an installed `obligation-runtime-policy` and reference it by name.
+**Option 2 — Copy:** Copy your pack into the built-in packs dir of an installed `lean-langchain-policy` and reference it by name.
 
 **Example:** Use the sample pack in this directory:
 
@@ -13,4 +13,4 @@ export OBR_POLICY_PACK="$(pwd)/examples/integrations/policy_pack_extension/custo
 obr run-patch-obligation --thread-id demo --target-files Main.lean
 ```
 
-See [pack_loader](../../packages/policy/obligation_runtime_policy/pack_loader.py) for the plugin contract (load_pack_from_path, load_pack with path).
+See [pack_loader](../../packages/policy/lean_langchain_policy/pack_loader.py) for the plugin contract (load_pack_from_path, load_pack with path).

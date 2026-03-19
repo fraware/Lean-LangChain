@@ -1,7 +1,7 @@
 {
   "name": "@lean-langchain/sdk",
   "version": "1.0.0",
-  "description": "Official TypeScript SDK for Lean-LangChain (Obligation Runtime Gateway API).",
+  "description": "Official TypeScript SDK for Lean-LangChain Gateway API.",
   "publishConfig": {
     "access": "public"
   },
@@ -30,7 +30,6 @@
   },
   "keywords": [
     "lean-langchain",
-    "obligation-runtime",
     "lean",
     "langchain",
     "gateway",

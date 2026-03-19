@@ -13,9 +13,9 @@ FROM python:3.12-slim AS builder
 WORKDIR /build
 
 COPY packages/schemas/pyproject.toml packages/schemas/
-COPY packages/schemas/obligation_runtime_schemas packages/schemas/obligation_runtime_schemas/
+COPY packages/schemas/lean_langchain_schemas packages/schemas/lean_langchain_schemas/
 COPY apps/lean-gateway/pyproject.toml apps/lean-gateway/
-COPY apps/lean-gateway/obligation_runtime_lean_gateway apps/lean-gateway/obligation_runtime_lean_gateway/
+COPY apps/lean-gateway/lean_langchain_gateway apps/lean-gateway/lean_langchain_gateway/
 
 RUN pip install --no-cache-dir ./packages/schemas "./apps/lean-gateway[postgres]"
 
@@ -40,4 +40,4 @@ USER obr
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')" || exit 1
 
-CMD ["python", "-m", "uvicorn", "obligation_runtime_lean_gateway.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "lean_langchain_gateway.api.app:app", "--host", "0.0.0.0", "--port", "8000"]

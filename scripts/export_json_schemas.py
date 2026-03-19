@@ -11,11 +11,11 @@ for _p in (_root, _root / "packages" / "schemas"):
         sys.path.insert(0, str(_p))
 
 try:
-    from obligation_runtime_schemas.environment import EnvironmentFingerprint
-    from obligation_runtime_schemas.obligation import Obligation
-    from obligation_runtime_schemas.interactive import InteractiveCheckResult
-    from obligation_runtime_schemas.policy import PolicyDecision
-    from obligation_runtime_schemas.witness import AcceptanceSummary, WitnessBundle
+    from lean_langchain_schemas.environment import EnvironmentFingerprint
+    from lean_langchain_schemas.obligation import Obligation
+    from lean_langchain_schemas.interactive import InteractiveCheckResult
+    from lean_langchain_schemas.policy import PolicyDecision
+    from lean_langchain_schemas.witness import AcceptanceSummary, WitnessBundle
 except ModuleNotFoundError as e:
     print(
         "export_json_schemas: missing dependency. Use the same Python that has the project installed.\n"
@@ -26,7 +26,7 @@ except ModuleNotFoundError as e:
     )
     raise SystemExit(1) from e
 
-OUT = _root / "packages" / "schemas" / "obligation_runtime_schemas" / "generated"
+OUT = _root / "packages" / "schemas" / "lean_langchain_schemas" / "generated"
 OUT.mkdir(parents=True, exist_ok=True)
 
 MODELS = {

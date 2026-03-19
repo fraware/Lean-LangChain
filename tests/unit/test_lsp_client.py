@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from obligation_runtime_lean_gateway.server import lsp_client
+from lean_langchain_gateway.server import lsp_client
 
 
 def _make_stdout(*responses: dict) -> io.StringIO:
@@ -28,7 +28,7 @@ def _workspace_path() -> Path:
 
 def test_start_lsp_returns_none_when_initialize_fails() -> None:
     """_start_lsp returns None when initialize response is missing or invalid."""
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = io.StringIO()  # no content -> _read returns None
@@ -43,7 +43,7 @@ def test_start_lsp_returns_proc_when_initialize_ok() -> None:
     """_start_lsp returns process when initialize returns result."""
     init_resp = {"jsonrpc": "2.0", "id": 1, "result": {"capabilities": {}}}
     stdout = _make_stdout(init_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -77,7 +77,7 @@ def test_run_check_returns_diagnostics_and_ok_from_publish_diagnostics() -> None
         },
     }
     stdout = _make_stdout(init_resp, diag)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -105,7 +105,7 @@ def test_run_check_ok_true_when_no_error_severity() -> None:
     init_resp = {"jsonrpc": "2.0", "id": 1, "result": {"capabilities": {}}}
     diag = {"method": "textDocument/publishDiagnostics", "params": {"diagnostics": []}}
     stdout = _make_stdout(init_resp, diag)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -131,7 +131,7 @@ def test_run_get_goal_returns_list_from_array_result() -> None:
     after_did_open = {"method": "textDocument/publishDiagnostics", "params": {"diagnostics": []}}
     goal_resp = {"jsonrpc": "2.0", "id": 2, "result": [{"text": "goal 1"}]}
     stdout = _make_stdout(init_resp, after_did_open, goal_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -160,7 +160,7 @@ def test_run_get_goal_normalizes_single_dict_to_list() -> None:
     after_did_open = {"method": "textDocument/publishDiagnostics", "params": {"diagnostics": []}}
     goal_resp = {"jsonrpc": "2.0", "id": 2, "result": {"text": "single goal"}}
     stdout = _make_stdout(init_resp, after_did_open, goal_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -187,7 +187,7 @@ def test_run_get_goal_uses_plain_goal_method_when_plain_in_kind() -> None:
     after_did_open = {"method": "textDocument/publishDiagnostics", "params": {}}
     goal_resp = {"jsonrpc": "2.0", "id": 2, "result": []}
     stdout = _make_stdout(init_resp, after_did_open, goal_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -213,7 +213,7 @@ def test_run_get_goal_uses_plain_term_goal_when_plain_not_in_kind() -> None:
     after_did_open = {"method": "textDocument/publishDiagnostics", "params": {}}
     goal_resp = {"jsonrpc": "2.0", "id": 2, "result": []}
     stdout = _make_stdout(init_resp, after_did_open, goal_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -239,7 +239,7 @@ def test_run_hover_returns_contents_value() -> None:
     after_did_open = {"method": "textDocument/publishDiagnostics", "params": {}}
     hover_resp = {"jsonrpc": "2.0", "id": 3, "result": {"contents": {"value": "hover text"}}}
     stdout = _make_stdout(init_resp, after_did_open, hover_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout
@@ -277,7 +277,7 @@ def test_run_definition_returns_list_of_locations() -> None:
         ],
     }
     stdout = _make_stdout(init_resp, after_did_open, def_resp)
-    with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
+    with patch("lean_langchain_gateway.server.lsp_client.subprocess.Popen") as mock_popen:
         proc = MagicMock()
         proc.stdin = MagicMock()
         proc.stdout = stdout

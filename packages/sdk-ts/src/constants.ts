@@ -1,6 +1,6 @@
 /**
  * Gateway / acceptance-lane constants and helpers for use with the TypeScript SDK.
- * Keep in sync with obligation_runtime_lean_gateway.batch.axiom_audit (NON_REAL_AXIOM_AUDIT_REASON).
+ * Keep in sync with lean_langchain_gateway.batch.axiom_audit (NON_REAL_AXIOM_AUDIT_REASON).
  */
 
 import type { BatchVerifyResponse } from "./types";

@@ -3,7 +3,7 @@ requires = ["hatchling>=1.25.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "obligation-runtime-tools"
+name = "lean-langchain-tools"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["obligation-runtime-schemas", "obligation-runtime-sdk"]
+dependencies = ["lean-langchain-schemas", "lean-langchain-sdk"]

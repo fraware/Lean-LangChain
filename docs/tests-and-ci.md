@@ -40,7 +40,7 @@ Other targets: `make test-axiom-producer` (axiom producer in lean-mini), `make t
 | `check-full` | Lint, typecheck, test-schemas, test, test-integration, test-regressions, export-schemas. |
 | `test-langsmith` | LangSmith unit and fixed-corpus integration tests. |
 | `test-axiom-producer` | Axiom producer test (lean-mini; skips if lake absent). |
-| `test-tracer-e2e` | Tracer E2E (requires obligation-runtime-telemetry[otlp]). |
+| `test-tracer-e2e` | Tracer E2E (requires lean-langchain-telemetry[otlp]). |
 | `demo-core` | Core demo (good patch, sorry, protected path); requires Gateway. See [demos/README.md](demos/README.md). |
 | `demo-full` | Full demo (6-step proof-preserving gate); requires Gateway and Postgres for steps 5–6. |
 

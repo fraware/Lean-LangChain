@@ -5,7 +5,7 @@ Ensures a single operation added to the catalog is reflected in MCP tools and SD
 
 from __future__ import annotations
 
-from obligation_runtime_schemas.operation_catalog import (
+from lean_langchain_schemas.operation_catalog import (
     OPERATIONS,
     build_mcp_tool_schemas,
     get_mcp_tool_name,
@@ -23,8 +23,8 @@ def test_operation_catalog_mcp_tool_schemas_parity() -> None:
 
 def test_mcp_tools_dict_matches_catalog() -> None:
     """build_mcp_tools returns exactly the tool names from the operation catalog."""
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
-    from obligation_runtime_orchestrator.mcp_server import build_mcp_tools
+    from lean_langchain_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.mcp_server import build_mcp_tools
 
     client = ObligationRuntimeClient(base_url="http://testserver")
     tools = build_mcp_tools(client)
@@ -38,7 +38,7 @@ _CATALOG_TO_PY_METHOD = {"check_interactive": "interactive_check"}
 
 def test_python_sdk_has_method_for_each_catalog_operation() -> None:
     """ObligationRuntimeClient has a callable method for every catalog operation."""
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     client = ObligationRuntimeClient(base_url="http://test")
     for op in OPERATIONS:
@@ -52,7 +52,7 @@ def test_python_sdk_has_method_for_each_catalog_operation() -> None:
 def test_gateway_error_envelope_has_code_and_message() -> None:
     """Gateway error responses use stable envelope with code and message (contract for clients)."""
     from fastapi.testclient import TestClient
-    from obligation_runtime_lean_gateway.api.app import create_app
+    from lean_langchain_gateway.api.app import create_app
 
     app = create_app()
     with TestClient(app) as tc:

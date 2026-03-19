@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from obligation_runtime_lean_gateway.api.review_store_postgres import PostgresReviewStore
+from lean_langchain_gateway.api.review_store_postgres import PostgresReviewStore
 
 
 def _get_postgres_uri() -> str | None:

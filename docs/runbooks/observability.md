@@ -1,6 +1,6 @@
 # Observability runbook
 
-Prometheus metrics, alert examples, and minimal dashboard guidance for the Lean Gateway. The Gateway exposes `GET /metrics` when `OBR_METRICS_ENABLED=1`; install the metrics extra (`pip install obligation-runtime-lean-gateway[metrics]`) and point Prometheus at the Gateway.
+Prometheus metrics, alert examples, and minimal dashboard guidance for the Lean Gateway. The Gateway exposes `GET /metrics` when `OBR_METRICS_ENABLED=1`; install the metrics extra (`pip install lean-langchain-gateway[metrics]`) and point Prometheus at the Gateway.
 
 ## Metrics
 

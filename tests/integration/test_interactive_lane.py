@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from obligation_runtime_lean_gateway.server.interactive_api import InteractiveAPI
-from obligation_runtime_lean_gateway.server.session_manager import SessionManager
-from obligation_runtime_lean_gateway.server.transport import TestDoubleTransport
-from obligation_runtime_lean_gateway.server.worker_pool import WorkerPool
+from lean_langchain_gateway.server.interactive_api import InteractiveAPI
+from lean_langchain_gateway.server.session_manager import SessionManager
+from lean_langchain_gateway.server.transport import TestDoubleTransport
+from lean_langchain_gateway.server.worker_pool import WorkerPool
 
 
 def test_open_session_and_check(tmp_path: Path) -> None:

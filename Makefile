@@ -19,9 +19,9 @@ typecheck:
 
 # Stricter gate (same `mypy` executable as typecheck; avoid `python -m mypy` if venv has no mypy).
 typecheck-strict-core:
-	mypy packages/schemas/obligation_runtime_schemas packages/policy/obligation_runtime_policy apps/lean-gateway/obligation_runtime_lean_gateway/batch --strict
-	mypy apps/orchestrator/obligation_runtime_orchestrator/runtime/state.py apps/orchestrator/obligation_runtime_orchestrator/runtime/initial_state.py apps/orchestrator/obligation_runtime_orchestrator/runtime/routes.py apps/orchestrator/obligation_runtime_orchestrator/runtime/graph.py apps/orchestrator/obligation_runtime_orchestrator/runtime/nodes/handlers.py apps/orchestrator/obligation_runtime_orchestrator/mcp_server.py apps/orchestrator/obligation_runtime_orchestrator/mcp_server_main.py --strict
-	mypy apps/lean-gateway/obligation_runtime_lean_gateway/server/session_manager.py apps/lean-gateway/obligation_runtime_lean_gateway/server/worker_pool.py apps/lean-gateway/obligation_runtime_lean_gateway/api/errors.py apps/lean-gateway/obligation_runtime_lean_gateway/api/fastapi_shim.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_environment.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_sessions.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_batch.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_reviews.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_health.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_metrics.py --strict
+	mypy packages/schemas/lean_langchain_schemas packages/policy/lean_langchain_policy apps/lean-gateway/lean_langchain_gateway/batch --strict
+	mypy apps/orchestrator/lean_langchain_orchestrator/runtime/state.py apps/orchestrator/lean_langchain_orchestrator/runtime/initial_state.py apps/orchestrator/lean_langchain_orchestrator/runtime/routes.py apps/orchestrator/lean_langchain_orchestrator/runtime/graph.py apps/orchestrator/lean_langchain_orchestrator/runtime/nodes/handlers.py apps/orchestrator/lean_langchain_orchestrator/mcp_server.py apps/orchestrator/lean_langchain_orchestrator/mcp_server_main.py --strict
+	mypy apps/lean-gateway/lean_langchain_gateway/server/session_manager.py apps/lean-gateway/lean_langchain_gateway/server/worker_pool.py apps/lean-gateway/lean_langchain_gateway/api/errors.py apps/lean-gateway/lean_langchain_gateway/api/fastapi_shim.py apps/lean-gateway/lean_langchain_gateway/api/routes_environment.py apps/lean-gateway/lean_langchain_gateway/api/routes_sessions.py apps/lean-gateway/lean_langchain_gateway/api/routes_batch.py apps/lean-gateway/lean_langchain_gateway/api/routes_reviews.py apps/lean-gateway/lean_langchain_gateway/api/routes_health.py apps/lean-gateway/lean_langchain_gateway/api/routes_metrics.py --strict
 
 test:
 	pytest tests/unit
@@ -86,7 +86,7 @@ test-fresh:
 test-axiom-producer:
 	pytest tests/unit/test_axiom_producer_lean.py -v
 
-# Tracer E2E: emit span and assert received by InMemorySpanExporter (requires obligation-runtime-telemetry[otlp])
+# Tracer E2E: emit span and assert received by InMemorySpanExporter (requires lean-langchain-telemetry[otlp])
 test-tracer-e2e:
 	pytest tests/integration/test_tracer_e2e_otlp.py -v
 

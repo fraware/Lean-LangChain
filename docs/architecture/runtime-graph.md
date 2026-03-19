@@ -2,7 +2,7 @@
 
 The LangGraph state machine for patch admissibility and multi-agent obligations. For the full workflow and use cases, see [workflow.md](../workflow.md).
 
-**Initial state:** Build via `make_initial_state()` from `obligation_runtime_orchestrator.runtime.initial_state`. The factory accepts `thread_id`, `obligation_id`, `obligation`, `target_files`, optional `target_declarations`, `current_patch`, `repo_path`, `session_id`, `policy_pack_name`, `protocol_events`, and `**overrides`.
+**Initial state:** Build via `make_initial_state()` from `lean_langchain_orchestrator.runtime.initial_state`. The factory accepts `thread_id`, `obligation_id`, `obligation`, `target_files`, optional `target_declarations`, `current_patch`, `repo_path`, `session_id`, `policy_pack_name`, `protocol_events`, and `**overrides`.
 
 **State fields (key)**
 
@@ -52,6 +52,6 @@ The graph sets `status` on state. Terminal or in-progress values include: `accep
 
 ## Handoff events and CLI
 
-- Events can be supplied at invocation time via state (e.g. `protocol_events` in the initial state) or via the CLI: `obr run-patch-obligation --protocol-events-file events.json` passes the JSON array of events into state; the graph’s evaluate_protocol node runs all pack-enabled protocol checks (handoff_legality, lock_ownership_invariant); first rejection/block wins. Use `--protected-paths` to set `obligation.policy.protected_paths` so that touching those paths triggers needs_review and the review payload includes patch_metadata. The CLI `obr run-protocol-obligation --events-file` remains the entry point for offline protocol evaluation. Reason codes and decisions are in `packages/policy/obligation_runtime_policy/constants.py`.
+- Events can be supplied at invocation time via state (e.g. `protocol_events` in the initial state) or via the CLI: `obr run-patch-obligation --protocol-events-file events.json` passes the JSON array of events into state; the graph’s evaluate_protocol node runs all pack-enabled protocol checks (handoff_legality, lock_ownership_invariant); first rejection/block wins. Use `--protected-paths` to set `obligation.policy.protected_paths` so that touching those paths triggers needs_review and the review payload includes patch_metadata. The CLI `obr run-protocol-obligation --events-file` remains the entry point for offline protocol evaluation. Reason codes and decisions are in `packages/policy/lean_langchain_policy/constants.py`.
 
 **See also:** [workflow.md](../workflow.md), [gateway-api.md](gateway-api.md), [policy-model.md](policy-model.md), [review-surface.md](review-surface.md).

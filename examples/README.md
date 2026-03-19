@@ -1,6 +1,6 @@
 # Examples: minimal SDK usage
 
-**Purpose:** A single minimal script showing how to call the Obligation Runtime Gateway from Python. The core runtime does not depend on this. **Audience:** integrators (Tier 2 reusers) who need a copy-paste starting point.
+**Purpose:** A single minimal script showing how to call the Lean-LangChain Gateway from Python. The core runtime does not depend on this. **Audience:** integrators (Tier 2 reusers) who need a copy-paste starting point.
 
 **Demos** (patch verification, review flow, evidence bundle) live in **scripts/demos/** and are documented in **[docs/demos/](../docs/demos/)**. Run `make demo-core` or `make demo-full` for the full flows.
 
@@ -10,7 +10,7 @@
 
 Opens an environment, creates a session, and runs batch-verify. No graph, no CLI; just the SDK and the Gateway API. The Python SDK returns **Pydantic models** (e.g. `open_resp.fingerprint_id`, `batch_data.trust_level`), not plain dicts.
 
-**Run:** Start the Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app`), then:
+**Run:** Start the Gateway (`uvicorn lean_langchain_gateway.api.app:app`), then:
 
 ```bash
 python examples/minimal_sdk_gateway.py

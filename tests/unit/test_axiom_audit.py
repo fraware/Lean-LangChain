@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-from obligation_runtime_lean_gateway.batch.axiom_audit import (
+from lean_langchain_gateway.batch.axiom_audit import (
     AxiomAuditor,
     AxiomAuditorReal,
     NON_REAL_AXIOM_AUDIT_REASON,
@@ -25,7 +25,7 @@ def test_axiom_auditor_test_double_returns_clean_with_non_real_reason() -> None:
 
 def test_axiom_auditor_real_returns_clean_when_command_succeeds() -> None:
     """AxiomAuditorReal returns ok=True when subprocess returns 0."""
-    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
+    with patch("lean_langchain_gateway.batch.axiom_audit.subprocess.run") as run:
         run.return_value = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
         auditor = AxiomAuditorReal(timeout_seconds=5.0)
         result = auditor.run(Path("/ws"), [])
@@ -36,7 +36,7 @@ def test_axiom_auditor_real_returns_clean_when_command_succeeds() -> None:
 
 def test_axiom_auditor_real_returns_blocked_when_command_fails() -> None:
     """AxiomAuditorReal returns ok=False and blocked when subprocess fails."""
-    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
+    with patch("lean_langchain_gateway.batch.axiom_audit.subprocess.run") as run:
         run.return_value = type(
             "R", (), {"returncode": 1, "stdout": "", "stderr": "axiom violation"}
         )()
@@ -54,7 +54,7 @@ def test_axiom_auditor_real_handles_timeout() -> None:
     """AxiomAuditorReal returns blocked on TimeoutExpired."""
     import subprocess
 
-    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
+    with patch("lean_langchain_gateway.batch.axiom_audit.subprocess.run") as run:
         run.side_effect = subprocess.TimeoutExpired(cmd=["lake", "build"], timeout=5)
         auditor = AxiomAuditorReal(timeout_seconds=5.0)
         result = auditor.run(Path("/ws"), [])

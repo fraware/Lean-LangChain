@@ -12,9 +12,9 @@ try:
 except ImportError:
     StateGraph = None
 
-from obligation_runtime_evals.golden import GoldenCase, load_golden_cases
-from obligation_runtime_evals.fixtures import PATCH_FAMILIES
-from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
+from lean_langchain_evals.golden import GoldenCase, load_golden_cases
+from lean_langchain_evals.fixtures import PATCH_FAMILIES
+from lean_langchain_orchestrator.runtime.initial_state import make_initial_state
 
 
 def _build_initial_state(case: GoldenCase, repo_path: str = "") -> dict[str, Any]:
@@ -40,8 +40,8 @@ def test_patch_admissibility_golden_good_patch(gateway_app) -> None:
     """Run good_patch golden case: full graph run, assert accepted and witness bundle."""
     from fastapi.testclient import TestClient
 
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     from tests.integration.conftest import make_testclient_request_adapter
 
@@ -100,8 +100,8 @@ def test_patch_admissibility_golden_protected_path_touched(gateway_app) -> None:
     import json
     from fastapi.testclient import TestClient
 
-    from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
-    from obligation_runtime_sdk.client import ObligationRuntimeClient
+    from lean_langchain_orchestrator.runtime.graph import build_patch_admissibility_graph
+    from lean_langchain_sdk.client import ObligationRuntimeClient
 
     from tests.integration.conftest import make_testclient_request_adapter
 

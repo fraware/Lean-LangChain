@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from obligation_runtime_sdk.client import ObligationRuntimeClient
+from lean_langchain_sdk.client import ObligationRuntimeClient
 
 
 def test_sdk_e2e_against_gateway(sdk_client: ObligationRuntimeClient) -> None:

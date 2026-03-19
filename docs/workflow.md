@@ -33,7 +33,7 @@ The runtime implements a **formal obligation pipeline**: open a Lean environment
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                         OBLIGATION RUNTIME WORKFLOW                             │
+│                           LEAN-LANGCHAIN WORKFLOW                               │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────────────────┐   │
@@ -109,15 +109,15 @@ flowchart LR
 
 | Layer            | Implementation |
 |------------------|----------------|
-| Gateway API      | `apps/lean-gateway`: routes for environments, sessions, apply-patch, interactive-check, batch-verify, reviews (payload, approve, reject, resume). Paths are defined in `obligation_runtime_schemas.api_paths` and used by both gateway and SDK. |
-| Graph            | `apps/orchestrator`: import `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state` from `obligation_runtime_orchestrator`. Implementation in `runtime/graph.py`; initial state via `runtime/initial_state.py`. |
-| CLI              | `apps/orchestrator/obligation_runtime_orchestrator/cli.py`: `open-environment`, `create-session`, `run-patch-obligation`, `resume`, etc. Uses `make_initial_state()` for run-patch-obligation. |
-| SDK              | `packages/sdk-py`: import `ObligationRuntimeClient`, `RequestAdapter` from `obligation_runtime_sdk`. Client uses path constants from `obligation_runtime_schemas.api_paths`. Responses are validated **Pydantic models** (OpenAPI-aligned); use attributes or `model_dump(mode="json")` for dicts. |
-| Tools            | `packages/tools/obligation_runtime_tools/toolset.py`: `build_toolset`; fixed tool order documented in docstring and in [integrate.md](integrate.md) (Public API). |
+| Gateway API      | `apps/lean-gateway`: routes for environments, sessions, apply-patch, interactive-check, batch-verify, reviews (payload, approve, reject, resume). Paths are defined in `lean_langchain_schemas.api_paths` and used by both gateway and SDK. |
+| Graph            | `apps/orchestrator`: import `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state` from `lean_langchain_orchestrator`. Implementation in `runtime/graph.py`; initial state via `runtime/initial_state.py`. |
+| CLI              | `apps/orchestrator/lean_langchain_orchestrator/cli.py`: `open-environment`, `create-session`, `run-patch-obligation`, `resume`, etc. Uses `make_initial_state()` for run-patch-obligation. |
+| SDK              | `packages/sdk-py`: import `ObligationRuntimeClient`, `RequestAdapter` from `lean_langchain_sdk`. Client uses path constants from `lean_langchain_schemas.api_paths`. Responses are validated **Pydantic models** (OpenAPI-aligned); use attributes or `model_dump(mode="json")` for dicts. |
+| Tools            | `packages/tools/lean_langchain_tools/toolset.py`: `build_toolset`; fixed tool order documented in docstring and in [integrate.md](integrate.md) (Public API). |
 
 ### Candidate producer (optional)
 
-The patch is always supplied by the caller (CLI, SDK, or script); the graph never generates Lean. For custom patch sources, an optional **candidate producer** can propose a patch before the run: implement the `CandidateProducer` protocol (`propose_patch(context) -> dict[str, str]`) and pass the result into state as `current_patch`, then invoke the same graph. The producer interface lives in `obligation_runtime_orchestrator.producer` (`ProducerContext`, `CandidateProducer`, `context_from_state`). Implement in adapters or a companion repo; the core verification path is unchanged.
+The patch is always supplied by the caller (CLI, SDK, or script); the graph never generates Lean. For custom patch sources, an optional **candidate producer** can propose a patch before the run: implement the `CandidateProducer` protocol (`propose_patch(context) -> dict[str, str]`) and pass the result into state as `current_patch`, then invoke the same graph. The producer interface lives in `lean_langchain_orchestrator.producer` (`ProducerContext`, `CandidateProducer`, `context_from_state`). Implement in adapters or a companion repo; the core verification path is unchanged.
 
 ---
 
@@ -182,7 +182,7 @@ The patch is always supplied by the caller (CLI, SDK, or script); the graph neve
 
 **Goal:** Run a fixed corpus of inputs and assert expected decisions/trust levels (patch and multi-agent families).
 
-**Flow:** `obr regressions` (or test suite) loads fixtures from `packages/evals/obligation_runtime_evals/fixtures.py` and `tests/regressions/fixtures/`, runs policy/protocol (and optionally full graph), and asserts against canonical reason codes and decisions.
+**Flow:** `obr regressions` (or test suite) loads fixtures from `packages/evals/lean_langchain_evals/fixtures.py` and `tests/regressions/fixtures/`, runs policy/protocol (and optionally full graph), and asserts against canonical reason codes and decisions.
 
 **Expected outcome:** All golden cases pass; decisions and reasons match fixture expectations.
 
@@ -199,7 +199,7 @@ LangChain **tools** are the **execution boundary** for agents: they expose the s
 
 ### Toolset
 
-Implemented in `packages/tools/obligation_runtime_tools/toolset.py`. `build_toolset(base_url, client)` returns a list of tools:
+Implemented in `packages/tools/lean_langchain_tools/toolset.py`. `build_toolset(base_url, client)` returns a list of tools:
 
 | Tool                     | Purpose |
 |--------------------------|--------|
@@ -250,10 +250,10 @@ LangSmith is the **trace and evaluation plane**: runs and spans are sent to Lang
 The graph (and runtime) accept an optional `tracer`. When provided, each node enter/exit (and error) is emitted as an event. The telemetry package supports:
 
 - **In-memory:** Default in tests; events stored in process.
-- **OTLP:** Set `OBR_OTLP_ENDPOINT` (or `OTEL_EXPORTER_OTLP_ENDPOINT`); install `obligation-runtime-telemetry[otlp]`. Spans are exported via OTLP (e.g. to Jaeger/Collector).
-- **LangSmith:** Set `LANGCHAIN_API_KEY` (or `LANGCHAIN_TRACING_V2`); install `obligation-runtime-telemetry[langsmith]`. `LangSmithTracer` sends run-like data to LangSmith.
+- **OTLP:** Set `OBR_OTLP_ENDPOINT` (or `OTEL_EXPORTER_OTLP_ENDPOINT`); install `lean-langchain-telemetry[otlp]`. Spans are exported via OTLP (e.g. to Jaeger/Collector).
+- **LangSmith:** Set `LANGCHAIN_API_KEY` (or `LANGCHAIN_TRACING_V2`); install `lean-langchain-telemetry[langsmith]`. `LangSmithTracer` sends run-like data to LangSmith.
 
-`get_production_tracer()` returns the configured tracer or `None`; the graph uses it for node-level spans. See `packages/telemetry/obligation_runtime_telemetry/README.md` and `docs/architecture/telemetry-and-evals.md`.
+`get_production_tracer()` returns the configured tracer or `None`; the graph uses it for node-level spans. See `packages/telemetry/lean_langchain_telemetry/README.md` and `docs/architecture/telemetry-and-evals.md`.
 
 ### Datasets and experiments
 
@@ -278,11 +278,11 @@ The graph (and runtime) accept an optional `tracer`. When provided, each node en
 
 ### Role
 
-LangGraph is the **obligation runtime**: it implements the patch-admissibility state machine that orchestrates init, interactive check, batch verify, audit, protocol evaluation, policy review, interrupt for approval, and finalize. The graph uses the SDK client to call the Gateway; it does not call Lean directly.
+LangGraph is the **Lean-LangChain runtime**: it implements the patch-admissibility state machine that orchestrates init, interactive check, batch verify, audit, protocol evaluation, policy review, interrupt for approval, and finalize. The graph uses the SDK client to call the Gateway; it does not call Lean directly.
 
 ### State
 
-State is `ObligationRuntimeState` (typed dict): `thread_id`, `obligation_id`, `obligation`, `session_id`, `environment_fingerprint`, `target_files`, `target_declarations`, `current_patch`, `patch_history`, `interactive_result`, `goal_snapshots`, `batch_result`, `policy_decision`, `trust_level`, `approval_required`, `approval_decision`, `status`, `attempt_count`, `max_attempts`, `artifacts`, `trace_events`, and internal `_repo_path`, `policy_pack_name`, `protocol_events`. See `apps/orchestrator/obligation_runtime_orchestrator/runtime/state.py` and `docs/architecture/runtime-graph.md`.
+State is `ObligationRuntimeState` (typed dict): `thread_id`, `obligation_id`, `obligation`, `session_id`, `environment_fingerprint`, `target_files`, `target_declarations`, `current_patch`, `patch_history`, `interactive_result`, `goal_snapshots`, `batch_result`, `policy_decision`, `trust_level`, `approval_required`, `approval_decision`, `status`, `attempt_count`, `max_attempts`, `artifacts`, `trace_events`, and internal `_repo_path`, `policy_pack_name`, `protocol_events`. See `apps/orchestrator/lean_langchain_orchestrator/runtime/state.py` and `docs/architecture/runtime-graph.md`.
 
 ### Nodes and edges
 

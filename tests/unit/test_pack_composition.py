@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from obligation_runtime_policy.engine import PolicyEngine
-from obligation_runtime_policy.pack_loader import clear_pack_resolution_cache, load_pack
-from obligation_runtime_policy.models import PathRule, PolicyPack
+from lean_langchain_policy.engine import PolicyEngine
+from lean_langchain_policy.pack_loader import clear_pack_resolution_cache, load_pack
+from lean_langchain_policy.models import PathRule, PolicyPack
 
 
 @pytest.fixture(autouse=True)

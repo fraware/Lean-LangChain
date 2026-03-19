@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from obligation_runtime_policy.pack_loader import load_pack
-from obligation_runtime_policy.protocol_evaluator import evaluate_protocol_obligation
+from lean_langchain_policy.pack_loader import load_pack
+from lean_langchain_policy.protocol_evaluator import evaluate_protocol_obligation
 
 HANDOFF_GOOD_EVENTS = [
     {
@@ -66,7 +66,7 @@ def test_run_protocol_obligation_cli_events_file() -> None:
     import sys
 
     repo_root = Path(__file__).resolve().parent.parent.parent
-    cli = [sys.executable, "-m", "obligation_runtime_orchestrator.cli"]
+    cli = [sys.executable, "-m", "lean_langchain_orchestrator.cli"]
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(HANDOFF_GOOD_EVENTS, f)
         events_file = f.name

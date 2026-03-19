@@ -11,19 +11,19 @@ from unittest.mock import patch
 
 import pytest
 
-from obligation_runtime_lean_gateway.server.leak_check import list_obr_containers
-from obligation_runtime_lean_gateway.server.runner import (
+from lean_langchain_gateway.server.leak_check import list_obr_containers
+from lean_langchain_gateway.server.runner import (
     _container_run_args,
     ContainerRunner,
     FirecrackerRunner,
     MicroVMRunner,
     get_runner,
 )
-from obligation_runtime_lean_gateway.server.session_manager import (
+from lean_langchain_gateway.server.session_manager import (
     SessionLease,
     SessionManager,
 )
-from obligation_runtime_lean_gateway.server.worker_runner import run_with_timeout
+from lean_langchain_gateway.server.worker_runner import run_with_timeout
 
 
 def test_run_with_timeout_aborts_on_expiry() -> None:

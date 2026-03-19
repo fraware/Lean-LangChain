@@ -1,6 +1,6 @@
 # Glossary
 
-Key terms used in the Obligation Runtime docs. For full definitions and data shapes, see the [architecture](architecture/) docs and [workflow.md](workflow.md).
+Key terms used in the Lean-LangChain docs. For full definitions and data shapes, see the [architecture](architecture/) docs and [workflow.md](workflow.md).
 
 | Term | Definition | See |
 |------|------------|---------------|

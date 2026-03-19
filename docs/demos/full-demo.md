@@ -54,7 +54,7 @@ Step 6               → obr artifacts → full_demo_witness.json
 
 - **Gateway** running. From the repo root:
   ```bash
-  uvicorn obligation_runtime_lean_gateway.api.app:app --reload
+  uvicorn lean_langchain_gateway.api.app:app --reload
   ```
   If the Gateway is not on `http://localhost:8000`, set `OBR_GATEWAY_URL`.
 

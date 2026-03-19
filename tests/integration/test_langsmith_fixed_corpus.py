@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from obligation_runtime_telemetry.langsmith import (
+from lean_langchain_telemetry.langsmith import (
     create_dataset,
     patch_admissibility_runnable_factory,
     run_experiment,

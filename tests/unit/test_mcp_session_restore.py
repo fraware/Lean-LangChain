@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from obligation_runtime_orchestrator.mcp_server import (
+from lean_langchain_orchestrator.mcp_server import (
     MCPSessionContext,
     build_mcp_tools,
 )
-from obligation_runtime_orchestrator.mcp_session_store import InMemoryMCPSessionStore
+from lean_langchain_orchestrator.mcp_session_store import InMemoryMCPSessionStore
 
 
 class _MockClient:

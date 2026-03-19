@@ -1,6 +1,6 @@
 # Main demo: verification and human review
 
-This demo walks through the most important path in the Obligation Runtime: verifying a Lean patch, seeing a bad patch rejected, and then going through human approval when the change touches protected code.
+This demo walks through the most important path in Lean-LangChain: verifying a Lean patch, seeing a bad patch rejected, and then going through human approval when the change touches protected code.
 
 **What you’ll see**
 
@@ -58,7 +58,7 @@ Protected   →  paused for review  →  Approve in UI  →  Resume  →  accept
 
 - **Gateway** running. From the repo root:
   ```bash
-  uvicorn obligation_runtime_lean_gateway.api.app:app --reload
+  uvicorn lean_langchain_gateway.api.app:app --reload
   ```
   If the Gateway is not on `http://localhost:8000`, set `OBR_GATEWAY_URL`.
 
@@ -131,10 +131,10 @@ From the CLI instead: `obr resume core-demo-3 --decision approved` (same Postgre
 
 | Topic | Where | Notes |
 |-------|--------|------|
-| **Strict verification** | [apps/lean-gateway/.../batch/combine.py](../../apps/lean-gateway/obligation_runtime_lean_gateway/batch/combine.py), [acceptance-lane.md](../architecture/acceptance-lane.md) | With strict mode, acceptance requires real axiom audit and fresh checker. |
-| **Review UI and resume** | [routes_reviews.py](../../apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_reviews.py), [apps/review-ui](../../apps/review-ui) | Policy says “needs review” → run pauses → approve/reject in UI → resume. |
+| **Strict verification** | [apps/lean-gateway/.../batch/combine.py](../../apps/lean-gateway/lean_langchain_gateway/batch/combine.py), [acceptance-lane.md](../architecture/acceptance-lane.md) | With strict mode, acceptance requires real axiom audit and fresh checker. |
+| **Review UI and resume** | [routes_reviews.py](../../apps/lean-gateway/lean_langchain_gateway/api/routes_reviews.py), [apps/review-ui](../../apps/review-ui) | Policy says “needs review” → run pauses → approve/reject in UI → resume. |
 | **Evidence bundle** | [core-primitives.md](../architecture/core-primitives.md), [glossary.md](../glossary.md), `obr artifacts` | Accepted runs can produce a full evidence bundle for audit. |
-| **Verification graph** | [runtime/graph.py](../../apps/orchestrator/obligation_runtime_orchestrator/runtime/graph.py) | Flow: init → interactive check → batch verify → policy → pause for review or finalize. |
+| **Verification graph** | [runtime/graph.py](../../apps/orchestrator/lean_langchain_orchestrator/runtime/graph.py) | Flow: init → interactive check → batch verify → policy → pause for review or finalize. |
 | **Protocol packs** | [demos/README.md](README.md) | Packs for reviewer-gated runs, handoff, and lock ownership. |
 
 ---
