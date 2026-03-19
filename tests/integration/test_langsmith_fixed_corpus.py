@@ -26,9 +26,7 @@ def test_run_experiment_on_regression_corpus_no_exception() -> None:
     """Load regression corpus, create dataset, run_experiment with patch-admissibility runnable.
     Asserts no unhandled exception; skip when fixtures missing; status is run or error when SDK/env missing.
     """
-    fixtures_dir = (
-        Path(__file__).resolve().parent.parent / "regressions" / "fixtures"
-    )
+    fixtures_dir = Path(__file__).resolve().parent.parent / "regressions" / "fixtures"
     if not fixtures_dir.is_dir():
         pytest.skip("regressions/fixtures not found")
     multi_files = list(fixtures_dir.glob("multi_agent_*.json"))
@@ -39,13 +37,15 @@ def test_run_experiment_on_regression_corpus_no_exception() -> None:
         raw = json.loads(path.read_text(encoding="utf-8"))
         inp = raw.get("obligation_input") or {}
         if "obligation_class" in inp and "events" in inp:
-            examples.append({
-                "inputs": {"obligation_input": inp},
-                "outputs": {
-                    "expected_decision": raw.get("expected_decision"),
-                    "expected_trust_level": raw.get("expected_trust_level"),
-                },
-            })
+            examples.append(
+                {
+                    "inputs": {"obligation_input": inp},
+                    "outputs": {
+                        "expected_decision": raw.get("expected_decision"),
+                        "expected_trust_level": raw.get("expected_trust_level"),
+                    },
+                }
+            )
     if not examples:
         pytest.skip("no obligation_class+events fixtures in regressions/fixtures")
     ds_result = create_dataset(

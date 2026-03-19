@@ -7,7 +7,11 @@ from __future__ import annotations
 FAMILY_good_patch = [
     {
         "case_id": "good_patch_1",
-        "obligation_input": {"target_files": ["Main.lean"], "current_patch": {}, "session_id": None},
+        "obligation_input": {
+            "target_files": ["Main.lean"],
+            "current_patch": {},
+            "session_id": None,
+        },
         "expected_decision": "accepted",
         "expected_trust_level": "clean",
         "expected_terminal_status": "accepted",

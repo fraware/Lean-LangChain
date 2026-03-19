@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from obligation_runtime_policy.engine import PolicyEngine
-from obligation_runtime_policy.models import PolicyPack
+from obligation_runtime_policy.models import PolicyPack, TrustGateRule
 from obligation_runtime_policy.patch_metadata import summarize_patch
 
 
@@ -24,7 +24,13 @@ def test_policy_accepted_when_batch_ok_no_triggers() -> None:
     result = engine.evaluate(
         obligation={},
         interactive_result={"diagnostics": [], "ok": True},
-        batch_result={"ok": True, "trust_level": "clean", "build": {"ok": True}, "axiom_audit": {"blocked_reasons": []}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": True,
+            "trust_level": "clean",
+            "build": {"ok": True},
+            "axiom_audit": {"blocked_reasons": []},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata={"protected_paths_touched": False, "imports_changed": False},
         policy_pack=pack,
     )
@@ -37,7 +43,10 @@ def test_policy_rejected_when_interactive_has_errors() -> None:
     pack = _strict_pack()
     result = engine.evaluate(
         obligation={},
-        interactive_result={"diagnostics": [{"severity": "error", "message": "type mismatch"}], "ok": False},
+        interactive_result={
+            "diagnostics": [{"severity": "error", "message": "type mismatch"}],
+            "ok": False,
+        },
         batch_result=None,
         patch_metadata={},
         policy_pack=pack,
@@ -53,7 +62,12 @@ def test_policy_rejected_when_batch_fails() -> None:
     result = engine.evaluate(
         obligation={},
         interactive_result={"diagnostics": [], "ok": True},
-        batch_result={"ok": False, "trust_level": "blocked", "build": {"ok": False}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": False,
+            "trust_level": "blocked",
+            "build": {"ok": False},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata={},
         policy_pack=pack,
     )
@@ -69,7 +83,13 @@ def test_policy_needs_review_when_protected_paths_touched() -> None:
     result = engine.evaluate(
         obligation={},
         interactive_result={"diagnostics": [], "ok": True},
-        batch_result={"ok": True, "trust_level": "clean", "build": {"ok": True}, "axiom_audit": {"blocked_reasons": []}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": True,
+            "trust_level": "clean",
+            "build": {"ok": True},
+            "axiom_audit": {"blocked_reasons": []},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata={"protected_paths_touched": True, "imports_changed": False},
         policy_pack=pack,
     )
@@ -83,12 +103,56 @@ def test_policy_needs_review_when_imports_changed() -> None:
     result = engine.evaluate(
         obligation={},
         interactive_result={"diagnostics": [], "ok": True},
-        batch_result={"ok": True, "trust_level": "clean", "build": {"ok": True}, "axiom_audit": {"blocked_reasons": []}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": True,
+            "trust_level": "clean",
+            "build": {"ok": True},
+            "axiom_audit": {"blocked_reasons": []},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata={"protected_paths_touched": False, "imports_changed": True},
         policy_pack=pack,
     )
     assert result.decision == "needs_review"
     assert "imports_changed_requires_review" in result.reasons
+
+
+def test_trust_gate_needs_review_when_trust_and_path_match() -> None:
+    engine = PolicyEngine()
+    pack = PolicyPack(
+        version="1",
+        name="tg",
+        description="d",
+        trust_gates=[
+            TrustGateRule(
+                rule_id="tg1",
+                when_trust_level=["clean"],
+                path_globs=["*.lean"],
+                require_human=True,
+                reason_code="clean_lean_touch",
+            )
+        ],
+    )
+    result = engine.evaluate(
+        obligation={},
+        interactive_result={"diagnostics": [], "ok": True},
+        batch_result={
+            "ok": True,
+            "trust_level": "clean",
+            "build": {"ok": True},
+            "axiom_audit": {"blocked_reasons": []},
+            "fresh_checker": {"ok": True},
+        },
+        patch_metadata={
+            "changed_files": ["Foo.lean"],
+            "protected_paths_touched": False,
+            "imports_changed": False,
+        },
+        policy_pack=pack,
+    )
+    assert result.decision == "needs_review"
+    assert "clean_lean_touch" in result.reasons
+    assert any(r.rule_id == "tg1" and r.matched for r in result.resolved_rules)
 
 
 def test_policy_needs_review_when_summarize_patch_reports_protected_path_touched() -> None:
@@ -107,7 +171,13 @@ def test_policy_needs_review_when_summarize_patch_reports_protected_path_touched
     result = engine.evaluate(
         obligation={},
         interactive_result={"diagnostics": [], "ok": True},
-        batch_result={"ok": True, "trust_level": "clean", "build": {"ok": True}, "axiom_audit": {"blocked_reasons": []}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": True,
+            "trust_level": "clean",
+            "build": {"ok": True},
+            "axiom_audit": {"blocked_reasons": []},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata=patch_meta,
         policy_pack=pack,
     )

@@ -18,7 +18,9 @@ from obligation_runtime_schemas.batch import (
 def test_apply_acceptance_strict_blocks_when_evidence_not_real() -> None:
     """apply_acceptance_strict forces ok=False and trust_level=blocked when axiom or fresh not real."""
     combined = combine_batch_results(
-        _build(True), _audit(True, "clean"), _fresh(True),
+        _build(True),
+        _audit(True, "clean"),
+        _fresh(True),
         axiom_evidence_real=False,
         fresh_evidence_real=False,
     )
@@ -32,7 +34,9 @@ def test_apply_acceptance_strict_blocks_when_evidence_not_real() -> None:
 def test_apply_acceptance_strict_no_change_when_both_real() -> None:
     """apply_acceptance_strict returns unchanged result when both evidences are real."""
     combined = combine_batch_results(
-        _build(True), _audit(True, "clean"), _fresh(True),
+        _build(True),
+        _audit(True, "clean"),
+        _fresh(True),
         axiom_evidence_real=True,
         fresh_evidence_real=True,
     )
@@ -46,12 +50,18 @@ def _build(ok: bool) -> BatchBuildResult:
     return BatchBuildResult(ok=ok, command=["lake", "build"], stdout="", stderr="", timing_ms=0)
 
 
-def _audit(ok: bool, trust_level: str, blocked_reasons: list[str] | None = None) -> AxiomAuditResult:
-    return AxiomAuditResult(ok=ok, trust_level=trust_level, blocked_reasons=blocked_reasons or [], dependencies=[])
+def _audit(
+    ok: bool, trust_level: str, blocked_reasons: list[str] | None = None
+) -> AxiomAuditResult:
+    return AxiomAuditResult(
+        ok=ok, trust_level=trust_level, blocked_reasons=blocked_reasons or [], dependencies=[]
+    )
 
 
 def _fresh(ok: bool) -> FreshCheckerResult:
-    return FreshCheckerResult(ok=ok, command=["lean4checker", "--fresh"], stdout="", stderr="", timing_ms=0)
+    return FreshCheckerResult(
+        ok=ok, command=["lean4checker", "--fresh"], stdout="", stderr="", timing_ms=0
+    )
 
 
 def test_combine_all_ok_trust_clean() -> None:

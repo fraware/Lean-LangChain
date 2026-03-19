@@ -1,9 +1,40 @@
 /**
- * Gateway API request/response types and normalized error envelope.
- * Aligned with Lean Gateway routes and obligation_runtime_schemas.
+ * Gateway API types derived from OpenAPI (`src/generated/gateway-openapi.ts`).
+ * Regenerate with: npm run generate:types
  */
 
-export type TrustLevel = "clean" | "warning" | "blocked";
+import type { components } from "./generated/gateway-openapi";
+
+type Schemas = components["schemas"];
+
+export type TrustLevel = Schemas["BatchVerifyResult"]["trust_level"];
+
+export type OpenEnvironmentPayload = Schemas["OpenEnvironmentRequest"];
+export type OpenEnvironmentResponse = Schemas["OpenEnvironmentResponse"];
+export type CreateSessionPayload = Schemas["CreateSessionRequest"];
+export type CreateSessionResponse = Schemas["CreateSessionResponse"];
+export type ApplyPatchPayload = Schemas["ApplyPatchRequest"];
+export type ApplyPatchResponse = Schemas["ApplyPatchResponse"];
+export type InteractiveCheckPayload = Schemas["InteractiveCheckRequest"];
+export type InteractiveCheckResponse = Schemas["InteractiveCheckApiResponse"];
+export type GetGoalPayload = Schemas["SessionGoalRequest"];
+export type GetGoalResponse = Schemas["SessionGoalResponse"];
+export type HoverPayload = Schemas["SessionHoverRequest"];
+export type HoverResponse = Schemas["SessionHoverResponse"];
+export type DefinitionPayload = Schemas["SessionDefinitionRequest"];
+export type DefinitionResponse = Schemas["SessionDefinitionResponse"];
+export type BatchVerifyPayload = Schemas["BatchVerifyRequest"];
+export type BatchVerifyResponse = Schemas["BatchVerifyResult"];
+export type BatchBuildResult = Schemas["BatchBuildResult"];
+export type AxiomDependency = Schemas["AxiomDependency"];
+export type AxiomAuditResult = Schemas["AxiomAuditResult"];
+export type FreshCheckerResult = Schemas["FreshCheckerResult"];
+export type ReviewPayload = Schemas["ReviewPayload"];
+export type CreatePendingReviewPayload = Schemas["CreatePendingReviewRequest"];
+export type CreatePendingReviewResponse = Schemas["CreatePendingReviewResponse"];
+export type SubmitReviewResponse = Schemas["ReviewDecisionResponse"];
+export type ResumeResponse = Schemas["ReviewResumeProxyResponse"];
+export type GatewayHealthResponse = Schemas["GatewayHealthResponse"];
 
 /** Normalized error envelope returned by Gateway on 4xx/5xx. */
 export interface ApiErrorBody {
@@ -25,7 +56,6 @@ export function isApiError(obj: unknown): obj is { error: ApiErrorBody } {
   );
 }
 
-/** Thrown on failed HTTP responses; carries Gateway error envelope. */
 export class ObligationRuntimeError extends Error {
   constructor(
     public readonly code: string,
@@ -40,167 +70,4 @@ export class ObligationRuntimeError extends Error {
   }
 }
 
-// --- Environment ---
-export interface OpenEnvironmentPayload {
-  repo_id: string;
-  repo_path?: string;
-  repo_url?: string;
-  commit_sha?: string;
-}
-
-export interface OpenEnvironmentResponse {
-  fingerprint: Record<string, unknown>;
-  fingerprint_id: string;
-  snapshot_path: string;
-}
-
-// --- Sessions ---
-export interface CreateSessionPayload {
-  fingerprint_id: string;
-}
-
-export interface CreateSessionResponse {
-  session_id: string;
-  fingerprint_id: string;
-  workspace_path: string;
-}
-
-export interface ApplyPatchPayload {
-  files: Record<string, string>;
-}
-
-export interface ApplyPatchResponse {
-  ok: boolean;
-  session_id: string;
-  changed_files: string[];
-}
-
-export interface InteractiveCheckPayload {
-  file_path: string;
-}
-
-export interface InteractiveCheckResponse {
-  ok: boolean;
-  diagnostics?: unknown[];
-  goals?: unknown[];
-  /** True when LSP is not configured (full diagnostics/goals require OBR_USE_LEAN_LSP). */
-  lsp_required?: boolean;
-}
-
-export interface GetGoalPayload {
-  file_path: string;
-  line: number;
-  column: number;
-  goal_kind?: string;
-}
-
-export interface GetGoalResponse {
-  ok: boolean;
-  goal_kind: string;
-  goals: unknown;
-  line: number;
-  column: number;
-  /** True when LSP is not configured (goal/hover/definition require OBR_USE_LEAN_LSP). */
-  lsp_required?: boolean;
-}
-
-export interface HoverPayload {
-  file_path: string;
-  line: number;
-  column: number;
-}
-
-export interface HoverResponse {
-  ok: boolean;
-  contents: unknown;
-  file_path: string;
-  line: number;
-  column: number;
-  lsp_required?: boolean;
-}
-
-export interface DefinitionPayload {
-  file_path: string;
-  line: number;
-  column: number;
-}
-
-export interface DefinitionResponse {
-  ok: boolean;
-  locations: unknown;
-  file_path: string;
-  line: number;
-  column: number;
-  lsp_required?: boolean;
-}
-
-// --- Batch verify (acceptance lane) ---
-export interface BatchBuildResult {
-  ok: boolean;
-  command: string[];
-  stdout?: string;
-  stderr?: string;
-  timing_ms?: number;
-}
-
-export interface AxiomDependency {
-  declaration: string;
-  axioms: string[];
-}
-
-export interface AxiomAuditResult {
-  ok: boolean;
-  trust_level: TrustLevel;
-  blocked_reasons?: string[];
-  dependencies?: AxiomDependency[];
-}
-
-export interface FreshCheckerResult {
-  ok: boolean;
-  command?: string[];
-  stdout?: string;
-  stderr?: string;
-  timing_ms?: number;
-}
-
-export interface BatchVerifyPayload {
-  target_files?: string[];
-  target_declarations?: string[];
-}
-
-export interface BatchVerifyResponse {
-  ok: boolean;
-  build: BatchBuildResult;
-  axiom_audit: AxiomAuditResult;
-  fresh_checker: FreshCheckerResult;
-  trust_level: TrustLevel;
-  reasons: string[];
-  axiom_evidence_real?: boolean;
-  fresh_evidence_real?: boolean;
-}
-
-// --- Review ---
-export type ReviewPayload = Record<string, unknown>;
-
-export interface CreatePendingReviewPayload {
-  thread_id: string;
-  [key: string]: unknown;
-}
-
-export interface CreatePendingReviewResponse {
-  ok: boolean;
-  thread_id: string;
-}
-
-export interface SubmitReviewResponse {
-  ok: boolean;
-  thread_id: string;
-  decision: "approved" | "rejected";
-}
-
-export interface ResumeResponse {
-  ok: boolean;
-  thread_id: string;
-  status?: string;
-  artifacts_count?: number;
-}
+export type { components as GatewayOpenAPIComponents } from "./generated/gateway-openapi";

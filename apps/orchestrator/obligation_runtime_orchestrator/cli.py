@@ -17,6 +17,7 @@ def _gateway_url() -> str:
 
 def _client():
     from obligation_runtime_sdk.client import ObligationRuntimeClient
+
     return ObligationRuntimeClient(base_url=_gateway_url())
 
 
@@ -46,6 +47,7 @@ def _get_checkpointer():
         if uri:
             try:
                 from langgraph.checkpoint.postgres import PostgresSaver
+
                 saver = PostgresSaver.from_conn_string(uri)
                 saver.setup()
                 return saver
@@ -53,6 +55,7 @@ def _get_checkpointer():
                 pass
     try:
         from langgraph.checkpoint.memory import MemorySaver
+
         return MemorySaver()
     except ImportError:
         return None
@@ -91,26 +94,38 @@ def cmd_run_patch_obligation(args: argparse.Namespace) -> int:
         try:
             with open(args.patch_file, encoding="utf-8") as f:
                 content = f.read()
-            key = getattr(args, "patch_apply_path", None) or PathLib(args.patch_file).name or "Main.lean"
+            key = (
+                getattr(args, "patch_apply_path", None)
+                or PathLib(args.patch_file).name
+                or "Main.lean"
+            )
             initial["current_patch"] = {key: content}
         except Exception as e:
             print(json.dumps({"error": str(e), "status": "failed"}, indent=2))
             return 1
     config = {"configurable": {"thread_id": initial["thread_id"]}} if checkpointer else None
     result = graph.invoke(initial, config=config) if config else graph.invoke(initial)
-    print(json.dumps({"status": result.get("status"), "artifacts_count": len(result.get("artifacts") or [])}, indent=2))
+    print(
+        json.dumps(
+            {"status": result.get("status"), "artifacts_count": len(result.get("artifacts") or [])},
+            indent=2,
+        )
+    )
     return 0
 
 
 def cmd_run_protocol_obligation(args: argparse.Namespace) -> int:
     from obligation_runtime_policy.pack_loader import load_pack
     from obligation_runtime_policy.protocol_evaluator import evaluate_protocol_obligation
+
     events = []
     if getattr(args, "events_file", None):
         with open(args.events_file, encoding="utf-8") as f:
             events = json.load(f)
     pack = load_pack(args.pack or "single_owner_handoff_v1")
-    decision = evaluate_protocol_obligation(args.obligation_class or "handoff_legality", events, pack)
+    decision = evaluate_protocol_obligation(
+        args.obligation_class or "handoff_legality", events, pack
+    )
     print(json.dumps(decision.model_dump(mode="json"), indent=2))
     return 0
 
@@ -120,6 +135,7 @@ def cmd_review(args: argparse.Namespace) -> int:
         url = f"{_gateway_url().rstrip('/')}/docs"
         try:
             import webbrowser
+
             webbrowser.open(url)
         except Exception:
             pass
@@ -159,7 +175,12 @@ def cmd_resume(args: argparse.Namespace) -> int:
     resume_state = make_resume_state(thread_id=thread_id, decision=decision)
     config = {"configurable": {"thread_id": thread_id}}
     result = graph.invoke(resume_state, config=config)
-    print(json.dumps({"status": result.get("status"), "artifacts_count": len(result.get("artifacts") or [])}, indent=2))
+    print(
+        json.dumps(
+            {"status": result.get("status"), "artifacts_count": len(result.get("artifacts") or [])},
+            indent=2,
+        )
+    )
     return 0
 
 
@@ -172,9 +193,12 @@ def cmd_artifacts(args: argparse.Namespace) -> int:
     checkpointer = _get_checkpointer()
     if checkpointer is None:
         print(
-            json.dumps({
-                "error": "Artifacts require a checkpointer (set CHECKPOINTER=postgres and DATABASE_URL, or use MemorySaver)",
-            }, indent=2)
+            json.dumps(
+                {
+                    "error": "Artifacts require a checkpointer (set CHECKPOINTER=postgres and DATABASE_URL, or use MemorySaver)",
+                },
+                indent=2,
+            )
         )
         return 1
     try:
@@ -196,13 +220,26 @@ def cmd_artifacts(args: argparse.Namespace) -> int:
     raw_artifacts = values.get("artifacts")
     artifacts: list[Any] = raw_artifacts if isinstance(raw_artifacts, list) else []
     if not values:
-        print(json.dumps({"message": "No checkpoint state for thread", "thread_id": thread_id}, indent=2))
+        print(
+            json.dumps(
+                {"message": "No checkpoint state for thread", "thread_id": thread_id}, indent=2
+            )
+        )
         return 0
     out = json.dumps(artifacts, indent=2)
     output_path = getattr(args, "output", None)
     if output_path:
         PathLib(output_path).write_text(out, encoding="utf-8")
-        print(json.dumps({"thread_id": thread_id, "artifacts_count": len(artifacts), "written_to": output_path}, indent=2))
+        print(
+            json.dumps(
+                {
+                    "thread_id": thread_id,
+                    "artifacts_count": len(artifacts),
+                    "written_to": output_path,
+                },
+                indent=2,
+            )
+        )
     else:
         print(out)
     return 0
@@ -210,9 +247,12 @@ def cmd_artifacts(args: argparse.Namespace) -> int:
 
 def cmd_regressions(args: argparse.Namespace) -> int:
     from pathlib import Path
+
     repo_root = Path(__file__).resolve().parent.parent.parent.parent
     tests_dir = str(repo_root / "tests" / "regressions")
-    code = subprocess.run([sys.executable, "-m", "pytest", tests_dir, "-v", "--tb=short"], cwd=repo_root).returncode
+    code = subprocess.run(
+        [sys.executable, "-m", "pytest", tests_dir, "-v", "--tb=short"], cwd=repo_root
+    ).returncode
     return code
 
 
@@ -239,10 +279,22 @@ def main() -> int:
     p_patch.add_argument("--target-files", nargs="*")
     p_patch.add_argument("--target-declarations", nargs="*", default=[])
     p_patch.add_argument("--patch-file")
-    p_patch.add_argument("--patch-apply-path", help="Workspace path to apply patch (default: basename of --patch-file)")
-    p_patch.add_argument("--policy-pack", help="Policy pack name (e.g. reviewer_gated_execution_v1)")
-    p_patch.add_argument("--protected-paths", nargs="*", default=None, help="Paths that require review when touched (e.g. Mini/Basic.lean)")
-    p_patch.add_argument("--protocol-events-file", help="JSON file of protocol events (runtime-produced or offline)")
+    p_patch.add_argument(
+        "--patch-apply-path",
+        help="Workspace path to apply patch (default: basename of --patch-file)",
+    )
+    p_patch.add_argument(
+        "--policy-pack", help="Policy pack name (e.g. reviewer_gated_execution_v1)"
+    )
+    p_patch.add_argument(
+        "--protected-paths",
+        nargs="*",
+        default=None,
+        help="Paths that require review when touched (e.g. Mini/Basic.lean)",
+    )
+    p_patch.add_argument(
+        "--protocol-events-file", help="JSON file of protocol events (runtime-produced or offline)"
+    )
     p_patch.set_defaults(func=cmd_run_patch_obligation)
 
     p_protocol = sub.add_parser("run-protocol-obligation")

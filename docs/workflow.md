@@ -112,7 +112,7 @@ flowchart LR
 | Gateway API      | `apps/lean-gateway`: routes for environments, sessions, apply-patch, interactive-check, batch-verify, reviews (payload, approve, reject, resume). Paths are defined in `obligation_runtime_schemas.api_paths` and used by both gateway and SDK. |
 | Graph            | `apps/orchestrator`: import `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state` from `obligation_runtime_orchestrator`. Implementation in `runtime/graph.py`; initial state via `runtime/initial_state.py`. |
 | CLI              | `apps/orchestrator/obligation_runtime_orchestrator/cli.py`: `open-environment`, `create-session`, `run-patch-obligation`, `resume`, etc. Uses `make_initial_state()` for run-patch-obligation. |
-| SDK              | `packages/sdk-py`: import `ObligationRuntimeClient`, `RequestAdapter` from `obligation_runtime_sdk`. Client uses path constants from `obligation_runtime_schemas.api_paths`. |
+| SDK              | `packages/sdk-py`: import `ObligationRuntimeClient`, `RequestAdapter` from `obligation_runtime_sdk`. Client uses path constants from `obligation_runtime_schemas.api_paths`. Responses are validated **Pydantic models** (OpenAPI-aligned); use attributes or `model_dump(mode="json")` for dicts. |
 | Tools            | `packages/tools/obligation_runtime_tools/toolset.py`: `build_toolset`; fixed tool order documented in docstring and in [integrate.md](integrate.md) (Public API). |
 
 ### Candidate producer (optional)

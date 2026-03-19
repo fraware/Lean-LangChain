@@ -1,4 +1,4 @@
-# Contributing to Obligation Runtime
+# Contributing to Lean-LangChain (Obligation Runtime)
 
 Thank you for your interest in contributing. This document covers setup, the full check, and how to submit changes.
 
@@ -9,6 +9,8 @@ Thank you for your interest in contributing. This document covers setup, the ful
    ```bash
    make install-dev-full
    ```
+
+   This runs `python -m pip install -e ".[dev]"` first (root metapackage with **mypy**, **ruff**, **black**), then editable-installs all workspace packages (`schemas` through `orchestrator`). `make check-full` expects those dev tools on `PATH` from the same environment. If you installed packages manually and skipped the root step, run `python -m pip install -e ".[dev]"` once.
 
    See [README.md](README.md) Quick start and [docs/running.md](docs/running.md) for details.
 
@@ -24,7 +26,7 @@ Run the full check from the repo root with the same Python you used for install:
 make check-full
 ```
 
-This runs lint (Ruff), typecheck (Mypy), schema tests, unit tests, integration tests, regression tests, and schema export. Optionally run `make typecheck` separately. See [docs/tests-and-ci.md](docs/tests-and-ci.md) for CI configuration (branch, Postgres service, optional jobs).
+This runs lint (Ruff), Mypy (`typecheck` and `typecheck-strict-core`), schema tests, unit/integration/regression tests, JSON schema and OpenAPI export, and **OpenAPI/TypeScript SDK contract verification** (`make verify-openapi-sdk-contract`; needs Node.js for `packages/sdk-ts`). CI also runs additional contract and Postgres tests. See [docs/tests-and-ci.md](docs/tests-and-ci.md).
 
 ## Branch and pull requests
 
@@ -34,12 +36,13 @@ This runs lint (Ruff), typecheck (Mypy), schema tests, unit tests, integration t
 
 ## Code style
 
-- **Python:** Ruff and Black (see root [pyproject.toml](pyproject.toml): line-length 100, target Python 3.12). Mypy is run in the full check; strictness and overrides are in the root `pyproject.toml`.
+- **Python:** Ruff and Black (see root [pyproject.toml](pyproject.toml): line-length 100, target Python 3.12). `make format` runs Black and `ruff check --fix`. `make typecheck` runs Mypy on schemas, gateway, and orchestrator. `make typecheck-strict-core` runs **strict** Mypy on `obligation_runtime_schemas`, `obligation_runtime_policy`, gateway `batch`, gateway API route modules (`routes_*.py`, `fastapi_shim.py`), session/worker/errors, orchestrator graph/handlers/MCP, and orchestrator `runtime.state` / `initial_state` / `routes`; new code in those areas should pass the strict gate.
 - **Public API:** Prefer the stable imports listed in [docs/integrate.md](docs/integrate.md) (Public API table) so reusers and type-checkers see a consistent surface.
 
 ## Plugins and extensions
 
-- **Policy packs (plugin contract v1):** Custom YAML packs can be loaded by name or path. Contract, schema, and versioning are documented in [docs/architecture/plugin-contract.md](docs/architecture/plugin-contract.md). Use `load_pack_from_path(path)` or `load_pack(name)`; set `OBR_POLICY_PACK` to a pack name or absolute path.
+- **Policy packs (plugin contract v1 / v1.1):** Custom YAML packs can use `extends`, `import`, and `path_rules` (see plugin contract doc). Use `load_pack_from_path(path)` or `load_pack(name)`; set `OBR_POLICY_PACK` to a pack name or absolute path. [docs/architecture/plugin-contract.md](docs/architecture/plugin-contract.md).
+- **Naming:** Repo brand vs PyPI/npm names are summarized in [docs/architecture/naming.md](docs/architecture/naming.md).
 - **Starter templates:** [examples/integrations/](examples/integrations/README.md) — MCP tool builder, LangGraph embed, policy pack extension. Use these as copy-paste bases for your integration.
 
 ## Optional tooling

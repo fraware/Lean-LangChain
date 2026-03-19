@@ -46,7 +46,9 @@ class SnapshotStore:
         self.env_root = root / "environments"
         self.env_root.mkdir(parents=True, exist_ok=True)
 
-    def ensure_snapshot(self, env: EnvironmentFingerprint, source_repo_root: Path) -> SnapshotRecord:
+    def ensure_snapshot(
+        self, env: EnvironmentFingerprint, source_repo_root: Path
+    ) -> SnapshotRecord:
         fid = env.fingerprint_id()
         snapshot_root = self.env_root / fid
         base_path = snapshot_root / "base"

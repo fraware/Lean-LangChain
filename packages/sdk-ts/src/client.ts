@@ -23,8 +23,20 @@ import {
   type SubmitReviewResponse,
   type ResumeResponse,
 } from "./types";
+import {
+  assertBatchVerifyResponse,
+  assertReviewPayload,
+  assertResumeResponse,
+} from "./validators";
 
-async function parseErrorBody(res: Response): Promise<{ code: string; message: string; request_id?: string; details?: Record<string, unknown> }> {
+export type ObligationRuntimeClientOptions = {
+  /** When true, validates critical response bodies at runtime (small overhead). */
+  validateResponses?: boolean;
+};
+
+async function parseErrorBody(
+  res: Response
+): Promise<{ code: string; message: string; request_id?: string; details?: Record<string, unknown> }> {
   let body: unknown;
   try {
     body = await res.json();
@@ -44,7 +56,36 @@ async function parseErrorBody(res: Response): Promise<{ code: string; message: s
 }
 
 export class ObligationRuntimeClient {
-  constructor(private readonly baseUrl: string = "http://localhost:8000") {}
+  private readonly validateResponses: boolean;
+
+  constructor(
+    private readonly baseUrl: string = "http://localhost:8000",
+    options?: ObligationRuntimeClientOptions
+  ) {
+    this.validateResponses = options?.validateResponses ?? false;
+  }
+
+  private parseSuccess<T>(path: string, data: unknown): T {
+    if (!this.validateResponses) {
+      return data as T;
+    }
+    try {
+      if (path.includes("/batch-verify")) {
+        assertBatchVerifyResponse(data);
+      } else if (path.startsWith("/v1/reviews/") && !path.includes("/approve") && !path.includes("/reject") && !path.includes("/resume")) {
+        assertReviewPayload(data);
+      } else if (path.endsWith("/resume")) {
+        assertResumeResponse(data);
+      }
+    } catch (e) {
+      throw new ObligationRuntimeError(
+        "response_validation_failed",
+        e instanceof Error ? e.message : String(e),
+        200
+      );
+    }
+    return data as T;
+  }
 
   private async post<T>(path: string, payload: object): Promise<T> {
     const res = await fetch(`${this.baseUrl}${path}`, {
@@ -56,7 +97,8 @@ export class ObligationRuntimeClient {
       const { code, message, request_id, details } = await parseErrorBody(res);
       throw new ObligationRuntimeError(code, message, res.status, request_id, details);
     }
-    return (await res.json()) as T;
+    const data: unknown = await res.json();
+    return this.parseSuccess<T>(path, data);
   }
 
   private async get<T>(path: string): Promise<T> {
@@ -65,7 +107,8 @@ export class ObligationRuntimeClient {
       const { code, message, request_id, details } = await parseErrorBody(res);
       throw new ObligationRuntimeError(code, message, res.status, request_id, details);
     }
-    return (await res.json()) as T;
+    const data: unknown = await res.json();
+    return this.parseSuccess<T>(path, data);
   }
 
   openEnvironment(payload: OpenEnvironmentPayload): Promise<OpenEnvironmentResponse> {

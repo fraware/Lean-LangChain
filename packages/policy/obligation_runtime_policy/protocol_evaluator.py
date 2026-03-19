@@ -6,6 +6,8 @@ for consistency. Events are normalized from dict or model to dict with kind, act
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 from obligation_runtime_schemas.policy import PolicyDecision
 
 from .constants import (
@@ -32,18 +34,18 @@ except ImportError:
     ProtocolEvent = None
 
 
-def _event_to_dict(ev: object) -> dict:
+def _event_to_dict(ev: object) -> dict[str, Any]:
     """Normalize event to dict with kind, actor, task; empty dict if invalid."""
     if isinstance(ev, dict):
-        return ev
+        return cast(dict[str, Any], ev)
     if hasattr(ev, "model_dump"):
-        return ev.model_dump(mode="json")
+        return cast(dict[str, Any], ev.model_dump(mode="json"))
     return {}
 
 
-def _validate_events(events: list) -> list[dict]:
+def _validate_events(events: list[object]) -> list[dict[str, Any]]:
     """Normalize events to list of dicts with kind, actor, task (default {}). Skip non-dict/invalid."""
-    out: list[dict] = []
+    out: list[dict[str, Any]] = []
     for ev in events:
         d = _event_to_dict(ev)
         if not isinstance(d, dict) or not d:
@@ -58,7 +60,7 @@ def _validate_events(events: list) -> list[dict]:
     return out
 
 
-def evaluate_handoff_legality(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_handoff_legality(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Evaluate handoff_legality: if single_owner_handoff, delegate must be from same owner as claim."""
     if not pack.single_owner_handoff:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -86,7 +88,7 @@ def evaluate_handoff_legality(events: list, pack: PolicyPack) -> PolicyDecision:
     return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
 
 
-def evaluate_reviewer_gated(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_reviewer_gated(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Evaluate reviewer-gated execution: if pack requires it, events must contain an approve."""
     if not pack.reviewer_gated_execution:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -101,7 +103,7 @@ def evaluate_reviewer_gated(events: list, pack: PolicyPack) -> PolicyDecision:
     )
 
 
-def evaluate_delegation_admissibility(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_delegation_admissibility(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Delegate only after claim; same or allowed task. Same semantics as handoff for single-owner."""
     if not pack.delegation_admissibility:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -139,7 +141,9 @@ def evaluate_delegation_admissibility(events: list, pack: PolicyPack) -> PolicyD
     return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
 
 
-def evaluate_state_transition_preservation(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_state_transition_preservation(
+    events: list[object], pack: PolicyPack
+) -> PolicyDecision:
     """Allowed transitions: claim -> delegate -> approve/reject; execute/recover only after approve."""
     if not pack.state_transition_preservation:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -159,7 +163,7 @@ def evaluate_state_transition_preservation(events: list, pack: PolicyPack) -> Po
     return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
 
 
-def evaluate_artifact_admissibility(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_artifact_admissibility(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Only approve/execute events may carry artifacts; others with non-empty artifact payload are rejected."""
     if not pack.artifact_admissibility:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -178,7 +182,7 @@ def evaluate_artifact_admissibility(events: list, pack: PolicyPack) -> PolicyDec
     return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
 
 
-def evaluate_side_effect_authorization(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_side_effect_authorization(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Execute and recover only after an approve event."""
     if not pack.side_effect_authorization:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -198,7 +202,9 @@ def evaluate_side_effect_authorization(events: list, pack: PolicyPack) -> Policy
     return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
 
 
-def evaluate_evidence_complete_execution_token(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_evidence_complete_execution_token(
+    events: list[object], pack: PolicyPack
+) -> PolicyDecision:
     """When pack requires it, events or payload must indicate evidence bundle complete (e.g. token or event kind)."""
     if not pack.evidence_complete_execution_token:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -217,7 +223,7 @@ def evaluate_evidence_complete_execution_token(events: list, pack: PolicyPack) -
     )
 
 
-def evaluate_lock_ownership_invariant(events: list, pack: PolicyPack) -> PolicyDecision:
+def evaluate_lock_ownership_invariant(events: list[object], pack: PolicyPack) -> PolicyDecision:
     """Evaluate lock ownership: only one holder; release must be by holder; no lock while held by another."""
     if not pack.lock_ownership_invariant:
         return PolicyDecision(decision=DECISION_ACCEPTED, trust_level=TRUST_CLEAN, reasons=[])
@@ -254,7 +260,7 @@ def evaluate_lock_ownership_invariant(events: list, pack: PolicyPack) -> PolicyD
 
 def evaluate_protocol_obligation(
     obligation_class: str,
-    events: list,
+    events: list[object],
     pack: PolicyPack,
 ) -> PolicyDecision:
     """Dispatch by obligation class to the right evaluator. Events are normalized internally."""

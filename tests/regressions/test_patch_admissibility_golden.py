@@ -50,7 +50,9 @@ def test_patch_admissibility_golden_good_patch(gateway_app) -> None:
     case = cases[0]
     assert case.expected_terminal_status == "accepted"
 
-    repo_path = str(Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini")
+    repo_path = str(
+        Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini"
+    )
     with TestClient(gateway_app) as tc:
         adapter = make_testclient_request_adapter(tc)
         client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
@@ -109,9 +111,12 @@ def test_patch_admissibility_golden_protected_path_touched(gateway_app) -> None:
         pytest.skip("patch_protected_path_touched.json not found")
     raw = json.loads(path.read_text(encoding="utf-8"))
     inp = raw.get("obligation_input", {})
-    repo_path = str(Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini")
+    repo_path = str(
+        Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini"
+    )
     with TestClient(gateway_app) as tc:
         base = make_testclient_request_adapter(tc)
+
         def adapter(method: str, path_str: str, body: Any) -> dict:
             if method == "POST":
                 if "interactive-check" in path_str:
@@ -125,6 +130,7 @@ def test_patch_admissibility_golden_protected_path_touched(gateway_app) -> None:
                         "fresh_checker": {"ok": True},
                     }
             return base(method, path_str, body)
+
         client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
         graph = build_patch_admissibility_graph(client=client)
         initial = make_initial_state(
@@ -141,6 +147,4 @@ def test_patch_admissibility_golden_protected_path_touched(gateway_app) -> None:
         result = graph.invoke(initial)
     assert result.get("status") == "awaiting_approval"
     assert (result.get("policy_decision") or {}).get("decision") == "needs_review"
-    assert "protected_path_touched" in (
-        (result.get("policy_decision") or {}).get("reasons") or []
-    )
+    assert "protected_path_touched" in ((result.get("policy_decision") or {}).get("reasons") or [])

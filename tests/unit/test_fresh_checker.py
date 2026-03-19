@@ -22,12 +22,8 @@ def test_fresh_checker_test_double_returns_ok() -> None:
 
 def test_fresh_checker_real_returns_ok_when_command_succeeds() -> None:
     """FreshCheckerReal returns ok=True when subprocess returns 0."""
-    with patch(
-        "obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run"
-    ) as run:
-        run.return_value = type(
-            "R", (), {"returncode": 0, "stdout": "ok", "stderr": ""}
-        )()
+    with patch("obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run") as run:
+        run.return_value = type("R", (), {"returncode": 0, "stdout": "ok", "stderr": ""})()
         checker = FreshCheckerReal(timeout_seconds=5.0)
         result = checker.run(Path("/ws"))
     assert result.ok is True
@@ -37,12 +33,8 @@ def test_fresh_checker_real_returns_ok_when_command_succeeds() -> None:
 
 def test_fresh_checker_real_returns_not_ok_when_command_fails() -> None:
     """FreshCheckerReal returns ok=False when subprocess returns non-zero."""
-    with patch(
-        "obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run"
-    ) as run:
-        run.return_value = type(
-            "R", (), {"returncode": 1, "stdout": "", "stderr": "not fresh"}
-        )()
+    with patch("obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run") as run:
+        run.return_value = type("R", (), {"returncode": 1, "stdout": "", "stderr": "not fresh"})()
         checker = FreshCheckerReal(timeout_seconds=5.0)
         result = checker.run(Path("/ws"))
     assert result.ok is False
@@ -51,9 +43,7 @@ def test_fresh_checker_real_returns_not_ok_when_command_fails() -> None:
 
 def test_fresh_checker_real_handles_os_error() -> None:
     """FreshCheckerReal returns ok=False on OSError (e.g. command not found)."""
-    with patch(
-        "obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run"
-    ) as run:
+    with patch("obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run") as run:
         run.side_effect = OSError("lean4checker not found")
         checker = FreshCheckerReal(timeout_seconds=5.0)
         result = checker.run(Path("/ws"))
@@ -64,12 +54,9 @@ def test_fresh_checker_real_handles_os_error() -> None:
 def test_fresh_checker_real_handles_timeout() -> None:
     """FreshCheckerReal returns ok=False on timeout."""
     import subprocess
-    with patch(
-        "obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run"
-    ) as run:
-        run.side_effect = subprocess.TimeoutExpired(
-            cmd=["lean4checker", "--fresh"], timeout=5
-        )
+
+    with patch("obligation_runtime_lean_gateway.batch.fresh_checker.subprocess.run") as run:
+        run.side_effect = subprocess.TimeoutExpired(cmd=["lean4checker", "--fresh"], timeout=5)
         checker = FreshCheckerReal(timeout_seconds=5.0)
         result = checker.run(Path("/ws"))
     assert result.ok is False

@@ -37,7 +37,7 @@ Optionally create a GitHub Release from the tag. Use your release notes (e.g. fr
 
 **Python (PyPI):** Individual packages (e.g. `obligation-runtime-schemas`, `obligation-runtime-sdk`, `obligation-runtime-lean-gateway`, `obligation-runtime-orchestrator`) have their own `pyproject.toml`. Publish from a clean tag after the Release workflow has passed. Do not store API keys in the repo; use GitHub Secrets or OIDC for uploads in CI. Build and publish each package separately (e.g. `pip install build && python -m build packages/schemas` then upload).
 
-**TypeScript (npm):** The SDK lives in `packages/sdk-ts`; run `npm run build` and `npm publish` from that directory when publishing to npm. Ensure `package.json` version matches the release tag.
+**TypeScript (npm):** Publish from `packages/sdk-ts` as **`@lean-langchain/sdk`** (`npm publish --access public` after `npm run build`). Version 1.0+ uses the scoped name only; legacy **obligation-runtime-sdk-ts** 0.1.x is frozen. See [packages/sdk-ts/MIGRATION.md](../packages/sdk-ts/MIGRATION.md) and [naming.md](architecture/naming.md).
 
 **Containers (OCI):** Gateway and worker images can be built from `infra/docker/`; tag images with the release version (e.g. `v0.1.0`) for traceability. Document the image names and any registry in the release notes.
 

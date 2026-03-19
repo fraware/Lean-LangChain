@@ -11,33 +11,37 @@ except ImportError:
     CONTENT_TYPE_LATEST = "text/plain"
 
 try:
-    from fastapi import APIRouter, Request
+    from fastapi import APIRouter
     from fastapi.responses import Response
 except Exception:  # pragma: no cover
-    class APIRouter:
-        def __init__(self): pass
-        def get(self, *_args, **_kwargs):
-            def deco(fn):
-                return fn
-            return deco
-    class Request: ...
-    def Response(*_args, **_kwargs): ...
+    from obligation_runtime_lean_gateway.api.fastapi_shim import (  # type: ignore[assignment]
+        APIRouter,
+        Response,
+    )
 
 
 router = APIRouter(tags=["metrics"])
 
-REQUEST_COUNT = Counter(
-    "obr_http_requests_total",
-    "Total HTTP requests",
-    ["method", "path", "status_class"],
-) if Counter else None
+REQUEST_COUNT = (
+    Counter(
+        "obr_http_requests_total",
+        "Total HTTP requests",
+        ["method", "path", "status_class"],
+    )
+    if Counter
+    else None
+)
 
-REQUEST_LATENCY = Histogram(
-    "obr_http_request_duration_seconds",
-    "HTTP request latency in seconds",
-    ["method", "path"],
-    buckets=(0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
-) if Histogram else None
+REQUEST_LATENCY = (
+    Histogram(
+        "obr_http_request_duration_seconds",
+        "HTTP request latency in seconds",
+        ["method", "path"],
+        buckets=(0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+    )
+    if Histogram
+    else None
+)
 
 
 def _status_class(status_code: int) -> str:

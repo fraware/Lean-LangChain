@@ -18,7 +18,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 REPO = "https://github.com/leanprover/lean4checker.git"
 DEFAULT_DIR = ".var/lean4checker"
 
@@ -65,7 +64,9 @@ def main() -> int:
         exe = bin_dir / exe_name
         if exe.exists():
             break
-        candidates = list(bin_dir.glob("*.exe")) if sys.platform == "win32" else list(bin_dir.glob("*"))
+        candidates = (
+            list(bin_dir.glob("*.exe")) if sys.platform == "win32" else list(bin_dir.glob("*"))
+        )
         if candidates:
             exe = candidates[0]
             break

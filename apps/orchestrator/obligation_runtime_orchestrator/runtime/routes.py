@@ -32,7 +32,10 @@ def route_after_policy(state: ObligationRuntimeState) -> str:
 
 def route_start(state: ObligationRuntimeState) -> str:
     """From START: resume_with_approval if approval_decision set, else init_environment."""
-    if state.get("approval_required") and state.get("approval_decision") in ("approved", "rejected"):
+    if state.get("approval_required") and state.get("approval_decision") in (
+        "approved",
+        "rejected",
+    ):
         return "resume_with_approval"
     return "init_environment"
 

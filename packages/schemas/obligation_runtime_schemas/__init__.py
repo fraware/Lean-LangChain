@@ -8,6 +8,7 @@ from .policy import PolicyDecision
 from .witness import AcceptanceSummary, WitnessBundle
 from .review import ReviewPayload
 from .batch import BatchVerifyResult, BatchBuildResult, AxiomAuditResult, FreshCheckerResult
+from .gateway_api import OpenEnvironmentRequest, OpenEnvironmentResponse, CreateSessionResponse
 
 __all__ = [
     "EnvironmentFingerprint",
@@ -25,4 +26,7 @@ __all__ = [
     "BatchBuildResult",
     "AxiomAuditResult",
     "FreshCheckerResult",
+    "OpenEnvironmentRequest",
+    "OpenEnvironmentResponse",
+    "CreateSessionResponse",
 ]

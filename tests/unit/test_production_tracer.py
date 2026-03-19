@@ -23,7 +23,12 @@ from obligation_runtime_telemetry.tracer import (
 
 def test_get_production_tracer_returns_none_with_no_env() -> None:
     """With no OTLP or LangSmith env vars, get_production_tracer returns None."""
-    keys = ("OBR_OTLP_ENDPOINT", "OTEL_EXPORTER_OTLP_ENDPOINT", "LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2")
+    keys = (
+        "OBR_OTLP_ENDPOINT",
+        "OTEL_EXPORTER_OTLP_ENDPOINT",
+        "LANGCHAIN_API_KEY",
+        "LANGCHAIN_TRACING_V2",
+    )
     saved = {k: os.environ.pop(k, None) for k in keys if k in os.environ}
     try:
         result = get_production_tracer()
@@ -138,7 +143,9 @@ def test_get_production_tracer_returns_otlp_when_mock_tracer_injected() -> None:
     """When OTLP env set and _make_otlp_tracer returns a tracer, get_production_tracer returns OtlpTracer."""
     mock_tracer = MagicMock()
     with patch.dict(os.environ, {"OBR_OTLP_ENDPOINT": "http://localhost:4317"}, clear=False):
-        with patch("obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer):
+        with patch(
+            "obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
+        ):
             result = get_production_tracer()
     assert result is not None
     assert isinstance(result, OtlpTracer)
@@ -148,7 +155,9 @@ def test_get_production_tracer_returns_langsmith_when_mock_client_injected() -> 
     """When LANGCHAIN_API_KEY set and _langsmith_client returns client, get_production_tracer returns LangSmithTracer."""
     mock_client = MagicMock()
     with patch.dict(os.environ, {"LANGCHAIN_API_KEY": "key"}, clear=False):
-        with patch("obligation_runtime_telemetry.tracer._langsmith_client", return_value=mock_client):
+        with patch(
+            "obligation_runtime_telemetry.tracer._langsmith_client", return_value=mock_client
+        ):
             result = get_production_tracer()
     assert result is not None
     assert isinstance(result, LangSmithTracer)
@@ -160,7 +169,9 @@ def test_production_tracer_with_env_emits_to_mock_exporter() -> None:
     mock_tracer = MagicMock()
     mock_tracer.start_span.return_value = mock_span
     with patch.dict(os.environ, {"OBR_OTLP_ENDPOINT": "http://test:4317"}, clear=False):
-        with patch("obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer):
+        with patch(
+            "obligation_runtime_telemetry.tracer._make_otlp_tracer", return_value=mock_tracer
+        ):
             tracer = get_production_tracer()
     assert tracer is not None
     event = RuntimeNodeEvent(

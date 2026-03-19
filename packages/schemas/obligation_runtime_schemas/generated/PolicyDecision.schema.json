@@ -1,4 +1,48 @@
 {
+  "$defs": {
+    "PolicyResolvedRule": {
+      "additionalProperties": false,
+      "description": "One evaluated policy rule for audit trails.",
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "source_pack": {
+          "title": "Source Pack",
+          "type": "string"
+        },
+        "matched": {
+          "title": "Matched",
+          "type": "boolean"
+        },
+        "effect": {
+          "enum": [
+            "none",
+            "needs_review",
+            "rejected",
+            "blocked",
+            "accepted"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "reason_code": {
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source_pack",
+        "matched",
+        "effect",
+        "reason_code"
+      ],
+      "title": "PolicyResolvedRule",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "decision": {
@@ -27,6 +71,23 @@
         "type": "string"
       },
       "title": "Reasons",
+      "type": "array"
+    },
+    "policy_pack_name": {
+      "default": "",
+      "title": "Policy Pack Name",
+      "type": "string"
+    },
+    "policy_pack_version": {
+      "default": "",
+      "title": "Policy Pack Version",
+      "type": "string"
+    },
+    "resolved_rules": {
+      "items": {
+        "$ref": "#/$defs/PolicyResolvedRule"
+      },
+      "title": "Resolved Rules",
       "type": "array"
     }
   },

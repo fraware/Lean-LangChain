@@ -37,7 +37,9 @@ def test_gateway_api_does_not_import_orchestrator_runtime() -> None:
                             "use OBR_ORCHESTRATOR_URL HTTP boundary instead."
                         )
             if isinstance(node, ast.ImportFrom):
-                if node.module and (node.module == forbidden or node.module.startswith(forbidden + ".")):
+                if node.module and (
+                    node.module == forbidden or node.module.startswith(forbidden + ".")
+                ):
                     repo_root = Path(__file__).resolve().parent.parent.parent
                     raise AssertionError(
                         f"{path.relative_to(repo_root)} must not import from {forbidden}; "

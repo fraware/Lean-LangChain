@@ -30,17 +30,14 @@
       "type": "array"
     },
     "build": {
-      "additionalProperties": true,
       "title": "Build",
       "type": "object"
     },
     "axiom_audit": {
-      "additionalProperties": true,
       "title": "Axiom Audit",
       "type": "object"
     },
     "fresh_checker": {
-      "additionalProperties": true,
       "title": "Fresh Checker",
       "type": "object"
     }

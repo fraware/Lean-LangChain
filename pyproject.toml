@@ -2,10 +2,14 @@
 requires = ["hatchling>=1.25.0"]
 build-backend = "hatchling.build"
 
+# Root is a metapackage (no app code here). Explicit wheel layout so ``pip install -e ".[dev]"`` works.
+[tool.hatch.build.targets.wheel]
+packages = ["obligation_runtime"]
+
 [project]
 name = "obligation-runtime"
 version = "0.1.0"
-description = "Semantic control plane for high-stakes agent systems"
+description = "Lean-LangChain: semantic control plane (Obligation Runtime) for high-stakes agent workflows"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
@@ -31,6 +35,8 @@ full = [
   "obligation-runtime-evals",
   "obligation-runtime-telemetry",
 ]
+# Local dev: pip install -e ".[dev]" so `python -m mypy` works inside .venv (see Makefile typecheck).
+dev = ["mypy>=1.8", "ruff>=0.4", "black>=24"]
 
 [tool.ruff]
 line-length = 100

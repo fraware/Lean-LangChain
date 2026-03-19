@@ -10,9 +10,7 @@ from typing import Any, Protocol
 
 def get_redis_url() -> str | None:
     """Return OBR_REDIS_URL or REDIS_URL if set, else None."""
-    return (
-        os.environ.get("OBR_REDIS_URL") or os.environ.get("REDIS_URL") or None
-    )
+    return os.environ.get("OBR_REDIS_URL") or os.environ.get("REDIS_URL") or None
 
 
 class CoordinationBackend(Protocol):
@@ -69,6 +67,7 @@ class RedisCoordinationBackend:
 
     def __init__(self, url: str) -> None:
         import redis
+
         self._client = redis.from_url(url, decode_responses=True)
 
     def _key(self, queue_name: str) -> str:

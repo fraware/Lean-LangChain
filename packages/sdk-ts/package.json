@@ -1,7 +1,10 @@
 {
-  "name": "obligation-runtime-sdk-ts",
-  "version": "0.1.0",
-  "description": "TypeScript/JavaScript client for the Obligation Runtime Gateway API (Lean + LLM verification)",
+  "name": "@lean-langchain/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for Lean-LangChain (Obligation Runtime Gateway API).",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,18 +15,33 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "generate:types": "openapi-typescript ../../contracts/openapi/lean-gateway.json -o src/generated/gateway-openapi.ts",
+    "check:openapi": "npm run generate:types && git diff --exit-code -- src/generated/gateway-openapi.ts",
     "build": "tsc",
     "test": "npm run build && node scripts/verify-surface.mjs",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["obligation-runtime", "lean", "langchain", "gateway", "sdk"],
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "keywords": [
+    "lean-langchain",
+    "obligation-runtime",
+    "lean",
+    "langchain",
+    "gateway",
+    "sdk"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.13.0",
     "typescript": "^5.0.0"
   }
 }

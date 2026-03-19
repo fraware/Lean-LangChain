@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from obligation_runtime_orchestrator.runtime.state import ObligationRuntimeState
 
@@ -11,14 +11,14 @@ def make_initial_state(
     *,
     thread_id: str,
     obligation_id: str,
-    obligation: dict,
+    obligation: dict[str, Any],
     target_files: list[str],
     target_declarations: list[str] | None = None,
     current_patch: dict[str, str] | None = None,
     repo_path: str = "",
     session_id: str | None = None,
     policy_pack_name: str | None = None,
-    protocol_events: list[dict] | None = None,
+    protocol_events: list[dict[str, Any]] | None = None,
     **overrides: Any,
 ) -> ObligationRuntimeState:
     """Build a full ObligationRuntimeState with required keys and defaults.
@@ -55,7 +55,7 @@ def make_initial_state(
     if protocol_events is not None:
         state["protocol_events"] = protocol_events
     state.update(overrides)
-    return state  # type: ignore[return-value]
+    return cast(ObligationRuntimeState, state)
 
 
 def make_resume_state(
@@ -95,4 +95,4 @@ def make_resume_state(
         "_repo_path": "",
     }
     state.update(overrides)
-    return state  # type: ignore[return-value]
+    return cast(ObligationRuntimeState, state)

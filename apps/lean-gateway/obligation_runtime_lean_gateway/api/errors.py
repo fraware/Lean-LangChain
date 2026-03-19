@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 # Stable codes for client handling; do not remove or change semantics.
 NOT_FOUND = "not_found"
@@ -28,8 +29,20 @@ def redact_secrets(text: str) -> str:
     return _SECRET_KEYS.sub(r"\1***", text)
 
 
-def error_envelope(code: str, message: str, request_id: str = "req_local", details: dict | None = None) -> dict:
-    return {"error": {"code": code, "message": message, "request_id": request_id, "details": details or {}}}
+def error_envelope(
+    code: str,
+    message: str,
+    request_id: str = "req_local",
+    details: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    return {
+        "error": {
+            "code": code,
+            "message": message,
+            "request_id": request_id,
+            "details": details or {},
+        }
+    }
 
 
 def _detail_code_and_message(detail: object) -> tuple[str, str]:

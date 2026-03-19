@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Literal
+from typing import Any, Literal, Mapping
 
 try:
     import psycopg
@@ -40,19 +40,17 @@ class PostgresReviewStore:
     def _ensure_table(self) -> None:
         with _get_conn(self._uri) as conn:
             with conn.cursor() as cur:
-                cur.execute(
-                    """
+                cur.execute("""
                     CREATE TABLE IF NOT EXISTS obr_reviews (
                         thread_id TEXT PRIMARY KEY,
                         payload JSONB NOT NULL DEFAULT '{}',
                         decision TEXT,
                         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                     )
-                    """
-                )
+                    """)
             conn.commit()
 
-    def put(self, thread_id: str, payload: dict) -> None:
+    def put(self, thread_id: str, payload: Mapping[str, Any]) -> None:
         with _get_conn(self._uri) as conn:
             with conn.cursor() as cur:
                 cur.execute(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import Field
 
 from .common import VersionedRecord
@@ -14,9 +16,9 @@ class AcceptanceSummary(VersionedRecord):
     ok: bool = True
     trust_level: str = "clean"
     reasons: list[str] = Field(default_factory=list)
-    build: dict = Field(default_factory=dict)
-    axiom_audit: dict = Field(default_factory=dict)
-    fresh_checker: dict = Field(default_factory=dict)
+    build: dict[str, Any] = Field(default_factory=dict)
+    axiom_audit: dict[str, Any] = Field(default_factory=dict)
+    fresh_checker: dict[str, Any] = Field(default_factory=dict)
 
 
 class WitnessBundle(VersionedRecord):
@@ -24,8 +26,7 @@ class WitnessBundle(VersionedRecord):
     obligation_id: str
     environment_fingerprint: EnvironmentFingerprint
     interactive: InteractiveCheckResult
-    # Acceptance lane result; dict for flexibility, typically matches AcceptanceSummary/BatchVerifyResult shape.
-    acceptance: dict = Field(default_factory=dict)
+    acceptance: AcceptanceSummary
     policy: PolicyDecision
-    approval: dict = Field(default_factory=dict)
-    trace: dict = Field(default_factory=dict)
+    approval: dict[str, Any] = Field(default_factory=dict)
+    trace: dict[str, Any] = Field(default_factory=dict)

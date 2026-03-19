@@ -38,11 +38,17 @@ jobs:
         run: |
           make install-dev-full
           pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
+          pip install "mypy>=1.8" "ruff>=0.4"
       - name: Full check
         run: make check-full
       - name: Gateway-orchestrator boundary and contract parity
         run: |
-          pytest tests/unit/test_gateway_orchestrator_boundary.py tests/contract/test_surface_parity.py -v
+          pytest tests/unit/test_gateway_orchestrator_boundary.py tests/contract/test_surface_parity.py tests/contract/test_openapi_contract_paths.py tests/contract/test_openapi_schema_snapshots.py -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: OpenAPI and SDK TS codegen drift gate
+        run: make verify-openapi-sdk-contract
       - name: Postgres review store and checkpointer tests
         run: |
           pytest tests/unit/test_review_store_postgres.py tests/integration/test_checkpointer_postgres.py -v

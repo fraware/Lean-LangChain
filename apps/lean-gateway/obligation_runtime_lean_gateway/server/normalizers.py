@@ -37,7 +37,16 @@ class InteractiveNormalizer:
             )
         return out
 
-    def result(self, *, ok: bool, diagnostics: list[dict], goals: list[dict], stdout: str = "", stderr: str = "", timing_ms: int = 0) -> InteractiveCheckResult:
+    def result(
+        self,
+        *,
+        ok: bool,
+        diagnostics: list[dict],
+        goals: list[dict],
+        stdout: str = "",
+        stderr: str = "",
+        timing_ms: int = 0,
+    ) -> InteractiveCheckResult:
         return InteractiveCheckResult(
             ok=ok,
             diagnostics=self.diagnostics(diagnostics),

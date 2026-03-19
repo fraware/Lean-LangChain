@@ -37,5 +37,6 @@ export {
   type CreatePendingReviewResponse,
   type SubmitReviewResponse,
   type ResumeResponse,
+  type GatewayHealthResponse,
 } from "./types";
 export type { PolicyDecision } from "./models";

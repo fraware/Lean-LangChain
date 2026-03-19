@@ -1,0 +1,9 @@
+# Example: compose built-in strict base with local overrides (plugin contract v1.1).
+extends: strict_patch_gate_v1
+version: "0.1.0"
+name: composed_example_v1_1
+description: "Strict base + optional path-based review gates"
+path_rules:
+  - glob: "Proofs/*.lean"
+    require_human: true
+    reason_code: "proof_layer_review"

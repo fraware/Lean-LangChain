@@ -64,16 +64,19 @@ def _start_lsp(workspace_path: Path, timeout_seconds: float) -> subprocess.Popen
         )
     except OSError:
         return None
-    _write(proc, {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-            "processId": None,
-            "rootUri": str(workspace_path.as_uri()),
-            "capabilities": {},
+    _write(
+        proc,
+        {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "processId": None,
+                "rootUri": str(workspace_path.as_uri()),
+                "capabilities": {},
+            },
         },
-    })
+    )
     resp = _read(proc, timeout_seconds)
     if not resp or "result" not in resp:
         proc.terminate()
@@ -145,11 +148,14 @@ def run_check(
         text = full_path.read_text(encoding="utf-8")
         uri = _uri(full_path)
         td = {"uri": uri, "languageId": "lean4", "version": 1, "text": text}
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "method": "textDocument/didOpen",
-            "params": {"textDocument": td},
-        })
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "method": "textDocument/didOpen",
+                "params": {"textDocument": td},
+            },
+        )
         diagnostics: list[dict] = []
         deadline = time.monotonic() + min(timeout_seconds, 30.0)
         while time.monotonic() < deadline:
@@ -164,16 +170,18 @@ def run_check(
                     end = r.get("end")
                     end_line = (end.get("line", 0) + 1) if end else None
                     end_col = end.get("character", 0) if end else None
-                    diagnostics.append({
-                        "severity": d.get("severity", 1),
-                        "file": str(full_path),
-                        "line": start.get("line", 0) + 1,
-                        "column": start.get("character", 0),
-                        "end_line": end_line,
-                        "end_column": end_col,
-                        "message": d.get("message", ""),
-                        "source": "lean",
-                    })
+                    diagnostics.append(
+                        {
+                            "severity": d.get("severity", 1),
+                            "file": str(full_path),
+                            "line": start.get("line", 0) + 1,
+                            "column": start.get("character", 0),
+                            "end_line": end_line,
+                            "end_column": end_col,
+                            "message": d.get("message", ""),
+                            "source": "lean",
+                        }
+                    )
                 break
             if "id" in msg and "result" in msg:
                 break
@@ -202,22 +210,28 @@ def run_get_goal(
         text = full_path.read_text(encoding="utf-8")
         uri = _uri(full_path)
         td = {"uri": uri, "languageId": "lean4", "version": 1, "text": text}
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "method": "textDocument/didOpen",
-            "params": {"textDocument": td},
-        })
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "method": "textDocument/didOpen",
+                "params": {"textDocument": td},
+            },
+        )
         _read(proc, 5.0)
         method = "$/lean/plainGoal" if "plain" in goal_kind else "$/lean/plainTermGoal"
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": method,
-            "params": {
-                "textDocument": {"uri": uri},
-                "position": {"line": line, "character": column},
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": method,
+                "params": {
+                    "textDocument": {"uri": uri},
+                    "position": {"line": line, "character": column},
+                },
             },
-        })
+        )
         resp = _read(proc, 10.0)
         if not resp or "result" not in resp:
             return []
@@ -258,21 +272,27 @@ def run_hover(
         text = full_path.read_text(encoding="utf-8")
         uri = _uri(full_path)
         td = {"uri": uri, "languageId": "lean4", "version": 1, "text": text}
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "method": "textDocument/didOpen",
-            "params": {"textDocument": td},
-        })
-        _read(proc, 5.0)
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "id": 3,
-            "method": "textDocument/hover",
-            "params": {
-                "textDocument": {"uri": uri},
-                "position": {"line": line, "character": column},
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "method": "textDocument/didOpen",
+                "params": {"textDocument": td},
             },
-        })
+        )
+        _read(proc, 5.0)
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 3,
+                "method": "textDocument/hover",
+                "params": {
+                    "textDocument": {"uri": uri},
+                    "position": {"line": line, "character": column},
+                },
+            },
+        )
         resp = _read(proc, 10.0)
         if not resp or "result" not in resp:
             return ""
@@ -307,21 +327,27 @@ def run_definition(
         text = full_path.read_text(encoding="utf-8")
         uri = _uri(full_path)
         td = {"uri": uri, "languageId": "lean4", "version": 1, "text": text}
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "method": "textDocument/didOpen",
-            "params": {"textDocument": td},
-        })
-        _read(proc, 5.0)
-        _write(proc, {
-            "jsonrpc": "2.0",
-            "id": 4,
-            "method": "textDocument/definition",
-            "params": {
-                "textDocument": {"uri": uri},
-                "position": {"line": line, "character": column},
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "method": "textDocument/didOpen",
+                "params": {"textDocument": td},
             },
-        })
+        )
+        _read(proc, 5.0)
+        _write(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 4,
+                "method": "textDocument/definition",
+                "params": {
+                    "textDocument": {"uri": uri},
+                    "position": {"line": line, "character": column},
+                },
+            },
+        )
         resp = _read(proc, 10.0)
         if not resp or "result" not in resp:
             return []

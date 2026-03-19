@@ -139,6 +139,6 @@ make install-dev-full
 make check-full
 ```
 
-See [tests-and-ci.md](tests-and-ci.md) for CI and optional jobs.
+`check-full` includes **OpenAPI/TypeScript SDK parity**: it regenerates `contracts/openapi/lean-gateway.json` and `packages/sdk-ts/src/generated/gateway-openapi.ts` and fails if the working tree drifts. That step runs `npm install` and `npm run generate:types` under `packages/sdk-ts`, so **Node.js** (v20+ recommended, same as CI) must be available. See [tests-and-ci.md](tests-and-ci.md) for CI jobs and optional Postgres/Lean/Docker targets.
 
 **See also:** [workflow.md](workflow.md), [deployment.md](deployment.md), [tests-and-ci.md](tests-and-ci.md), [architecture/gateway-api.md](architecture/gateway-api.md), [architecture/review-surface.md](architecture/review-surface.md).

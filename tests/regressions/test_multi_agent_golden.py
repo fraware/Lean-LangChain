@@ -62,12 +62,34 @@ def _events_for_handoff(owner_match: bool) -> list[dict]:
     """Build protocol events for handoff_legality: same or different owner."""
     if owner_match:
         return [
-            {"kind": "claim", "event_id": "e1", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "t1", "task_class": "patch"}},
-            {"kind": "delegate", "event_id": "e2", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "t1", "task_class": "patch"}, "prior_event_ids": ["e1"]},
+            {
+                "kind": "claim",
+                "event_id": "e1",
+                "actor": {"agent_id": "alice", "role": "owner"},
+                "task": {"task_id": "t1", "task_class": "patch"},
+            },
+            {
+                "kind": "delegate",
+                "event_id": "e2",
+                "actor": {"agent_id": "alice", "role": "owner"},
+                "task": {"task_id": "t1", "task_class": "patch"},
+                "prior_event_ids": ["e1"],
+            },
         ]
     return [
-        {"kind": "claim", "event_id": "e1", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "t1", "task_class": "patch"}},
-        {"kind": "delegate", "event_id": "e2", "actor": {"agent_id": "bob", "role": "other"}, "task": {"task_id": "t1", "task_class": "patch"}, "prior_event_ids": ["e1"]},
+        {
+            "kind": "claim",
+            "event_id": "e1",
+            "actor": {"agent_id": "alice", "role": "owner"},
+            "task": {"task_id": "t1", "task_class": "patch"},
+        },
+        {
+            "kind": "delegate",
+            "event_id": "e2",
+            "actor": {"agent_id": "bob", "role": "other"},
+            "task": {"task_id": "t1", "task_class": "patch"},
+            "prior_event_ids": ["e1"],
+        },
     ]
 
 
@@ -93,14 +115,27 @@ def test_multi_agent_golden_handoff_bad_owner() -> None:
     result = evaluate_protocol_obligation("handoff_legality", events, pack)
     assert result.decision == case.expected_decision
     assert result.trust_level == case.expected_trust_level
-    assert any(r in result.reasons for r in case.expected_reason_codes) or not case.expected_reason_codes
+    assert (
+        any(r in result.reasons for r in case.expected_reason_codes)
+        or not case.expected_reason_codes
+    )
 
 
 def _events_for_lock_conflict() -> list[dict]:
     """Events that trigger lock_conflict: lock by A then lock by B."""
     return [
-        {"kind": "lock", "event_id": "e1", "actor": {"agent_id": "alice", "role": "owner"}, "task": {"task_id": "r1", "task_class": "resource"}},
-        {"kind": "lock", "event_id": "e2", "actor": {"agent_id": "bob", "role": "other"}, "task": {"task_id": "r1", "task_class": "resource"}},
+        {
+            "kind": "lock",
+            "event_id": "e1",
+            "actor": {"agent_id": "alice", "role": "owner"},
+            "task": {"task_id": "r1", "task_class": "resource"},
+        },
+        {
+            "kind": "lock",
+            "event_id": "e2",
+            "actor": {"agent_id": "bob", "role": "other"},
+            "task": {"task_id": "r1", "task_class": "resource"},
+        },
     ]
 
 
@@ -133,18 +168,14 @@ def test_regression_fixtures_from_dir_assert_decision_and_trust() -> None:
         inp = raw.get("obligation_input", {})
         if "owner_match" in inp:
             events = _events_for_handoff(owner_match=inp["owner_match"])
-            pack = PolicyPack(
-                version="1", name="so", description="", single_owner_handoff=True
-            )
+            pack = PolicyPack(version="1", name="so", description="", single_owner_handoff=True)
             result = evaluate_protocol_obligation("handoff_legality", events, pack)
         elif inp.get("lock_held") and inp.get("conflict"):
             events = _events_for_lock_conflict()
             pack = PolicyPack(
                 version="1", name="lock", description="", lock_ownership_invariant=True
             )
-            result = evaluate_protocol_obligation(
-                "lock_ownership_invariant", events, pack
-            )
+            result = evaluate_protocol_obligation("lock_ownership_invariant", events, pack)
         elif "obligation_class" in inp and "events" in inp:
             obligation_class = inp["obligation_class"]
             events = inp["events"]

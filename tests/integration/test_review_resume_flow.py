@@ -31,7 +31,9 @@ def test_resume_endpoint_404_when_review_not_found(gateway_client) -> None:
 def test_resume_endpoint_400_when_no_decision(gateway_client) -> None:
     """POST /v1/reviews/{thread_id}/resume returns 400 when review has not been approved/rejected."""
     client = gateway_client
-    client.post("/v1/reviews", json={"thread_id": "resume-no-decision", "status": "awaiting_review"})
+    client.post(
+        "/v1/reviews", json={"thread_id": "resume-no-decision", "status": "awaiting_review"}
+    )
     r = client.post("/v1/reviews/resume-no-decision/resume", json={})
     assert r.status_code == 400
     body = r.json()
@@ -87,7 +89,12 @@ def test_resume_with_approval_continues_to_finalize(gateway_client, obr_graph) -
         "thread_id": thread_id,
         "obligation_id": "ob-resume",
         "session_id": "sess-resume-flow-1",
-        "environment_fingerprint": {"repo_id": "r", "commit_sha": "c", "lean_toolchain": "t", "lakefile_hash": "h"},
+        "environment_fingerprint": {
+            "repo_id": "r",
+            "commit_sha": "c",
+            "lean_toolchain": "t",
+            "lakefile_hash": "h",
+        },
         "obligation": {},
         "target_files": [],
         "target_declarations": [],

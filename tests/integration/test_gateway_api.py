@@ -5,19 +5,27 @@ import pytest
 
 
 def test_health_returns_ok(gateway_client) -> None:
-    """GET /health returns 200 and status ok for liveness probes."""
+    """GET /health returns 200, status ok, and capability snapshot."""
     client = gateway_client
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok"}
+    body = r.json()
+    assert body["status"] == "ok"
+    assert "version" in body
+    assert "degraded" in body
+    assert body["capabilities"]["lean_interactive"] == "test_injected"
+    assert body["capabilities"]["review_store"] in ("memory", "postgres")
 
 
 def test_ready_returns_ready(gateway_client) -> None:
-    """GET /ready returns 200 and status ready for readiness probes."""
+    """GET /ready returns 200 and status ready plus capability block."""
     client = gateway_client
     r = client.get("/ready")
     assert r.status_code == 200
-    assert r.json() == {"status": "ready"}
+    body = r.json()
+    assert body["status"] == "ready"
+    assert "capabilities" in body
+    assert "degraded" in body
 
 
 def test_metrics_404_when_disabled(gateway_client) -> None:

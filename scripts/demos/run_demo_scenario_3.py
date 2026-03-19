@@ -64,18 +64,25 @@ def main() -> int:
         print("Skipped: invalid JSON from open-environment", file=sys.stderr)
         return 0
 
-    out2 = subprocess.run(cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10)
+    out2 = subprocess.run(
+        cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10
+    )
     if out2.returncode != 0:
         print("Skipped: create-session failed", file=sys.stderr)
         return 0
 
     out3 = subprocess.run(
-        cli + [
+        cli
+        + [
             "run-patch-obligation",
-            "--thread-id", thread_id,
-            "--repo-id", "lean-mini",
-            "--repo-path", str(fixture_path),
-            "--protected-paths", "Mini/Basic.lean",
+            "--thread-id",
+            thread_id,
+            "--repo-id",
+            "lean-mini",
+            "--repo-path",
+            str(fixture_path),
+            "--protected-paths",
+            "Mini/Basic.lean",
         ],
         cwd=cwd,
         env=env,

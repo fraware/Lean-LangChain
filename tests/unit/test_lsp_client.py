@@ -66,7 +66,10 @@ def test_run_check_returns_diagnostics_and_ok_from_publish_diagnostics() -> None
         "params": {
             "diagnostics": [
                 {
-                    "range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 5}},
+                    "range": {
+                        "start": {"line": 0, "character": 0},
+                        "end": {"line": 0, "character": 5},
+                    },
                     "severity": 1,
                     "message": "error msg",
                 }
@@ -263,7 +266,15 @@ def test_run_definition_returns_list_of_locations() -> None:
     def_resp = {
         "jsonrpc": "2.0",
         "id": 4,
-        "result": [{"uri": "file:///path/to/file.lean", "range": {"start": {"line": 10, "character": 0}, "end": {"line": 10, "character": 5}}}],
+        "result": [
+            {
+                "uri": "file:///path/to/file.lean",
+                "range": {
+                    "start": {"line": 10, "character": 0},
+                    "end": {"line": 10, "character": 5},
+                },
+            }
+        ],
     }
     stdout = _make_stdout(init_resp, after_did_open, def_resp)
     with patch("obligation_runtime_lean_gateway.server.lsp_client.subprocess.Popen") as mock_popen:

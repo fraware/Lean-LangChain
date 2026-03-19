@@ -76,9 +76,8 @@ class RedisMCPSessionStore(MCPSessionStore):
         if self._url:
             try:
                 import redis
-                self._client = redis.from_url(
-                    self._url, decode_responses=True
-                )
+
+                self._client = redis.from_url(self._url, decode_responses=True)
             except ImportError:
                 self._client = None
 
@@ -87,6 +86,7 @@ class RedisMCPSessionStore(MCPSessionStore):
             return None
         try:
             import json
+
             raw = self._client.get(f"obr:mcp:{key}")
             if raw is None:
                 return None
@@ -104,6 +104,7 @@ class RedisMCPSessionStore(MCPSessionStore):
         if not self._client:
             return
         import json
+
         rec = {
             "session_id": session_id,
             "thread_id": thread_id,
@@ -112,13 +113,9 @@ class RedisMCPSessionStore(MCPSessionStore):
         }
         val = json.dumps(rec)
         try:
-            self._client.setex(
-                f"obr:mcp:{session_id}", self._ttl, val
-            )
+            self._client.setex(f"obr:mcp:{session_id}", self._ttl, val)
             if thread_id:
-                self._client.setex(
-                    f"obr:mcp:{thread_id}", self._ttl, val
-                )
+                self._client.setex(f"obr:mcp:{thread_id}", self._ttl, val)
         except Exception:
             pass
 
@@ -139,9 +136,7 @@ class PostgresMCPSessionStore(MCPSessionStore):
 
     def __init__(self, url: str | None = None) -> None:
         self._url = (
-            url
-            or os.environ.get("DATABASE_URL")
-            or os.environ.get("REVIEW_STORE_POSTGRES_URI", "")
+            url or os.environ.get("DATABASE_URL") or os.environ.get("REVIEW_STORE_POSTGRES_URI", "")
         )
         self._table = "obr_mcp_session"
 
@@ -150,6 +145,7 @@ class PostgresMCPSessionStore(MCPSessionStore):
             return None
         try:
             import psycopg
+
             return psycopg.connect(self._url)
         except ImportError:
             return None
@@ -192,12 +188,10 @@ class PostgresMCPSessionStore(MCPSessionStore):
             return
         try:
             with conn.cursor() as cur:
-                cur.execute(
-                    f"""
+                cur.execute(f"""
                     CREATE TABLE IF NOT EXISTS {self._table}
                     (session_id TEXT PRIMARY KEY, thread_id TEXT, fingerprint_id TEXT, workspace_path TEXT, updated_at TIMESTAMPTZ DEFAULT NOW())
-                    """
-                )
+                    """)
                 cur.execute(
                     f"""
                     INSERT INTO {self._table} (session_id, thread_id, fingerprint_id, workspace_path)

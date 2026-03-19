@@ -15,6 +15,7 @@
 ## Root scripts
 
 - **export_json_schemas.py** — Export JSON schemas from the schema package. Run via `make export-schemas`.
+- **export_gateway_openapi.py** — Write `contracts/openapi/lean-gateway.json`. Run via `make export-openapi` (also invoked by `make check` / `make check-full`).
 - **run_benchmark.py** — Pipeline and workload benchmark; see `docs/benchmark.md`. Run with `make benchmark` or `make benchmark-report`.
 
 ## Axiom producer

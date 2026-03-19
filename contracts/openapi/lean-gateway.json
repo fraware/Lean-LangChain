@@ -1,0 +1,2124 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Obligation Runtime Lean Gateway",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "description": "Liveness probe: process is running; includes capability snapshot for operators.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayHealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Ready",
+        "description": "Readiness: DB when postgres; optional 503 if OBR_READY_FAIL_ON_DEGRADED and capabilities degraded.",
+        "operationId": "ready_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/environments/open": {
+      "post": {
+        "summary": "Open Environment",
+        "operationId": "open_environment_v1_environments_open_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenEnvironmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenEnvironmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions": {
+      "post": {
+        "summary": "Create Session",
+        "operationId": "create_session_v1_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSessionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/apply-patch": {
+      "post": {
+        "summary": "Apply Patch",
+        "operationId": "apply_patch_v1_sessions__session_id__apply_patch_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplyPatchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/interactive-check": {
+      "post": {
+        "summary": "Interactive Check",
+        "operationId": "interactive_check_v1_sessions__session_id__interactive_check_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InteractiveCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractiveCheckApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/goal": {
+      "post": {
+        "summary": "Goal",
+        "operationId": "goal_v1_sessions__session_id__goal_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionGoalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionGoalResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/hover": {
+      "post": {
+        "summary": "Hover",
+        "operationId": "hover_v1_sessions__session_id__hover_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionHoverRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionHoverResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/definition": {
+      "post": {
+        "summary": "Definition",
+        "operationId": "definition_v1_sessions__session_id__definition_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionDefinitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDefinitionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/batch-verify": {
+      "post": {
+        "summary": "Batch Verify",
+        "operationId": "batch_verify_v1_sessions__session_id__batch_verify_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchVerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchVerifyResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reviews/{thread_id}": {
+      "get": {
+        "summary": "Get Review",
+        "description": "Return review payload for a thread; 404 if not pending or unknown.",
+        "operationId": "get_review_v1_reviews__thread_id__get",
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewPayload"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reviews": {
+      "post": {
+        "summary": "Create Pending Review",
+        "description": "Create or replace pending review (called by orchestrator on interrupt).",
+        "operationId": "create_pending_review_v1_reviews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePendingReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePendingReviewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reviews/{thread_id}/approve": {
+      "post": {
+        "summary": "Approve Review",
+        "description": "Record approval for thread; 400 if not pending.",
+        "operationId": "approve_review_v1_reviews__thread_id__approve_post",
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDecisionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reviews/{thread_id}/reject": {
+      "post": {
+        "summary": "Reject Review",
+        "description": "Record rejection for thread; 400 if not pending.",
+        "operationId": "reject_review_v1_reviews__thread_id__reject_post",
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDecisionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reviews/{thread_id}/resume": {
+      "post": {
+        "summary": "Resume Review",
+        "description": "Resume the graph after approve/reject by calling the orchestrator service.",
+        "operationId": "resume_review_v1_reviews__thread_id__resume_post",
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResumeProxyResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcceptanceSummary": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "trust_level": {
+            "type": "string",
+            "title": "Trust Level",
+            "default": "clean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "build": {
+            "type": "object",
+            "title": "Build"
+          },
+          "axiom_audit": {
+            "type": "object",
+            "title": "Axiom Audit"
+          },
+          "fresh_checker": {
+            "type": "object",
+            "title": "Fresh Checker"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AcceptanceSummary",
+        "description": "Typed summary of batch (acceptance lane) verification for WitnessBundle.acceptance."
+      },
+      "ApplyPatchRequest": {
+        "properties": {
+          "files": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Files"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "title": "ApplyPatchRequest"
+      },
+      "ApplyPatchResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "changed_files": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Changed Files"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_id",
+          "changed_files"
+        ],
+        "title": "ApplyPatchResponse"
+      },
+      "AxiomAuditResult": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "trust_level": {
+            "type": "string",
+            "enum": [
+              "clean",
+              "warning",
+              "blocked"
+            ],
+            "title": "Trust Level"
+          },
+          "blocked_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Blocked Reasons"
+          },
+          "dependencies": {
+            "items": {
+              "$ref": "#/components/schemas/AxiomDependency"
+            },
+            "type": "array",
+            "title": "Dependencies"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ok",
+          "trust_level"
+        ],
+        "title": "AxiomAuditResult"
+      },
+      "AxiomDependency": {
+        "properties": {
+          "declaration": {
+            "type": "string",
+            "title": "Declaration"
+          },
+          "axioms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Axioms"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "declaration"
+        ],
+        "title": "AxiomDependency"
+      },
+      "BatchBuildResult": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "command": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Command"
+          },
+          "stdout": {
+            "type": "string",
+            "title": "Stdout",
+            "default": ""
+          },
+          "stderr": {
+            "type": "string",
+            "title": "Stderr",
+            "default": ""
+          },
+          "timing_ms": {
+            "type": "integer",
+            "title": "Timing Ms",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "BatchBuildResult"
+      },
+      "BatchVerifyRequest": {
+        "properties": {
+          "target_declarations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Target Declarations"
+          }
+        },
+        "type": "object",
+        "title": "BatchVerifyRequest",
+        "description": "Batch-verify body; target_files is ignored (legacy) \u2014 use target_declarations."
+      },
+      "BatchVerifyResult": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "build": {
+            "$ref": "#/components/schemas/BatchBuildResult"
+          },
+          "axiom_audit": {
+            "$ref": "#/components/schemas/AxiomAuditResult"
+          },
+          "fresh_checker": {
+            "$ref": "#/components/schemas/FreshCheckerResult"
+          },
+          "trust_level": {
+            "type": "string",
+            "enum": [
+              "clean",
+              "warning",
+              "blocked"
+            ],
+            "title": "Trust Level"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "axiom_evidence_real": {
+            "type": "boolean",
+            "title": "Axiom Evidence Real",
+            "default": false
+          },
+          "fresh_evidence_real": {
+            "type": "boolean",
+            "title": "Fresh Evidence Real",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ok",
+          "build",
+          "axiom_audit",
+          "fresh_checker",
+          "trust_level"
+        ],
+        "title": "BatchVerifyResult"
+      },
+      "CreatePendingReviewRequest": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "thread_id"
+        ],
+        "title": "CreatePendingReviewRequest",
+        "description": "Minimum fields to create a pending review; additional keys stored as-is."
+      },
+      "CreatePendingReviewResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "thread_id"
+        ],
+        "title": "CreatePendingReviewResponse"
+      },
+      "CreateSessionRequest": {
+        "properties": {
+          "fingerprint_id": {
+            "type": "string",
+            "title": "Fingerprint Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fingerprint_id"
+        ],
+        "title": "CreateSessionRequest"
+      },
+      "CreateSessionResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "fingerprint_id": {
+            "type": "string",
+            "title": "Fingerprint Id"
+          },
+          "workspace_path": {
+            "type": "string",
+            "title": "Workspace Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_id",
+          "fingerprint_id",
+          "workspace_path"
+        ],
+        "title": "CreateSessionResponse"
+      },
+      "Diagnostic": {
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "information",
+              "hint"
+            ],
+            "title": "Severity"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          },
+          "end_line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Line"
+          },
+          "end_column": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Column"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "lean"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "severity",
+          "file",
+          "line",
+          "column",
+          "message"
+        ],
+        "title": "Diagnostic"
+      },
+      "EnvironmentFingerprint": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "repo_id": {
+            "type": "string",
+            "title": "Repo Id"
+          },
+          "repo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Url"
+          },
+          "commit_sha": {
+            "type": "string",
+            "title": "Commit Sha"
+          },
+          "lean_toolchain": {
+            "type": "string",
+            "title": "Lean Toolchain"
+          },
+          "lakefile_hash": {
+            "type": "string",
+            "title": "Lakefile Hash"
+          },
+          "manifest_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manifest Hash"
+          },
+          "target_platform": {
+            "type": "string",
+            "title": "Target Platform",
+            "default": "linux/amd64"
+          },
+          "build_flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Build Flags"
+          },
+          "os_family": {
+            "type": "string",
+            "enum": [
+              "linux",
+              "darwin",
+              "windows"
+            ],
+            "title": "Os Family",
+            "default": "linux"
+          },
+          "imported_packages": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imported Packages"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "repo_id",
+          "commit_sha",
+          "lean_toolchain",
+          "lakefile_hash"
+        ],
+        "title": "EnvironmentFingerprint"
+      },
+      "FreshCheckerResult": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "command": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Command"
+          },
+          "stdout": {
+            "type": "string",
+            "title": "Stdout",
+            "default": ""
+          },
+          "stderr": {
+            "type": "string",
+            "title": "Stderr",
+            "default": ""
+          },
+          "timing_ms": {
+            "type": "integer",
+            "title": "Timing Ms",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "FreshCheckerResult"
+      },
+      "GatewayCapabilityBlock": {
+        "properties": {
+          "lean_interactive": {
+            "type": "string",
+            "title": "Lean Interactive"
+          },
+          "axiom_audit": {
+            "type": "string",
+            "title": "Axiom Audit"
+          },
+          "fresh_checker": {
+            "type": "string",
+            "title": "Fresh Checker"
+          },
+          "review_store": {
+            "type": "string",
+            "title": "Review Store"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "lean_interactive",
+          "axiom_audit",
+          "fresh_checker",
+          "review_store"
+        ],
+        "title": "GatewayCapabilityBlock"
+      },
+      "GatewayHealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ],
+            "const": "ok",
+            "title": "Status"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "degraded": {
+            "type": "boolean",
+            "title": "Degraded"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/GatewayCapabilityBlock"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "degraded",
+          "capabilities"
+        ],
+        "title": "GatewayHealthResponse"
+      },
+      "GoalSnapshot": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "plainGoal",
+              "plainTermGoal"
+            ],
+            "title": "Kind"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          },
+          "column": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind",
+          "text"
+        ],
+        "title": "GoalSnapshot"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InteractiveCheckApiResponse": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version",
+            "default": "0.1.0"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "phase": {
+            "type": "string",
+            "title": "Phase",
+            "default": "interactive"
+          },
+          "diagnostics": {
+            "items": {
+              "$ref": "#/components/schemas/Diagnostic"
+            },
+            "type": "array",
+            "title": "Diagnostics"
+          },
+          "goals": {
+            "items": {
+              "$ref": "#/components/schemas/GoalSnapshot"
+            },
+            "type": "array",
+            "title": "Goals"
+          },
+          "stdout": {
+            "type": "string",
+            "title": "Stdout",
+            "default": ""
+          },
+          "stderr": {
+            "type": "string",
+            "title": "Stderr",
+            "default": ""
+          },
+          "timing_ms": {
+            "type": "integer",
+            "title": "Timing Ms",
+            "default": 0
+          },
+          "lsp_required": {
+            "type": "boolean",
+            "title": "Lsp Required",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "InteractiveCheckApiResponse",
+        "description": "Interactive check JSON including LSP capability flag."
+      },
+      "InteractiveCheckRequest": {
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_path"
+        ],
+        "title": "InteractiveCheckRequest"
+      },
+      "OpenEnvironmentRequest": {
+        "properties": {
+          "repo_id": {
+            "type": "string",
+            "title": "Repo Id"
+          },
+          "repo_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Path"
+          },
+          "repo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Url"
+          },
+          "commit_sha": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Sha",
+            "default": "HEAD"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "repo_id"
+        ],
+        "title": "OpenEnvironmentRequest"
+      },
+      "OpenEnvironmentResponse": {
+        "properties": {
+          "fingerprint": {
+            "$ref": "#/components/schemas/EnvironmentFingerprint"
+          },
+          "fingerprint_id": {
+            "type": "string",
+            "title": "Fingerprint Id"
+          },
+          "snapshot_path": {
+            "type": "string",
+            "title": "Snapshot Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fingerprint",
+          "fingerprint_id",
+          "snapshot_path"
+        ],
+        "title": "OpenEnvironmentResponse"
+      },
+      "PolicyAuditTrail": {
+        "properties": {
+          "policy_pack_name": {
+            "type": "string",
+            "title": "Policy Pack Name",
+            "default": ""
+          },
+          "policy_pack_version": {
+            "type": "string",
+            "title": "Policy Pack Version",
+            "default": ""
+          },
+          "resolved_rules": {
+            "items": {
+              "$ref": "#/components/schemas/PolicyResolvedRule"
+            },
+            "type": "array",
+            "title": "Resolved Rules"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PolicyAuditTrail",
+        "description": "Structured policy provenance for review UI and witnesses."
+      },
+      "PolicyDecision": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "rejected",
+              "blocked",
+              "needs_review",
+              "lower_trust",
+              "failed"
+            ],
+            "title": "Decision"
+          },
+          "trust_level": {
+            "type": "string",
+            "enum": [
+              "clean",
+              "warning",
+              "blocked"
+            ],
+            "title": "Trust Level"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "policy_pack_name": {
+            "type": "string",
+            "title": "Policy Pack Name",
+            "default": ""
+          },
+          "policy_pack_version": {
+            "type": "string",
+            "title": "Policy Pack Version",
+            "default": ""
+          },
+          "resolved_rules": {
+            "items": {
+              "$ref": "#/components/schemas/PolicyResolvedRule"
+            },
+            "type": "array",
+            "title": "Resolved Rules"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision",
+          "trust_level"
+        ],
+        "title": "PolicyDecision"
+      },
+      "PolicyResolvedRule": {
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "title": "Rule Id"
+          },
+          "source_pack": {
+            "type": "string",
+            "title": "Source Pack"
+          },
+          "matched": {
+            "type": "boolean",
+            "title": "Matched"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "none",
+              "needs_review",
+              "rejected",
+              "blocked",
+              "accepted"
+            ],
+            "title": "Effect"
+          },
+          "reason_code": {
+            "type": "string",
+            "title": "Reason Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rule_id",
+          "source_pack",
+          "matched",
+          "effect",
+          "reason_code"
+        ],
+        "title": "PolicyResolvedRule",
+        "description": "One evaluated policy rule for audit trails."
+      },
+      "ReviewDecisionResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "title": "Decision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "thread_id",
+          "decision"
+        ],
+        "title": "ReviewDecisionResponse"
+      },
+      "ReviewEnvironmentSummary": {
+        "properties": {
+          "repo_id": {
+            "type": "string",
+            "title": "Repo Id",
+            "default": ""
+          },
+          "repo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Url"
+          },
+          "commit_sha": {
+            "type": "string",
+            "title": "Commit Sha",
+            "default": ""
+          },
+          "lean_toolchain": {
+            "type": "string",
+            "title": "Lean Toolchain",
+            "default": ""
+          },
+          "lakefile_hash": {
+            "type": "string",
+            "title": "Lakefile Hash",
+            "default": ""
+          },
+          "manifest_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manifest Hash"
+          },
+          "target_platform": {
+            "type": "string",
+            "title": "Target Platform",
+            "default": "linux/amd64"
+          },
+          "build_flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Build Flags"
+          },
+          "os_family": {
+            "type": "string",
+            "title": "Os Family",
+            "default": "linux"
+          },
+          "imported_packages": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imported Packages"
+          }
+        },
+        "type": "object",
+        "title": "ReviewEnvironmentSummary",
+        "description": "Environment fingerprint subset for review display."
+      },
+      "ReviewObligationSummary": {
+        "properties": {
+          "obligation": {
+            "type": "object",
+            "title": "Obligation"
+          },
+          "target_files": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Target Files"
+          },
+          "target_declarations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Target Declarations"
+          }
+        },
+        "type": "object",
+        "title": "ReviewObligationSummary",
+        "description": "Obligation context shown in the review UI."
+      },
+      "ReviewPatchMetadata": {
+        "properties": {
+          "current_patch": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Current Patch"
+          },
+          "protected_paths_touched": {
+            "type": "boolean",
+            "title": "Protected Paths Touched",
+            "default": false
+          },
+          "imports_changed": {
+            "type": "boolean",
+            "title": "Imports Changed",
+            "default": false
+          },
+          "changed_files": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Changed Files"
+          },
+          "diff_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diff Hash"
+          }
+        },
+        "type": "object",
+        "title": "ReviewPatchMetadata",
+        "description": "Patch and diff context for reviewers."
+      },
+      "ReviewPayload": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "obligation_id": {
+            "type": "string",
+            "title": "Obligation Id",
+            "default": ""
+          },
+          "obligation_summary": {
+            "$ref": "#/components/schemas/ReviewObligationSummary"
+          },
+          "environment_summary": {
+            "$ref": "#/components/schemas/ReviewEnvironmentSummary"
+          },
+          "patch_metadata": {
+            "$ref": "#/components/schemas/ReviewPatchMetadata"
+          },
+          "diff_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diff Summary"
+          },
+          "diagnostics_summary": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Diagnostics Summary"
+          },
+          "axiom_audit_summary": {
+            "$ref": "#/components/schemas/AxiomAuditResult"
+          },
+          "batch_summary": {
+            "$ref": "#/components/schemas/AcceptanceSummary"
+          },
+          "policy_summary": {
+            "$ref": "#/components/schemas/PolicyDecision"
+          },
+          "trust_delta": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trust Delta"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "awaiting_review"
+          },
+          "policy_audit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PolicyAuditTrail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id"
+        ],
+        "title": "ReviewPayload",
+        "description": "Payload served to the review UI for interrupted obligations."
+      },
+      "ReviewResumeProxyResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "artifacts_count": {
+            "type": "integer",
+            "title": "Artifacts Count",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "thread_id"
+        ],
+        "title": "ReviewResumeProxyResponse",
+        "description": "Shape returned by orchestrator resume; gateway proxies this."
+      },
+      "SessionDefinitionRequest": {
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_path",
+          "line",
+          "column"
+        ],
+        "title": "SessionDefinitionRequest"
+      },
+      "SessionDefinitionResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "locations": {
+            "title": "Locations"
+          },
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          },
+          "lsp_required": {
+            "type": "boolean",
+            "title": "Lsp Required",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "locations",
+          "file_path",
+          "line",
+          "column"
+        ],
+        "title": "SessionDefinitionResponse"
+      },
+      "SessionGoalRequest": {
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          },
+          "goal_kind": {
+            "type": "string",
+            "title": "Goal Kind",
+            "default": "plainGoal"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_path",
+          "line",
+          "column"
+        ],
+        "title": "SessionGoalRequest"
+      },
+      "SessionGoalResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "goal_kind": {
+            "type": "string",
+            "title": "Goal Kind"
+          },
+          "goals": {
+            "title": "Goals"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          },
+          "lsp_required": {
+            "type": "boolean",
+            "title": "Lsp Required",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "goal_kind",
+          "goals",
+          "line",
+          "column"
+        ],
+        "title": "SessionGoalResponse"
+      },
+      "SessionHoverRequest": {
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_path",
+          "line",
+          "column"
+        ],
+        "title": "SessionHoverRequest"
+      },
+      "SessionHoverResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "default": true
+          },
+          "contents": {
+            "title": "Contents"
+          },
+          "file_path": {
+            "type": "string",
+            "title": "File Path"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "column": {
+            "type": "integer",
+            "title": "Column"
+          },
+          "lsp_required": {
+            "type": "boolean",
+            "title": "Lsp Required",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "contents",
+          "file_path",
+          "line",
+          "column"
+        ],
+        "title": "SessionHoverResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

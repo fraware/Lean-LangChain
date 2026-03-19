@@ -10,7 +10,7 @@ import logging
 import os
 import time
 from datetime import datetime, timezone
-from typing import Any, Callable
+from typing import Any, Callable, Mapping, cast
 
 from langgraph.graph import END, START, StateGraph
 
@@ -44,7 +44,7 @@ SPAN_BY_NODE: dict[str, str] = {
 
 def _emit(
     tracer: Any,
-    state: ObligationRuntimeState,
+    state: Mapping[str, Any],
     node_name: str,
     event_type: str,
     status: str,
@@ -77,17 +77,18 @@ def _emit(
 def _with_tracing(
     tracer: Any,
     node_name: str,
-    fn: Callable[[ObligationRuntimeState], dict],
-) -> Callable[[ObligationRuntimeState], dict]:
-    def wrapped(state: ObligationRuntimeState) -> dict:
+    fn: Callable[[ObligationRuntimeState], dict[str, Any]],
+) -> Callable[[ObligationRuntimeState], dict[str, Any]]:
+    def wrapped(state: ObligationRuntimeState) -> dict[str, Any]:
         _emit(tracer, state, node_name, "node_enter", state.get("status") or "running")
         start = time.monotonic()
         try:
             out = fn(state)
             elapsed_ms = int((time.monotonic() - start) * 1000)
+            merged: dict[str, Any] = {**dict(state), **out}
             _emit(
                 tracer,
-                {**state, **out},
+                cast(ObligationRuntimeState, merged),
                 node_name,
                 "node_exit",
                 out.get("status") or "ok",
@@ -127,9 +128,8 @@ def build_patch_admissibility_graph(
     _DEFAULT_PACK_NAME = "strict_patch_gate_v1"
 
     def _load_pack_for_review(state: ObligationRuntimeState) -> PolicyPack:
-        name = (
-            state.get("policy_pack_name")
-            or os.environ.get("OBR_POLICY_PACK", _DEFAULT_PACK_NAME)
+        name = state.get("policy_pack_name") or os.environ.get(
+            "OBR_POLICY_PACK", _DEFAULT_PACK_NAME
         )
         try:
             return load_pack(name)
@@ -137,9 +137,7 @@ def build_patch_admissibility_graph(
             logger.warning("Policy pack %r not loadable: %s; using default", name, e)
             return _DEFAULT_PACK
         except Exception as e:
-            logger.warning(
-                "Policy pack %r validation failed: %s; using default", name, e
-            )
+            logger.warning("Policy pack %r validation failed: %s; using default", name, e)
             return _DEFAULT_PACK
 
     handlers = create_node_handlers(
@@ -149,7 +147,9 @@ def build_patch_admissibility_graph(
         load_pack_for_review=_load_pack_for_review,
     )
 
-    def wrap(name: str, f: Callable[[ObligationRuntimeState], dict]) -> Callable[[ObligationRuntimeState], dict]:
+    def wrap(
+        name: str, f: Callable[[ObligationRuntimeState], dict[str, Any]]
+    ) -> Callable[[ObligationRuntimeState], dict[str, Any]]:
         return _with_tracing(tracer, name, f)
 
     builder = StateGraph(ObligationRuntimeState)
@@ -167,7 +167,11 @@ def build_patch_admissibility_graph(
     builder.add_conditional_edges(
         "interactive_check",
         route_after_interactive,
-        {"batch_verify": "batch_verify", "repair_from_diagnostics": "repair_from_diagnostics", "repair_from_goals": "repair_from_goals"},
+        {
+            "batch_verify": "batch_verify",
+            "repair_from_diagnostics": "repair_from_diagnostics",
+            "repair_from_goals": "repair_from_goals",
+        },
     )
     builder.add_edge("batch_verify", "audit_trust")
     builder.add_edge("audit_trust", "evaluate_protocol")
@@ -175,7 +179,11 @@ def build_patch_admissibility_graph(
     builder.add_conditional_edges(
         "policy_review",
         route_after_policy,
-        {"finalize": "finalize", "interrupt_for_approval": "interrupt_for_approval", "__end__": "__end__"},
+        {
+            "finalize": "finalize",
+            "interrupt_for_approval": "interrupt_for_approval",
+            "__end__": "__end__",
+        },
     )
     builder.add_edge("finalize", END)
     builder.add_conditional_edges(

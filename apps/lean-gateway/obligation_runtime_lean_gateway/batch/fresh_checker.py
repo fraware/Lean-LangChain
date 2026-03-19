@@ -53,9 +53,7 @@ class FreshCheckerReal:
         timeout_seconds: float | None = None,
         runner: LeanRunner | None = None,
     ) -> None:
-        self._timeout = (
-            timeout_seconds if timeout_seconds is not None else _fresh_timeout_seconds()
-        )
+        self._timeout = timeout_seconds if timeout_seconds is not None else _fresh_timeout_seconds()
         cmd_env = os.environ.get("OBR_FRESH_CHECK_CMD")
         self._cmd = cmd_env.split() if cmd_env else ["lean4checker", "--fresh"]
         self._runner = runner

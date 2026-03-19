@@ -2,6 +2,7 @@
 
 Run with Gateway up: OBR_GATEWAY_URL=http://localhost:8000 python run_graph.py
 """
+
 from __future__ import annotations
 
 import os
@@ -9,6 +10,7 @@ import os
 from obligation_runtime_sdk.client import ObligationRuntimeClient
 from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
 from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
+
 
 def main() -> None:
     base_url = os.environ.get("OBR_GATEWAY_URL", "http://localhost:8000")
@@ -24,6 +26,7 @@ def main() -> None:
     result = graph.invoke(initial, config=config)
     print("Status:", result.get("status"))
     print("Artifacts:", len(result.get("artifacts") or []))
+
 
 if __name__ == "__main__":
     main()

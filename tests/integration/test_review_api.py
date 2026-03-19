@@ -38,7 +38,7 @@ def test_create_pending_review_then_get(gateway_client) -> None:
 def test_create_review_requires_thread_id(gateway_client) -> None:
     client = gateway_client
     r = client.post("/v1/reviews", json={})
-    assert r.status_code == 400
+    assert r.status_code == 422
 
 
 def test_approve_and_reject(gateway_client) -> None:

@@ -7,8 +7,10 @@ Paths are defined in api_paths.py.
 
 from __future__ import annotations
 
+from typing import Any
+
 # Each entry: name (snake_case, matches SDK method), params, description. Paths live in api_paths.
-OPERATIONS: list[dict] = [
+OPERATIONS: list[dict[str, Any]] = [
     {
         "name": "open_environment",
         "params": ["repo_id", "repo_path", "repo_url", "commit_sha"],
@@ -72,7 +74,7 @@ def get_mcp_tool_name(operation_name: str) -> str:
     return f"obligation/{operation_name}"
 
 
-def operation_param_schema(param: str) -> dict:
+def operation_param_schema(param: str) -> dict[str, Any]:
     """Return JSON Schema type for common param names."""
     if param in ("line", "column"):
         return {"type": "integer"}
@@ -83,15 +85,17 @@ def operation_param_schema(param: str) -> dict:
     return {"type": "string"}
 
 
-def build_mcp_tool_schemas() -> list[dict]:
+def build_mcp_tool_schemas() -> list[dict[str, Any]]:
     """Build MCP tools/list payload from the operation catalog."""
     schemas = []
     for op in OPERATIONS:
         params = op.get("params", [])
         properties = {p: operation_param_schema(p) for p in params}
-        schemas.append({
-            "name": get_mcp_tool_name(op["name"]),
-            "description": op.get("description", ""),
-            "inputSchema": {"type": "object", "properties": properties},
-        })
+        schemas.append(
+            {
+                "name": get_mcp_tool_name(op["name"]),
+                "description": op.get("description", ""),
+                "inputSchema": {"type": "object", "properties": properties},
+            }
+        )
     return schemas

@@ -1,0 +1,5 @@
+extends: strict_patch_gate_v1
+version: "0.1.0"
+name: loose_imports_v1
+description: "Like strict_patch_gate_v1 but does not require review on import-only edits"
+require_human_if_imports_change: false

@@ -50,11 +50,19 @@ def test_lean_transport_required_in_production() -> None:
     env.pop("OBR_USE_LEAN_LSP", None)
     env.pop("OBR_USE_REAL_LEAN", None)
     result = subprocess.run(
-        [sys.executable, "-c", "from obligation_runtime_lean_gateway.api import deps; _ = deps.interactive_api"],
+        [
+            sys.executable,
+            "-c",
+            "from obligation_runtime_lean_gateway.api import deps; _ = deps.interactive_api",
+        ],
         env=env,
         capture_output=True,
         text=True,
         timeout=10,
     )
     assert result.returncode != 0
-    assert "OBR_USE_REAL_LEAN" in result.stderr or "OBR_USE_LEAN_LSP" in result.stderr or "RuntimeError" in result.stderr
+    assert (
+        "OBR_USE_REAL_LEAN" in result.stderr
+        or "OBR_USE_LEAN_LSP" in result.stderr
+        or "RuntimeError" in result.stderr
+    )

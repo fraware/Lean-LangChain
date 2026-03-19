@@ -85,6 +85,7 @@ class SubprocessLeanTransport:
         runner: LeanRunner | None = None,
     ) -> None:
         from .runner import get_runner
+
         self._session_manager = session_manager
         self._timeout_seconds = timeout_seconds
         self._runner = runner if runner is not None else get_runner("interactive")
@@ -142,7 +143,9 @@ class LspLeanTransport:
 
         lease = self._session_manager.get(session_id)
         workspace_path = Path(lease.workspace_path)
-        return run_get_goal(workspace_path, file_path, line, column, goal_kind, self._timeout_seconds)
+        return run_get_goal(
+            workspace_path, file_path, line, column, goal_kind, self._timeout_seconds
+        )
 
     def hover(self, session_id: str, file_path: str, line: int, column: int) -> str:
         from .lsp_client import run_hover

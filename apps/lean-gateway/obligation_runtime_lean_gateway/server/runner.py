@@ -79,15 +79,17 @@ def _container_run_args(
     run_cmd = [docker_cmd, "run"]
     if runtime is not None:
         run_cmd.extend(["--runtime", runtime])
-    run_cmd.extend([
-        "--rm",
-        "--label",
-        "obr=1",
-        "-v",
-        f"{workspace_path}:/workspace",
-        "-w",
-        "/workspace",
-    ])
+    run_cmd.extend(
+        [
+            "--rm",
+            "--label",
+            "obr=1",
+            "-v",
+            f"{workspace_path}:/workspace",
+            "-w",
+            "/workspace",
+        ]
+    )
     network = os.environ.get("OBR_CONTAINER_NETWORK")
     run_cmd.extend(["--network", network if network is not None else "none"])
     memory_mb = os.environ.get("OBR_CONTAINER_MEMORY_MB")
@@ -109,9 +111,7 @@ class ContainerRunner:
         image: str | None = None,
         docker_cmd: str = "docker",
     ) -> None:
-        self._image = (
-            image or os.environ.get("OBR_DOCKER_IMAGE", "lean-worker:latest")
-        )
+        self._image = image or os.environ.get("OBR_DOCKER_IMAGE", "lean-worker:latest")
         self._docker_cmd = docker_cmd
 
     def run(

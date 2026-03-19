@@ -4,17 +4,19 @@ How to run checks locally and what the CI pipeline does. Use the same Python/ven
 
 ## Local commands
 
-- **Quick check:** `make check` — Lint, schema tests, unit tests, integration tests, schema export. No typecheck.
-- **Full check:** `make check-full` — Lint, typecheck (mypy), schema tests, unit tests, integration tests, regression tests, schema export.
+- **Quick check:** `make check` — Lint, schema tests, unit tests, integration tests, JSON schema export, OpenAPI export. No typecheck or regressions.
+- **Full check:** `make check-full` — Lint; Mypy (`make typecheck` + `make typecheck-strict-core`); schema round-trip tests; unit, integration, and regression tests; JSON schema export; OpenAPI export; **`verify-openapi-sdk-contract`** (regenerates TS types from OpenAPI, `git diff` must be clean). Requires **Node.js** for the last step.
 
-CI runs `make check-full` on the main branch. Typecheck runs over `packages/schemas`, `apps/lean-gateway`, and `apps/orchestrator`.
+CI **main** job runs `make check-full` plus extra steps (Postgres-backed tests, contract pytest modules, tracer tests). Typecheck covers `packages/schemas`, `apps/lean-gateway`, and `apps/orchestrator`; strict Mypy covers policy, gateway batch/routes, orchestrator graph/MCP, and selected modules (see Makefile).
 
 ## Main CI job
 
 The **main** job runs the full check with Postgres so the production persistence path is validated:
 
 - Postgres 16 service with `DATABASE_URL`, `REVIEW_STORE=postgres`, `CHECKPOINTER=postgres`.
-- Steps: install (including `langgraph-checkpoint-postgres`, `psycopg[binary]`), `make check-full`, production tracer tests (mocks), Postgres review store and checkpointer tests.
+- Steps: `make install-dev-full` (includes root `[dev]` extra), extra Postgres deps, `make check-full`, gateway/orchestrator boundary tests, contract parity and OpenAPI snapshot tests, production tracer tests, Postgres review store and checkpointer tests.
+
+A **contract** job (Node 20) runs cross-surface parity tests, TypeScript SDK unit tests, and `verify-openapi-sdk-contract`.
 
 Unit tests do not require real API keys; when LangSmith is missing or auth fails, helpers return `status: "error"`. The main job uses test doubles for transport, axiom auditor, and fresh checker so the Gateway runs without Lean.
 

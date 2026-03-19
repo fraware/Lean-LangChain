@@ -11,7 +11,9 @@ from pathlib import Path
 import pytest
 
 
-def _send_mcp(proc: subprocess.Popen, method: str, params: dict | None = None, msg_id: int = 1) -> dict:
+def _send_mcp(
+    proc: subprocess.Popen, method: str, params: dict | None = None, msg_id: int = 1
+) -> dict:
     req = {"jsonrpc": "2.0", "id": msg_id, "method": method}
     if params is not None:
         req["params"] = params
@@ -62,12 +64,8 @@ def test_mcp_server_list_tools() -> None:
             except ImportError:
                 pass
             if in_ci and orchestrator_importable:
-                pytest.fail(
-                    f"MCP server did not respond in CI; stderr: {stderr[:500]!r}"
-                )
-            pytest.skip(
-                f"MCP server no response (run make install-dev-full?): {stderr[:300]}"
-            )
+                pytest.fail(f"MCP server did not respond in CI; stderr: {stderr[:500]!r}")
+            pytest.skip(f"MCP server no response (run make install-dev-full?): {stderr[:300]}")
         if proc.poll() is not None and "result" not in init_resp:
             stderr = (proc.stderr.read() or "") if proc.stderr else ""
             in_ci = os.environ.get("CI") == "true"
@@ -77,9 +75,7 @@ def test_mcp_server_list_tools() -> None:
             except ImportError:
                 orchestrator_importable = False
             if in_ci and orchestrator_importable:
-                pytest.fail(
-                    f"MCP server exited without result in CI; stderr: {stderr[:500]!r}"
-                )
+                pytest.fail(f"MCP server exited without result in CI; stderr: {stderr[:500]!r}")
             pytest.skip(f"MCP server exited: {stderr[:300]}")
         assert "result" in init_resp, f"Expected result in response: {init_resp}"
         assert init_resp["result"].get("serverInfo", {}).get("name") == "obligation-runtime"

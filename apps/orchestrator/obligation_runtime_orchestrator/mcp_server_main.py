@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 import os
 import sys
-from typing import Any
+from typing import Any, cast
 
 
-def _read_message() -> dict | None:
+def _read_message() -> dict[str, Any] | None:
     """Read one MCP message from stdin (Content-Length: N + JSON body)."""
     line = sys.stdin.readline()
     if not line:
@@ -21,19 +21,20 @@ def _read_message() -> dict | None:
     except (ValueError, IndexError):
         return None
     body = sys.stdin.read(length)
-    return json.loads(body)
+    return cast(dict[str, Any], json.loads(body))
 
 
-def _write_message(msg: dict) -> None:
+def _write_message(msg: dict[str, Any]) -> None:
     """Write one MCP message to stdout."""
     body = json.dumps(msg, separators=(",", ":"))
     sys.stdout.write(f"Content-Length: {len(body)}\r\n\r\n{body}")
     sys.stdout.flush()
 
 
-def _tool_schemas() -> list[dict]:
+def _tool_schemas() -> list[dict[str, Any]]:
     """Return MCP tool list schema from canonical operation catalog (parity with Gateway/SDK)."""
     from obligation_runtime_schemas.operation_catalog import build_mcp_tool_schemas
+
     return build_mcp_tool_schemas()
 
 
@@ -67,12 +68,17 @@ def handle_mcp_request(
             # Align with Gateway/SDK error envelope when SDK raises API error
             try:
                 from obligation_runtime_sdk.exceptions import ObligationRuntimeAPIError
+
                 if isinstance(e, ObligationRuntimeAPIError):
                     return {
                         "error": {
                             "code": -32000,
                             "message": str(e),
-                            "data": {"api_code": e.code, "api_message": e.message, "status_code": e.status_code},
+                            "data": {
+                                "api_code": e.code,
+                                "api_message": e.message,
+                                "status_code": e.status_code,
+                            },
                         }
                     }
             except ImportError:
@@ -91,7 +97,9 @@ def _run_server() -> None:
     )
     from obligation_runtime_orchestrator.mcp_session_store import get_mcp_session_store
 
-    base_url = os.environ.get("OBR_GATEWAY_URL") or os.environ.get("OBLIGATION_GATEWAY_URL", "http://localhost:8000")
+    base_url = os.environ.get("OBR_GATEWAY_URL") or os.environ.get(
+        "OBLIGATION_GATEWAY_URL", "http://localhost:8000"
+    )
     client = ObligationRuntimeClient(base_url=base_url)
     context = MCPSessionContext()
     store = get_mcp_session_store()

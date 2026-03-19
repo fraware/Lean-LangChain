@@ -18,6 +18,40 @@ Versioned contract for external policy packs and extensions. Safe to depend on f
 
 **Example:** See `examples/integrations/policy_pack_extension/custom_strict_v1.yaml` and that directory’s README.
 
+## Policy pack plugin contract (v1.1, additive)
+
+**Stability:** Backward compatible with v1. Same required keys. New optional keys:
+
+- **`extends`:** Single string, name or path of another pack. Base fields are merged first; this file’s keys override.
+- **`import`:** List of pack names or paths. Each pack is merged in list order; later entries override earlier ones. Then this file’s keys override (except `extends` / `import`, which are consumed at load time).
+- **`path_rules`:** List of `{ glob, require_human?, reason_code? }`. After batch verification succeeds, if any `changed_files` entry (from patch metadata) matches `glob` (Unix-style `fnmatch`), policy returns `needs_review` with `reason_code` (default `path_rule_review`).
+
+Composition depth is capped (see `pack_loader.py`). Cycles in `extends` / `import` raise at load time.
+
+### Composition merge semantics (v1.1)
+
+Load order and precedence (see `pack_loader._merge_pack_layers`):
+
+1. If `extends` is set, that base pack is merged first (recursively).
+2. Each entry in `import` is merged in **list order**; **later imports overwrite** earlier keys on conflict (shallow dict merge: `merged.update(sub)` per layer).
+3. The current file’s body (all keys except `extends` and `import`) is merged last and **wins** over all bases and imports.
+
+**Field behavior:**
+
+- **Scalars and booleans:** Last writer wins (child / later import / own body).
+- **Lists** (`protected_paths`, `path_rules`, `trust_gates`, `import` list itself): the merged layer from a child pack **replaces** the list from the previous merge for that key when the child YAML specifies the key; there is **no** deep merge of list elements. To combine path rules from multiple packs, use `import` and repeat rules in the final pack if needed.
+- **Depth:** Maximum composition depth is 12; exceeding it raises `ValueError`.
+- **Cycles:** Visiting the same pack path twice while resolving `extends`/`import` raises `ValueError` with a circular reference message.
+
+**Import conflict policy:** Optional `composition_conflict_policy`:
+
+- `last_wins` (default): each `import` entry overwrites overlapping scalar flags from earlier imports, as before.
+- `error_on_import_scalar_override`: while merging the **current file’s** `import` list only, if a later import would change any of the tracked scalar/protocol flags (`require_human_if_imports_change`, `block_sorry_ax`, protocol booleans, etc.) relative to the merge-so-far, load fails with `ValueError`. Does not apply to `extends` merges or to the final pack body (body still wins). Use when parallel imports must not silently disagree.
+
+**Trust gates (`trust_gates`):** List of rules `{ rule_id?, when_trust_level[], path_globs[], require_human?, reason_code? }`. After batch verification succeeds, if the batch `trust_level` is in `when_trust_level` and any `changed_files` entry matches a `path_globs` entry (empty `path_globs` means “any change”), policy returns `needs_review` with the given `reason_code`. Evaluated together with `path_rules` and import/protected-path gates.
+
+**Example:** [composed_v1_1.yaml](../../examples/integrations/policy_pack_extension/composed_v1_1.yaml), built-in [loose_imports_v1.yaml](../../packages/policy/obligation_runtime_policy/packs/loose_imports_v1.yaml).
+
 ## Extension stability notes
 
 - Built-in packs in `packages/policy/obligation_runtime_policy/packs/` are part of the repo and may change between releases.

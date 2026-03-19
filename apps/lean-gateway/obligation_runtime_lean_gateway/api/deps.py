@@ -24,7 +24,6 @@ from obligation_runtime_lean_gateway.batch.build_runner import BuildRunner
 from obligation_runtime_lean_gateway.batch.axiom_audit import AxiomAuditorReal
 from obligation_runtime_lean_gateway.batch.fresh_checker import FreshCheckerReal
 
-
 _DATA_ROOT = Path(".var")
 
 fingerprints = FingerprintService()
@@ -69,27 +68,21 @@ def _resolve_lean_transport() -> LeanTransport:
         return LspLeanTransport(session_manager)
     if os.environ.get("OBR_USE_REAL_LEAN"):
         return SubprocessLeanTransport(session_manager, runner=_interactive_runner)
-    raise RuntimeError(
-        "Set OBR_USE_REAL_LEAN or OBR_USE_LEAN_LSP for the interactive lane."
-    )
+    raise RuntimeError("Set OBR_USE_REAL_LEAN or OBR_USE_LEAN_LSP for the interactive lane.")
 
 
 def _resolve_axiom_auditor() -> AxiomAuditorReal:
     """Resolve axiom auditor. Raises if not configured (production requires real)."""
     if os.environ.get("OBR_USE_REAL_AXIOM_AUDIT"):
         return AxiomAuditorReal(runner=_batch_runner)
-    raise RuntimeError(
-        "Set OBR_USE_REAL_AXIOM_AUDIT for batch-verify (axiom audit)."
-    )
+    raise RuntimeError("Set OBR_USE_REAL_AXIOM_AUDIT for batch-verify (axiom audit).")
 
 
 def _resolve_fresh_checker() -> FreshCheckerReal:
     """Resolve fresh checker. Raises if not configured (production requires real)."""
     if os.environ.get("OBR_USE_REAL_FRESH_CHECKER"):
         return FreshCheckerReal(runner=_batch_runner)
-    raise RuntimeError(
-        "Set OBR_USE_REAL_FRESH_CHECKER for batch-verify (fresh check)."
-    )
+    raise RuntimeError("Set OBR_USE_REAL_FRESH_CHECKER for batch-verify (fresh check).")
 
 
 def _get_lean_transport() -> LeanTransport:

@@ -40,9 +40,7 @@ class OtlpTracer:
                 span.set_attribute("timing_ms", event.timing_ms)
             if event.failure_class:
                 span.set_attribute("failure_class", event.failure_class)
-            span.set_status(
-                _otel_status_ok() if event.status == "ok" else _otel_status_error()
-            )
+            span.set_status(_otel_status_ok() if event.status == "ok" else _otel_status_error())
         finally:
             span.end()
 
@@ -55,6 +53,7 @@ def _make_otlp_tracer():
         )
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
         provider = TracerProvider()
         endpoint = os.environ.get("OBR_OTLP_ENDPOINT") or os.environ.get(
             "OTEL_EXPORTER_OTLP_ENDPOINT"
@@ -72,6 +71,7 @@ def _make_otlp_tracer():
 def _otel_status_ok():
     try:
         from opentelemetry.trace import Status, StatusCode
+
         return Status(StatusCode.OK)
     except ImportError:
         return None
@@ -80,6 +80,7 @@ def _otel_status_ok():
 def _otel_status_error():
     try:
         from opentelemetry.trace import Status, StatusCode
+
         return Status(StatusCode.ERROR)
     except ImportError:
         return None
@@ -112,6 +113,7 @@ def _langsmith_client():
         return None
     try:
         from langsmith import Client
+
         return Client()
     except ImportError:
         return None
@@ -128,15 +130,11 @@ def get_production_tracer(provider: Any = None):
             return OtlpTracer(tracer=tracer)
         except Exception:
             pass
-    if os.environ.get("OBR_OTLP_ENDPOINT") or os.environ.get(
-        "OTEL_EXPORTER_OTLP_ENDPOINT"
-    ):
+    if os.environ.get("OBR_OTLP_ENDPOINT") or os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"):
         t = OtlpTracer()
         if t._tracer is not None:
             return t
-    if os.environ.get("LANGCHAIN_API_KEY") or os.environ.get(
-        "LANGCHAIN_TRACING_V2"
-    ):
+    if os.environ.get("LANGCHAIN_API_KEY") or os.environ.get("LANGCHAIN_TRACING_V2"):
         t = LangSmithTracer()
         if t._client is not None:
             return t

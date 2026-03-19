@@ -105,9 +105,7 @@ class AxiomAuditorReal:
             return AxiomAuditResult(
                 ok=False,
                 trust_level="blocked",
-                blocked_reasons=[
-                    result.stderr or result.stdout or "Axiom audit failed"
-                ],
+                blocked_reasons=[result.stderr or result.stdout or "Axiom audit failed"],
                 dependencies=[],
             )
         dependencies = _parse_axiom_stdout(result.stdout or "", declarations)

@@ -24,11 +24,15 @@ class InteractiveAPI:
         self.worker_pool = worker_pool
         self.normalizer = InteractiveNormalizer()
         if transport is None:
-            raise ValueError("transport is required; use set_test_transport(TestDoubleTransport()) only in tests")
+            raise ValueError(
+                "transport is required; use set_test_transport(TestDoubleTransport()) only in tests"
+            )
         self.transport = transport
         self.check_timeout_seconds = check_timeout_seconds
 
-    def open_session(self, *, session_id: str, fingerprint_id: str, workspace_path: Path) -> SessionLease:
+    def open_session(
+        self, *, session_id: str, fingerprint_id: str, workspace_path: Path
+    ) -> SessionLease:
         lease = SessionLease(
             session_id=session_id,
             fingerprint_id=fingerprint_id,
@@ -49,7 +53,9 @@ class InteractiveAPI:
         def _run() -> tuple[list, list, bool]:
             return self.transport.check(session_id, file_path)
 
-        raw_diagnostics, raw_goals, ok = run_with_timeout(_run, timeout_seconds=self.check_timeout_seconds)
+        raw_diagnostics, raw_goals, ok = run_with_timeout(
+            _run, timeout_seconds=self.check_timeout_seconds
+        )
         elapsed_ms = int((perf_counter() - start) * 1000)
         return self.normalizer.result(
             ok=ok,

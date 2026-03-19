@@ -3,8 +3,10 @@ from __future__ import annotations
 try:
     from langchain_core.tools import tool
 except Exception:  # pragma: no cover
+
     def tool(func=None, **_kwargs):
         return func
+
 
 from obligation_runtime_sdk.client import ObligationRuntimeClient
 
@@ -22,9 +24,16 @@ def build_toolset(base_url: str, client: ObligationRuntimeClient | None = None) 
         client = make_client(base_url)
 
     @tool
-    def open_environment_tool(repo_id: str, repo_path: str | None = None, repo_url: str | None = None, commit_sha: str = "HEAD") -> dict:
+    def open_environment_tool(
+        repo_id: str,
+        repo_path: str | None = None,
+        repo_url: str | None = None,
+        commit_sha: str = "HEAD",
+    ) -> dict:
         """Open or reuse an environment snapshot for a repo."""
-        return client.open_environment(repo_id=repo_id, repo_path=repo_path, repo_url=repo_url, commit_sha=commit_sha)
+        return client.open_environment(
+            repo_id=repo_id, repo_path=repo_path, repo_url=repo_url, commit_sha=commit_sha
+        )
 
     @tool
     def create_session_tool(fingerprint_id: str) -> dict:
@@ -42,9 +51,17 @@ def build_toolset(base_url: str, client: ObligationRuntimeClient | None = None) 
         return client.interactive_check(session_id=session_id, file_path=file_path)
 
     @tool
-    def get_goal_tool(session_id: str, file_path: str, line: int, column: int, goal_kind: str = "plainGoal") -> dict:
+    def get_goal_tool(
+        session_id: str, file_path: str, line: int, column: int, goal_kind: str = "plainGoal"
+    ) -> dict:
         """Get goal at position in a file for an existing session."""
-        return client.get_goal(session_id=session_id, file_path=file_path, line=line, column=column, goal_kind=goal_kind)
+        return client.get_goal(
+            session_id=session_id,
+            file_path=file_path,
+            line=line,
+            column=column,
+            goal_kind=goal_kind,
+        )
 
     @tool
     def hover_tool(session_id: str, file_path: str, line: int, column: int) -> dict:
@@ -54,12 +71,20 @@ def build_toolset(base_url: str, client: ObligationRuntimeClient | None = None) 
     @tool
     def definition_tool(session_id: str, file_path: str, line: int, column: int) -> dict:
         """Get definition location for symbol at position in a file for an existing session."""
-        return client.definition(session_id=session_id, file_path=file_path, line=line, column=column)
+        return client.definition(
+            session_id=session_id, file_path=file_path, line=line, column=column
+        )
 
     @tool
-    def batch_verify_tool(session_id: str, target_files: list[str], target_declarations: list[str]) -> dict:
+    def batch_verify_tool(
+        session_id: str, target_files: list[str], target_declarations: list[str]
+    ) -> dict:
         """Run authoritative batch verification for target files/declarations."""
-        return client.batch_verify(session_id=session_id, target_files=target_files, target_declarations=target_declarations)
+        return client.batch_verify(
+            session_id=session_id,
+            target_files=target_files,
+            target_declarations=target_declarations,
+        )
 
     @tool
     def get_review_payload_tool(thread_id: str) -> dict:

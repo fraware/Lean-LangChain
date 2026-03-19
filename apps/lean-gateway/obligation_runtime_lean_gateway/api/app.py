@@ -11,15 +11,25 @@ try:
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
 except Exception:  # pragma: no cover — fallback when FastAPI not installed (e.g. schema-only tests)
+
     class FastAPI:
-        def __init__(self, **_kwargs): pass
-        def include_router(self, *_args, **_kwargs): pass
-        def add_middleware(self, *_args, **_kwargs): pass
+        def __init__(self, **_kwargs):
+            pass
+
+        def include_router(self, *_args, **_kwargs):
+            pass
+
+        def add_middleware(self, *_args, **_kwargs):
+            pass
+
     class HTTPException(Exception): ...
+
     class Request: ...
+
     def JSONResponse(*_args, **_kwargs): ...
     class CORSMiddleware:
         pass
+
 
 from .routes_environment import router as environment_router
 from .routes_sessions import router as session_router
@@ -37,6 +47,7 @@ from .errors import (
     redact_secrets,
 )
 from .logging_config import configure_logging, request_id_ctx
+from .capabilities import log_capabilities_at_startup
 
 
 def _request_id(request: Request) -> str:
@@ -94,6 +105,7 @@ def _warn_production_tracer_if_unset() -> None:
         return
     try:
         from obligation_runtime_telemetry.tracer import get_production_tracer
+
         if get_production_tracer() is None:
             logging.getLogger(__name__).warning(
                 "OBR_ENV=production but no tracer configured: set OBR_OTLP_ENDPOINT or LANGCHAIN_API_KEY for observability"
@@ -108,6 +120,8 @@ async def _lifespan(app: FastAPI):
     configure_logging()
     for handler in logging.root.handlers:
         handler.addFilter(_SecretRedactionFilter())
+    log = logging.getLogger("obligation_runtime_lean_gateway")
+    log_capabilities_at_startup(log, app_version=getattr(app, "version", None) or "0.1.0")
     _warn_production_tracer_if_unset()
     yield
 
@@ -132,7 +146,11 @@ def create_app() -> FastAPI:
         )
 
     app.include_router(health_router)
-    if os.environ.get("OBR_METRICS_ENABLED") and hasattr(_routes_metrics, "record_request") and _routes_metrics.REQUEST_COUNT is not None:
+    if (
+        os.environ.get("OBR_METRICS_ENABLED")
+        and hasattr(_routes_metrics, "record_request")
+        and _routes_metrics.REQUEST_COUNT is not None
+    ):
         app.include_router(_routes_metrics.router)
 
         @app.middleware("http")

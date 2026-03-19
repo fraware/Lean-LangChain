@@ -100,8 +100,16 @@ def _run_pipeline(metrics: dict, python_exe: str, skip_tests: bool = False) -> b
 
     # Schema tests
     t, code, out, err = _run(
-        [python_exe, "-m", "pytest", "tests/unit/test_schema_roundtrip.py",
-         "tests/unit/test_hash_stability.py", "tests/unit/test_schema_export.py", "-q", "--tb=no"],
+        [
+            python_exe,
+            "-m",
+            "pytest",
+            "tests/unit/test_schema_roundtrip.py",
+            "tests/unit/test_hash_stability.py",
+            "tests/unit/test_schema_export.py",
+            "-q",
+            "--tb=no",
+        ],
         root,
         timeout=30,
     )
@@ -216,6 +224,7 @@ def _run_workload(n: int, metrics: dict) -> None:
 
     app = create_app()
     with TestClient(app) as tc:
+
         def adapter(method: str, path: str, body):
             if method == "POST":
                 r = tc.post(path, json=body if body is not None else {})
@@ -244,8 +253,12 @@ def _run_workload(n: int, metrics: dict) -> None:
     metrics["workload_latency_ms"] = [round(x, 2) for x in latencies_ms]
     if latencies_ms:
         metrics["workload_latency_p50_ms"] = round(latencies_ms[int(len(latencies_ms) * 0.5)], 2)
-        metrics["workload_latency_p95_ms"] = round(latencies_ms[min(int(len(latencies_ms) * 0.95), len(latencies_ms) - 1)], 2)
-        metrics["workload_latency_p99_ms"] = round(latencies_ms[min(int(len(latencies_ms) * 0.99), len(latencies_ms) - 1)], 2)
+        metrics["workload_latency_p95_ms"] = round(
+            latencies_ms[min(int(len(latencies_ms) * 0.95), len(latencies_ms) - 1)], 2
+        )
+        metrics["workload_latency_p99_ms"] = round(
+            latencies_ms[min(int(len(latencies_ms) * 0.99), len(latencies_ms) - 1)], 2
+        )
         total_s = sum(latencies_ms) / 1000
         metrics["workload_throughput_per_s"] = round(n / total_s if total_s > 0 else 0, 4)
 
@@ -254,8 +267,17 @@ def _run_slowest_tests(metrics: dict, python_exe: str, n: int = 10) -> None:
     """Run pytest --durations=N to get slowest tests."""
     root = _repo_root()
     _, code, out, err = _run(
-        [python_exe, "-m", "pytest", "tests/unit", "tests/integration", "tests/regressions",
-         "-q", "--tb=no", f"--durations={n}"],
+        [
+            python_exe,
+            "-m",
+            "pytest",
+            "tests/unit",
+            "tests/integration",
+            "tests/regressions",
+            "-q",
+            "--tb=no",
+            f"--durations={n}",
+        ],
         root,
         timeout=300,
     )
@@ -290,10 +312,14 @@ def main() -> int:
             sys.path.insert(0, s)
 
     ap = argparse.ArgumentParser(description="Run benchmark and report metrics")
-    ap.add_argument("--workload", type=int, default=0, help="Number of graph invocations for workload benchmark")
+    ap.add_argument(
+        "--workload", type=int, default=0, help="Number of graph invocations for workload benchmark"
+    )
     ap.add_argument("--slowest", type=int, default=0, help="Report N slowest tests (0 = skip)")
     ap.add_argument("--output", "-o", default="", help="Write JSON report to file")
-    ap.add_argument("--pipeline-only", action="store_true", help="Only run pipeline (lint, typecheck, tests)")
+    ap.add_argument(
+        "--pipeline-only", action="store_true", help="Only run pipeline (lint, typecheck, tests)"
+    )
     args = ap.parse_args()
 
     python_exe = _get_project_python(root)

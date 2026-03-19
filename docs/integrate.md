@@ -38,13 +38,16 @@ python -m pip install -e packages/schemas -e packages/sdk-py
 from obligation_runtime_sdk import ObligationRuntimeClient
 
 client = ObligationRuntimeClient(base_url="http://localhost:8000")
-# Open environment, create session, apply patch, interactive-check, batch-verify, etc.
-resp = client.open_environment(repo_id="my-repo", repo_path="/path/to/repo")
+# Methods return validated Pydantic models (aligned with the gateway OpenAPI surface).
+open_resp = client.open_environment(repo_id="my-repo", repo_path="/path/to/repo")
+fingerprint_id = open_resp.fingerprint_id  # or open_resp.model_dump(mode="json") for a dict
 ```
+
+**Response types:** `open_environment` → `OpenEnvironmentResponse`; `create_session` → `CreateSessionResponse`; `apply_patch` → `ApplyPatchResponse`; `interactive_check` → `InteractiveCheckApiResponse`; `batch_verify` → `BatchVerifyResult`; review helpers → `ReviewPayload` / decision models. Import these from `obligation_runtime_schemas.gateway_api` and `obligation_runtime_schemas.batch` when you need explicit types. LangChain tools in `obligation_runtime_tools` return the same model instances from the underlying client (use `.model_dump(mode="json")` if an agent pipeline needs plain JSON).
 
 This is the **best single entry point** for reusers: one client, one base URL. See `examples/minimal_sdk_gateway.py` for a minimal script. For runnable demos (patch verification, review), see [docs/demos/](demos/README.md) and `make demo-core` / `make demo-full`.
 
-**TypeScript/JavaScript:** Use the `obligation-runtime-sdk-ts` package from `packages/sdk-ts`. Build with `npm run build`; the client mirrors the Python SDK (openEnvironment, createSession, applyPatch, interactiveCheck, getGoal, hover, definition, batchVerify, getReviewPayload, submitReviewDecision, resume). See `packages/sdk-ts/README.md` for install and usage.
+**TypeScript/JavaScript:** Use **`@lean-langchain/sdk`** from `packages/sdk-ts`. Build with `npm run build`; the client mirrors the Python SDK (openEnvironment, createSession, applyPatch, interactiveCheck, getGoal, hover, definition, batchVerify, getReviewPayload, submitReviewDecision, resume). See `packages/sdk-ts/README.md` and `MIGRATION.md` for install and legacy migration.
 
 **Builder quickstart (cookbook):** For one-command runnable paths (minimal SDK, MCP tools, LangGraph embed, custom policy pack), see [examples/integrations/README.md](../examples/integrations/README.md). Configuration for Gateway, Orchestrator, and MCP is in [docs/running.md](running.md) (builder configuration table).
 
@@ -115,7 +118,7 @@ Recommended top-level imports per package:
 | Package | Import | Purpose |
 |---------|--------|---------|
 | **obligation_runtime_schemas** | `EnvironmentFingerprint`, `BatchVerifyResult`, `WitnessBundle`, etc. | Data contracts and Pydantic models for Gateway payloads. |
-| **obligation_runtime_sdk** | `ObligationRuntimeClient`, `RequestAdapter` | Call the Gateway from Python; optional custom adapter for tests or in-process use. |
+| **obligation_runtime_sdk** | `ObligationRuntimeClient`, `RequestAdapter` | Call the Gateway from Python; methods return validated Pydantic models. Optional `RequestAdapter` for tests or in-process use. |
 | **obligation_runtime_tools** | `build_toolset` | Build LangChain tools that call the Gateway. Fixed order: open_environment, create_session, apply_patch, check_interactive, get_goal, hover, definition, batch_verify, get_review_payload, submit_review_decision. |
 | **obligation_runtime_orchestrator** | `build_patch_admissibility_graph`, `ObligationRuntimeState`, `make_initial_state`, `CandidateProducer`, `context_from_state` | Run the patch-admissibility graph; build initial state; implement or use producers. |
 | **obligation_runtime_policy** | Policy pack loading and decision types | Policy engine and pack evaluation. |
@@ -141,7 +144,7 @@ python -m pip install -e packages/schemas -e apps/lean-gateway
 uvicorn obligation_runtime_lean_gateway.api.app:app --reload
 ```
 
-OpenAPI at `/docs` and `/redoc`. See [running.md](running.md) for full setup.
+OpenAPI at `/docs` and `/redoc`. A checked-in snapshot for tooling and SDK alignment lives at [contracts/openapi/lean-gateway.json](../contracts/openapi/lean-gateway.json); regenerate with `make export-openapi`. See [running.md](running.md) for full setup.
 
 ---
 

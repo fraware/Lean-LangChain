@@ -48,7 +48,9 @@ def test_goal_retrieval_with_lsp_transport(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     goal_resp = client.post(
@@ -75,7 +77,9 @@ def test_hover_with_test_double_returns_empty_contents(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     hover_resp = client.post(
@@ -104,7 +108,9 @@ def test_hover_with_lsp_transport(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     hover_resp = client.post(
@@ -126,7 +132,9 @@ def test_definition_with_test_double_returns_empty_locations(gateway_client) -> 
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     def_resp = client.post(
@@ -155,7 +163,9 @@ def test_definition_with_lsp_transport(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     def_resp = client.post(

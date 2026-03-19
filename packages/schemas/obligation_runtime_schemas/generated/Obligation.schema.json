@@ -207,7 +207,6 @@
       "type": "string"
     },
     "inputs": {
-      "additionalProperties": true,
       "title": "Inputs",
       "type": "object"
     },

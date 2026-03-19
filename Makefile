@@ -1,11 +1,11 @@
-.PHONY: lint format typecheck test test-schemas test-integration test-regressions export-schemas install-dev install-dev-full check check-full demo-scenario-1 demo-scenario-2 demo-scenario-3 demo-scenario-4 demo-scenario-5 demo-core demo-core-ui demo-full demo-full-ui install-lean4checker test-fresh test-axiom-producer test-tracer-e2e benchmark benchmark-report
+.PHONY: lint format typecheck typecheck-strict-core test test-schemas test-integration test-regressions export-schemas export-openapi install-dev install-dev-full check check-full demo-scenario-1 demo-scenario-2 demo-scenario-3 demo-scenario-4 demo-scenario-5 demo-core demo-core-ui demo-full demo-full-ui install-lean4checker test-fresh test-axiom-producer test-tracer-e2e benchmark benchmark-report
 
 # Use python -m pip so install and gates use the same interpreter (e.g. .venv or conda)
 install-dev:
 	python -m pip install -e packages/schemas -e apps/lean-gateway
 
 install-dev-full:
-	python -m pip install -e packages/schemas -e packages/evals -e packages/telemetry -e packages/protocol -e packages/policy -e packages/sdk-py -e packages/tools -e apps/lean-gateway -e apps/orchestrator
+	python -m pip install -e ".[dev]" -e packages/schemas -e packages/evals -e packages/telemetry -e packages/protocol -e packages/policy -e packages/sdk-py -e packages/tools -e apps/lean-gateway -e apps/orchestrator
 
 lint:
 	ruff check .
@@ -17,6 +17,12 @@ format:
 typecheck:
 	mypy packages/schemas apps/lean-gateway apps/orchestrator
 
+# Stricter gate (same `mypy` executable as typecheck; avoid `python -m mypy` if venv has no mypy).
+typecheck-strict-core:
+	mypy packages/schemas/obligation_runtime_schemas packages/policy/obligation_runtime_policy apps/lean-gateway/obligation_runtime_lean_gateway/batch --strict
+	mypy apps/orchestrator/obligation_runtime_orchestrator/runtime/state.py apps/orchestrator/obligation_runtime_orchestrator/runtime/initial_state.py apps/orchestrator/obligation_runtime_orchestrator/runtime/routes.py apps/orchestrator/obligation_runtime_orchestrator/runtime/graph.py apps/orchestrator/obligation_runtime_orchestrator/runtime/nodes/handlers.py apps/orchestrator/obligation_runtime_orchestrator/mcp_server.py apps/orchestrator/obligation_runtime_orchestrator/mcp_server_main.py --strict
+	mypy apps/lean-gateway/obligation_runtime_lean_gateway/server/session_manager.py apps/lean-gateway/obligation_runtime_lean_gateway/server/worker_pool.py apps/lean-gateway/obligation_runtime_lean_gateway/api/errors.py apps/lean-gateway/obligation_runtime_lean_gateway/api/fastapi_shim.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_environment.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_sessions.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_batch.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_reviews.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_health.py apps/lean-gateway/obligation_runtime_lean_gateway/api/routes_metrics.py --strict
+
 test:
 	pytest tests/unit
 
@@ -27,15 +33,24 @@ test-schemas:
 export-schemas:
 	python scripts/export_json_schemas.py
 
+export-openapi:
+	python scripts/export_gateway_openapi.py
+
 test-integration:
 	pytest tests/integration
 
 test-regressions:
 	pytest tests/regressions -v
 
-check: lint test-schemas test test-integration export-schemas
+check: lint test-schemas test test-integration export-schemas export-openapi
 
-check-full: lint typecheck test-schemas test test-integration test-regressions export-schemas
+# Regenerate OpenAPI + SDK TS types and fail if working tree drifts (run from repo root, git repo).
+verify-openapi-sdk-contract:
+	python scripts/export_gateway_openapi.py
+	cd packages/sdk-ts && npm install && npm run generate:types
+	git diff --exit-code contracts/openapi/lean-gateway.json packages/sdk-ts/src/generated/gateway-openapi.ts
+
+check-full: lint typecheck typecheck-strict-core test-schemas test test-integration test-regressions export-schemas export-openapi verify-openapi-sdk-contract
 
 demo-scenario-1:
 	python scripts/demos/run_demo_scenario_1.py

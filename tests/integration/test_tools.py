@@ -20,7 +20,11 @@ def test_tools_e2e_against_gateway(sdk_client: ObligationRuntimeClient) -> None:
     tools = build_toolset("http://testserver", client=sdk_client)
     assert len(tools) >= 5
     open_tool, create_tool, apply_tool, check_tool, batch_tool = (
-        tools[0], tools[1], tools[2], tools[3], tools[7]
+        tools[0],
+        tools[1],
+        tools[2],
+        tools[3],
+        tools[7],
     )
 
     def invoke(tool, **kwargs: Any) -> dict:
@@ -30,19 +34,21 @@ def test_tools_e2e_against_gateway(sdk_client: ObligationRuntimeClient) -> None:
 
     repo_path = Path(__file__).resolve().parent / "fixtures" / "lean-mini"
     open_data = invoke(open_tool, repo_id="lean-mini", repo_path=str(repo_path), commit_sha="head")
-    assert "fingerprint_id" in open_data
-    fingerprint_id = open_data["fingerprint_id"]
+    fingerprint_id = open_data.fingerprint_id
+    assert fingerprint_id
 
     session_data = invoke(create_tool, fingerprint_id=fingerprint_id)
-    assert "session_id" in session_data
-    session_id = session_data["session_id"]
+    session_id = session_data.session_id
+    assert session_id
 
-    apply_data = invoke(apply_tool, session_id=session_id, files={"Mini/Basic.lean": "def x := 1\n"})
-    assert "ok" in apply_data
+    apply_data = invoke(
+        apply_tool, session_id=session_id, files={"Mini/Basic.lean": "def x := 1\n"}
+    )
+    assert apply_data.ok is not None
 
     check_data = invoke(check_tool, session_id=session_id, file_path="Mini/Basic.lean")
-    assert "ok" in check_data
-    assert "diagnostics" in check_data
+    assert check_data.ok is not None
+    assert check_data.diagnostics is not None
 
     batch_data = invoke(
         batch_tool,
@@ -50,6 +56,6 @@ def test_tools_e2e_against_gateway(sdk_client: ObligationRuntimeClient) -> None:
         target_files=["Mini/Basic.lean"],
         target_declarations=[],
     )
-    assert "ok" in batch_data
-    assert "trust_level" in batch_data
-    assert "reasons" in batch_data
+    assert batch_data.ok is not None
+    assert batch_data.trust_level
+    assert batch_data.reasons is not None

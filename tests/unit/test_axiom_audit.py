@@ -25,12 +25,8 @@ def test_axiom_auditor_test_double_returns_clean_with_non_real_reason() -> None:
 
 def test_axiom_auditor_real_returns_clean_when_command_succeeds() -> None:
     """AxiomAuditorReal returns ok=True when subprocess returns 0."""
-    with patch(
-        "obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run"
-    ) as run:
-        run.return_value = type(
-            "R", (), {"returncode": 0, "stdout": "", "stderr": ""}
-        )()
+    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
+        run.return_value = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
         auditor = AxiomAuditorReal(timeout_seconds=5.0)
         result = auditor.run(Path("/ws"), [])
     assert result.ok is True
@@ -40,9 +36,7 @@ def test_axiom_auditor_real_returns_clean_when_command_succeeds() -> None:
 
 def test_axiom_auditor_real_returns_blocked_when_command_fails() -> None:
     """AxiomAuditorReal returns ok=False and blocked when subprocess fails."""
-    with patch(
-        "obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run"
-    ) as run:
+    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
         run.return_value = type(
             "R", (), {"returncode": 1, "stdout": "", "stderr": "axiom violation"}
         )()
@@ -50,15 +44,17 @@ def test_axiom_auditor_real_returns_blocked_when_command_fails() -> None:
         result = auditor.run(Path("/ws"), [])
     assert result.ok is False
     assert result.trust_level == "blocked"
-    assert "axiom" in result.blocked_reasons[0].lower() or "violation" in result.blocked_reasons[0].lower()
+    assert (
+        "axiom" in result.blocked_reasons[0].lower()
+        or "violation" in result.blocked_reasons[0].lower()
+    )
 
 
 def test_axiom_auditor_real_handles_timeout() -> None:
     """AxiomAuditorReal returns blocked on TimeoutExpired."""
     import subprocess
-    with patch(
-        "obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run"
-    ) as run:
+
+    with patch("obligation_runtime_lean_gateway.batch.axiom_audit.subprocess.run") as run:
         run.side_effect = subprocess.TimeoutExpired(cmd=["lake", "build"], timeout=5)
         auditor = AxiomAuditorReal(timeout_seconds=5.0)
         result = auditor.run(Path("/ws"), [])

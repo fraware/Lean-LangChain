@@ -31,7 +31,12 @@ def test_policy_engine_integration_rejected_on_batch_fail() -> None:
     result = engine.evaluate(
         obligation={},
         interactive_result={"ok": True, "diagnostics": []},
-        batch_result={"ok": False, "trust_level": "blocked", "build": {"ok": False}, "fresh_checker": {"ok": True}},
+        batch_result={
+            "ok": False,
+            "trust_level": "blocked",
+            "build": {"ok": False},
+            "fresh_checker": {"ok": True},
+        },
         patch_metadata={},
         policy_pack=pack,
     )

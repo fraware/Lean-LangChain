@@ -88,6 +88,7 @@ def test_postgres_resume_after_interrupt_to_accepted(gateway_app) -> None:
 
     with TestClient(gateway_app) as tc:
         base = make_testclient_request_adapter(tc)
+
         def adapter(method: str, path: str, body: Any) -> dict:
             if method == "POST":
                 if "interactive-check" in path:
@@ -101,6 +102,7 @@ def test_postgres_resume_after_interrupt_to_accepted(gateway_app) -> None:
                         "fresh_checker": {"ok": True},
                     }
             return base(method, path, body)
+
         client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
         graph = build_patch_admissibility_graph(client=client, checkpointer=saver)
         thread_id = "test-postgres-resume-interrupt"
@@ -110,7 +112,10 @@ def test_postgres_resume_after_interrupt_to_accepted(gateway_app) -> None:
         initial = make_initial_state(
             thread_id=thread_id,
             obligation_id="obl-resume-1",
-            obligation={"target": {"repo_id": "lean-mini"}, "policy": {"protected_paths": [protected_path]}},
+            obligation={
+                "target": {"repo_id": "lean-mini"},
+                "policy": {"protected_paths": [protected_path]},
+            },
             target_files=[protected_path],
             current_patch={protected_path: "def x := 1\n"},
             repo_path=repo_path,

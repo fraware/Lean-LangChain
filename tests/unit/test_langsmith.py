@@ -20,7 +20,10 @@ def test_create_dataset_no_exception() -> None:
     result = create_dataset("test-dataset", description="test")
     assert isinstance(result, dict)
     assert "dataset_name" in result or "status" in result
-    assert result.get("dataset_name") == "test-dataset" or result.get("status") in ("error", "created")
+    assert result.get("dataset_name") == "test-dataset" or result.get("status") in (
+        "error",
+        "created",
+    )
 
 
 def test_run_experiment_no_exception() -> None:

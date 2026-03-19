@@ -100,32 +100,28 @@ def main() -> int:
                 repo_path=repo_path,
                 commit_sha="head",
             )
-            fingerprint_id = open_data.get("fingerprint_id")
+            fingerprint_id = open_data.fingerprint_id
             if not fingerprint_id:
                 LOG.error("No fingerprint_id in response: %s", open_data)
                 return 1
             LOG.info("Environment opened: fingerprint_id=%s", fingerprint_id)
 
             session_data = client.create_session(fingerprint_id=fingerprint_id)
-            session_id = session_data.get("session_id")
+            session_id = session_data.session_id
             if not session_id:
                 LOG.error("No session_id in response: %s", session_data)
                 return 1
             LOG.info("Session created: session_id=%s", session_id)
 
-            target_files = (
-                ["Mini/Basic.lean"]
-                if "lean-mini" in repo_path
-                else ["Main.lean"]
-            )
+            target_files = ["Mini/Basic.lean"] if "lean-mini" in repo_path else ["Main.lean"]
             LOG.info("Running batch_verify target_files=%s", target_files)
             batch_data = client.batch_verify(
                 session_id=session_id,
                 target_files=target_files,
                 target_declarations=[],
             )
-            ok = batch_data.get("ok")
-            trust_level = batch_data.get("trust_level", "?")
+            ok = batch_data.ok
+            trust_level = batch_data.trust_level
             LOG.info("batch_verify: ok=%s trust_level=%s", ok, trust_level)
             return 0
 

@@ -53,19 +53,27 @@ def main() -> int:
         print("Skipped: invalid JSON from open-environment", file=sys.stderr)
         return 0
 
-    out2 = subprocess.run(cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10)
+    out2 = subprocess.run(
+        cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10
+    )
     if out2.returncode != 0:
         print("Skipped: create-session failed", file=sys.stderr)
         return 0
 
     out3 = subprocess.run(
-        cli + [
+        cli
+        + [
             "run-patch-obligation",
-            "--repo-id", "lean-mini",
-            "--repo-path", str(fixture_path),
-            "--patch-file", str(sorry_patch),
-            "--patch-apply-path", "Mini/Basic.lean",
-            "--target-files", "Mini/Basic.lean",
+            "--repo-id",
+            "lean-mini",
+            "--repo-path",
+            str(fixture_path),
+            "--patch-file",
+            str(sorry_patch),
+            "--patch-apply-path",
+            "Mini/Basic.lean",
+            "--target-files",
+            "Mini/Basic.lean",
         ],
         cwd=cwd,
         env=env,
@@ -81,7 +89,10 @@ def main() -> int:
         data3 = json.loads(out3.stdout)
         status = data3.get("status")
         if status not in ("rejected", "failed"):
-            print(f"Expected status rejected or failed (batch-fail scenario), got {status!r}", file=sys.stderr)
+            print(
+                f"Expected status rejected or failed (batch-fail scenario), got {status!r}",
+                file=sys.stderr,
+            )
             return 1
     except json.JSONDecodeError:
         print("Invalid JSON from run-patch-obligation", file=sys.stderr)

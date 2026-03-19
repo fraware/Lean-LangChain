@@ -1,6 +1,7 @@
 """Worker isolation: timeout and resource limits for Lean invocations.
 
-Current: in-process thread timeout only. Full isolation (container/microVM) is future work; see infra/README.md."""
+Current: in-process thread timeout only. Full isolation (container/microVM) is future work; see infra/README.md.
+"""
 
 from __future__ import annotations
 

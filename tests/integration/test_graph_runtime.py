@@ -27,6 +27,15 @@ from obligation_runtime_sdk.client import ObligationRuntimeClient
 
 from tests.integration.conftest import make_testclient_request_adapter
 
+_MINIMAL_BATCH_VERIFY_OK: dict[str, Any] = {
+    "ok": True,
+    "trust_level": "clean",
+    "build": {"ok": True, "command": [], "stdout": "", "stderr": "", "timing_ms": 0},
+    "axiom_audit": {"ok": True, "trust_level": "clean", "blocked_reasons": []},
+    "fresh_checker": {"ok": True, "command": [], "stdout": "", "stderr": "", "timing_ms": 0},
+    "reasons": [],
+}
+
 
 @pytest.mark.skipif(StateGraph is None, reason="langgraph not installed")
 def test_graph_builds_and_runs_to_terminal(obr_graph) -> None:
@@ -43,14 +52,16 @@ def test_graph_builds_and_runs_to_terminal(obr_graph) -> None:
     result = obr_graph.invoke(initial)
     assert "status" in result
     assert result["status"] in (
-        "accepted", "rejected", "failed", "awaiting_approval", "repairing", "auditing"
+        "accepted",
+        "rejected",
+        "failed",
+        "awaiting_approval",
+        "repairing",
+        "auditing",
     )
     if result["status"] == "accepted":
         assert "artifacts" in result
-        bundles = [
-            a for a in result["artifacts"]
-            if a.get("kind") == "witness_bundle"
-        ]
+        bundles = [a for a in result["artifacts"] if a.get("kind") == "witness_bundle"]
         assert len(bundles) >= 1
         assert "bundle" in bundles[0]
         b = bundles[0]["bundle"]
@@ -88,13 +99,7 @@ def test_graph_protected_path_touched_reaches_needs_review(gateway_tc) -> None:
             if "interactive-check" in path:
                 return {"ok": True, "diagnostics": [], "goals": []}
             if "batch-verify" in path:
-                return {
-                    "ok": True,
-                    "trust_level": "clean",
-                    "build": {"ok": True},
-                    "axiom_audit": {"blocked_reasons": []},
-                    "fresh_checker": {"ok": True},
-                }
+                return dict(_MINIMAL_BATCH_VERIFY_OK)
         return base(method, path, body)
 
     client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
@@ -104,7 +109,10 @@ def test_graph_protected_path_touched_reaches_needs_review(gateway_tc) -> None:
     initial = make_initial_state(
         thread_id="thr_protected",
         obligation_id="obl_prot",
-        obligation={"target": {"repo_id": "lean-mini"}, "policy": {"protected_paths": [protected_path]}},
+        obligation={
+            "target": {"repo_id": "lean-mini"},
+            "policy": {"protected_paths": [protected_path]},
+        },
         target_files=[protected_path],
         current_patch={protected_path: "def x := 1\n"},
         repo_path=repo_path,
@@ -130,13 +138,7 @@ def test_graph_protected_path_review_payload_has_patch_metadata(gateway_tc) -> N
             if "interactive-check" in path:
                 return {"ok": True, "diagnostics": [], "goals": []}
             if "batch-verify" in path:
-                return {
-                    "ok": True,
-                    "trust_level": "clean",
-                    "build": {"ok": True},
-                    "axiom_audit": {"blocked_reasons": []},
-                    "fresh_checker": {"ok": True},
-                }
+                return dict(_MINIMAL_BATCH_VERIFY_OK)
         return base(method, path, body)
 
     client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
@@ -146,7 +148,10 @@ def test_graph_protected_path_review_payload_has_patch_metadata(gateway_tc) -> N
     initial = make_initial_state(
         thread_id="thr_capture",
         obligation_id="obl_cap",
-        obligation={"target": {"repo_id": "lean-mini"}, "policy": {"protected_paths": [protected_path]}},
+        obligation={
+            "target": {"repo_id": "lean-mini"},
+            "policy": {"protected_paths": [protected_path]},
+        },
         target_files=[protected_path],
         current_patch={protected_path: "def x := 1\n"},
         repo_path=repo_path,
@@ -155,6 +160,9 @@ def test_graph_protected_path_review_payload_has_patch_metadata(gateway_tc) -> N
     assert result.get("status") == "awaiting_approval"
     assert len(captured) >= 1, "create_pending_review should have been called"
     patch_meta = captured[0].get("patch_metadata") or {}
-    assert patch_meta.get("protected_paths_touched"), (
-        "Review payload patch_metadata.protected_paths_touched should be truthy"
-    )
+    assert patch_meta.get(
+        "protected_paths_touched"
+    ), "Review payload patch_metadata.protected_paths_touched should be truthy"
+    audit = captured[0].get("policy_audit") or {}
+    assert audit.get("policy_pack_name")
+    assert isinstance(audit.get("resolved_rules"), list)

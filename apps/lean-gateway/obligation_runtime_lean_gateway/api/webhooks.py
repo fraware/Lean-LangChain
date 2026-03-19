@@ -58,6 +58,7 @@ def _emit_event(event_type: str, thread_id: str, payload: dict[str, Any]) -> Non
         headers["X-Webhook-Signature"] = "sha256=" + _sign_payload(secret, body_bytes)
 
     import httpx
+
     last_exc: Exception | None = None
     for attempt in range(_WEBHOOK_RETRIES + 1):
         try:

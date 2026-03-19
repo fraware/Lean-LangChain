@@ -28,11 +28,20 @@ def test_patch_admissibility_e2e_one_golden_run(gateway_app) -> None:
     if not cases:
         pytest.skip("good_patch golden case not found")
     case = cases[0]
-    repo_path = str(Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini")
+    repo_path = str(
+        Path(__file__).resolve().parent.parent / "integration" / "fixtures" / "lean-mini"
+    )
     with TestClient(gateway_app) as tc:
         adapter = make_testclient_request_adapter(tc)
         client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
         graph = build_patch_admissibility_graph(client=client)
         initial = _build_initial_state(case, repo_path)
         result = graph.invoke(initial)
-    assert result.get("status") in ("accepted", "rejected", "failed", "awaiting_approval", "repairing", "auditing")
+    assert result.get("status") in (
+        "accepted",
+        "rejected",
+        "failed",
+        "awaiting_approval",
+        "repairing",
+        "auditing",
+    )

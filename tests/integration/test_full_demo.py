@@ -23,6 +23,7 @@ except ImportError:
 
 from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
 from obligation_runtime_orchestrator.runtime.initial_state import make_initial_state
+from tests.integration.api_stubs import STUB_INTERACTIVE_CHECK_SORRY
 from obligation_runtime_sdk.client import ObligationRuntimeClient
 
 from tests.integration.conftest import make_testclient_request_adapter
@@ -106,9 +107,7 @@ def test_full_demo_valid_proof_edit_accepted(gateway_tc) -> None:
                 }
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client)
     repo_path = _lean_mini_path()
     patch_content = _valid_proof_edit_content()
@@ -137,12 +136,10 @@ def test_full_demo_sorry_patch_rejected(gateway_tc) -> None:
 
     def adapter(method: str, path: str, body: object) -> dict:
         if method == "POST" and "interactive-check" in path:
-            return {"ok": False, "diagnostics": [{"message": "sorry"}], "goals": []}
+            return dict(STUB_INTERACTIVE_CHECK_SORRY)
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client)
     repo_path = _lean_mini_path()
     patch_content = _sorry_patch_content()
@@ -187,9 +184,7 @@ def test_full_demo_false_theorem_rejected(gateway_tc) -> None:
                 }
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client)
     repo_path = _lean_mini_path()
     patch_content = _false_theorem_content()
@@ -220,6 +215,7 @@ def test_full_demo_protected_approve_then_accepted(gateway_tc) -> None:
     saver: Any = None
     try:
         from langgraph.checkpoint.memory import MemorySaver
+
         saver = MemorySaver()
     except ImportError:
         pytest.skip("MemorySaver not available")
@@ -241,9 +237,7 @@ def test_full_demo_protected_approve_then_accepted(gateway_tc) -> None:
                 }
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client, checkpointer=saver)
     repo_path = _lean_mini_path()
     protected_path = "Mini/Basic.lean"
@@ -266,10 +260,7 @@ def test_full_demo_protected_approve_then_accepted(gateway_tc) -> None:
     resume_state = {"thread_id": thread_id, "approval_decision": "approved"}
     result2 = graph.invoke(resume_state, config=config)
     assert result2.get("status") == "accepted"
-    assert any(
-        a.get("kind") == "witness_bundle"
-        for a in result2.get("artifacts", [])
-    )
+    assert any(a.get("kind") == "witness_bundle" for a in result2.get("artifacts", []))
 
 
 # --- Graph-level: protected path -> reject -> rejected ---
@@ -281,6 +272,7 @@ def test_full_demo_protected_reject_then_rejected(gateway_tc) -> None:
     saver: Any = None
     try:
         from langgraph.checkpoint.memory import MemorySaver
+
         saver = MemorySaver()
     except ImportError:
         pytest.skip("MemorySaver not available")
@@ -302,9 +294,7 @@ def test_full_demo_protected_reject_then_rejected(gateway_tc) -> None:
                 }
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client, checkpointer=saver)
     repo_path = _lean_mini_path()
     protected_path = "Mini/Basic.lean"
@@ -352,9 +342,7 @@ def test_full_demo_no_patch_accepted(gateway_tc) -> None:
                 }
         return base(method, path, body)
 
-    client = ObligationRuntimeClient(
-        base_url="http://testserver", request_adapter=adapter
-    )
+    client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
     graph = build_patch_admissibility_graph(client=client)
     repo_path = _lean_mini_path()
     initial = make_initial_state(

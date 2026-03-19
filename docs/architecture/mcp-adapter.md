@@ -16,6 +16,8 @@ The MCP server exposes the same Gateway operations as tools, with session affini
 - **obligation/create_session:** `fingerprint_id`, optional `thread_id`.
 - **obligation/apply_patch**, **obligation/check_interactive**, **obligation/get_goal**, **obligation/batch_verify:** optional `session_id`, optional `thread_id` (for restore when context is empty), plus their usual parameters (e.g. `files`, `file_path`, `target_files`, `target_declarations`).
 
+**Tool return shape:** MCP tool handlers normalize SDK responses to **JSON-shaped dicts** (`model_dump(mode="json")`) for the MCP wire format. Unit tests may use plain dict doubles for the client; both are accepted.
+
 Tests: `tests/unit/test_mcp_session_restore.py` (restore by thread_id after simulated restart), `tests/integration/test_mcp_session_affinity.py`.
 
 **See also:** [gateway-api.md](gateway-api.md), [workflow.md](../workflow.md), [running.md](../running.md).

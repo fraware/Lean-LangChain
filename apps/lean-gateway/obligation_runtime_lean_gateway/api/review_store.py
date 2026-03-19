@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Literal, Protocol
+from typing import Any, Literal, Mapping, Protocol
 
 
 class ReviewStoreProtocol(Protocol):
     """Thread-scoped pending reviews: payload + optional decision after approve/reject."""
 
-    def put(self, thread_id: str, payload: dict) -> None:
+    def put(self, thread_id: str, payload: Mapping[str, Any]) -> None:
         """Create or replace pending review for thread_id. Clears any prior decision."""
         ...
 
@@ -39,7 +39,7 @@ class InMemoryReviewStore:
     def __init__(self) -> None:
         self._store: dict[str, dict] = {}
 
-    def put(self, thread_id: str, payload: dict) -> None:
+    def put(self, thread_id: str, payload: Mapping[str, Any]) -> None:
         self._store[thread_id] = {"payload": dict(payload), "decision": None}
 
     def get(self, thread_id: str) -> dict | None:

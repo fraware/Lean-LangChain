@@ -28,6 +28,7 @@ def main() -> int:
         from obligation_runtime_orchestrator.pilot.sample_workflow import (
             run_sample_workflow,
         )
+
         return run_sample_workflow(gateway_base_url=args.gateway)
     from obligation_runtime_orchestrator.runtime.graph import (
         build_patch_admissibility_graph,

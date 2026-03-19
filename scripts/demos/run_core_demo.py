@@ -47,9 +47,7 @@ def _run(
     )
 
 
-def _parse_run_output(
-    raw: str, context: str
-) -> tuple[dict | None, str | None]:
+def _parse_run_output(raw: str, context: str) -> tuple[dict | None, str | None]:
     """Parse JSON from subprocess stdout. Returns (data, error_message)."""
     if not (raw or "").strip():
         return None, f"{context}: empty stdout"
@@ -72,8 +70,10 @@ def _get_fid_and_session(
         cli
         + [
             "open-environment",
-            "--repo-id", REPO_ID,
-            "--repo-path", str(fixture),
+            "--repo-id",
+            REPO_ID,
+            "--repo-path",
+            str(fixture),
         ],
         cwd=cwd,
         env=env,
@@ -102,7 +102,8 @@ def main() -> int:
         help="Scenario 3: print Review UI URL and instructions, do not call obr resume",
     )
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="store_true",
         help="Log subprocess and parse steps to stderr",
     )
@@ -144,8 +145,10 @@ def main() -> int:
         cli
         + [
             "run-patch-obligation",
-            "--repo-id", REPO_ID,
-            "--repo-path", str(fixture_path),
+            "--repo-id",
+            REPO_ID,
+            "--repo-path",
+            str(fixture_path),
         ],
         cwd=cwd,
         env=env,
@@ -184,11 +187,16 @@ def main() -> int:
         cli
         + [
             "run-patch-obligation",
-            "--repo-id", REPO_ID,
-            "--repo-path", str(fixture_path),
-            "--patch-file", str(sorry_patch),
-            "--patch-apply-path", "Mini/Basic.lean",
-            "--target-files", "Mini/Basic.lean",
+            "--repo-id",
+            REPO_ID,
+            "--repo-path",
+            str(fixture_path),
+            "--patch-file",
+            str(sorry_patch),
+            "--patch-apply-path",
+            "Mini/Basic.lean",
+            "--target-files",
+            "Mini/Basic.lean",
         ],
         cwd=cwd,
         env=env,
@@ -223,10 +231,14 @@ def main() -> int:
             cli
             + [
                 "run-patch-obligation",
-                "--thread-id", THREAD_ID_SCENARIO_3,
-                "--repo-id", REPO_ID,
-                "--repo-path", str(fixture_path),
-                "--protected-paths", "Mini/Basic.lean",
+                "--thread-id",
+                THREAD_ID_SCENARIO_3,
+                "--repo-id",
+                REPO_ID,
+                "--repo-path",
+                str(fixture_path),
+                "--protected-paths",
+                "Mini/Basic.lean",
             ],
             cwd=cwd,
             env=env,
@@ -236,9 +248,7 @@ def main() -> int:
             err = out3.stderr or out3.stdout
             print("Scenario 3 failed: run-patch-obligation", err, file=sys.stderr)
             return 1
-        data3, parse_err = _parse_run_output(
-            out3.stdout, "run-patch-obligation (scenario 3)"
-        )
+        data3, parse_err = _parse_run_output(out3.stdout, "run-patch-obligation (scenario 3)")
         if parse_err:
             print(parse_err, file=sys.stderr)
             return 1
@@ -258,9 +268,7 @@ def main() -> int:
         return 1
 
     # Automated resume: requires Postgres
-    if os.environ.get("CHECKPOINTER") != "postgres" and not os.environ.get(
-        "DATABASE_URL"
-    ):
+    if os.environ.get("CHECKPOINTER") != "postgres" and not os.environ.get("DATABASE_URL"):
         print(
             "Skipped: scenario 3 with CLI resume requires "
             "CHECKPOINTER=postgres and DATABASE_URL",
@@ -283,10 +291,14 @@ def main() -> int:
         cli
         + [
             "run-patch-obligation",
-            "--thread-id", THREAD_ID_SCENARIO_3,
-            "--repo-id", REPO_ID,
-            "--repo-path", str(fixture_path),
-            "--protected-paths", "Mini/Basic.lean",
+            "--thread-id",
+            THREAD_ID_SCENARIO_3,
+            "--repo-id",
+            REPO_ID,
+            "--repo-path",
+            str(fixture_path),
+            "--protected-paths",
+            "Mini/Basic.lean",
         ],
         cwd=cwd,
         env=env,
@@ -296,9 +308,7 @@ def main() -> int:
         err = out3.stderr or out3.stdout
         print("Scenario 3 failed: run-patch-obligation", err, file=sys.stderr)
         return 1
-    data3, parse_err = _parse_run_output(
-        out3.stdout, "run-patch-obligation (scenario 3)"
-    )
+    data3, parse_err = _parse_run_output(out3.stdout, "run-patch-obligation (scenario 3)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1

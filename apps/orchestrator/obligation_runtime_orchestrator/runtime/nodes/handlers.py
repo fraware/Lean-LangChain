@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 from obligation_runtime_orchestrator.runtime.state import ObligationRuntimeState
 
@@ -16,7 +16,7 @@ def create_node_handlers(
     policy_engine: Any,
     load_pack: Callable[[str], Any],
     load_pack_for_review: Callable[[ObligationRuntimeState], Any],
-) -> dict[str, Callable[[ObligationRuntimeState], dict]]:
+) -> dict[str, Callable[[ObligationRuntimeState], dict[str, Any]]]:
     """Build a dict of node_name -> (state -> state_updates) for the patch-admissibility graph."""
     from obligation_runtime_policy.constants import (
         DECISION_BLOCKED,
@@ -26,27 +26,38 @@ def create_node_handlers(
     from obligation_runtime_policy.patch_metadata import summarize_patch
     from obligation_runtime_policy.protocol_evaluator import evaluate_protocol_obligation
 
-    def init_environment(state: ObligationRuntimeState) -> dict:
+    def _sdk_to_dict(x: Any) -> dict[str, Any]:
+        """Normalize Pydantic SDK models or plain dicts to a dict for graph state."""
+        if isinstance(x, dict):
+            return x
+        md = getattr(x, "model_dump", None)
+        if callable(md):
+            return cast(dict[str, Any], md())
+        raise TypeError(f"Expected dict or model with model_dump, got {type(x)!r}")
+
+    def init_environment(state: ObligationRuntimeState) -> dict[str, Any]:
         ob = state.get("obligation", {})
         env = ob.get("environment_fingerprint", {}) or state.get("environment_fingerprint", {})
         repo_id = (ob.get("target") or {}).get("repo_id") or env.get("repo_id") or "default"
         repo_path = state.get("_repo_path") or ""
-        open_data = client.open_environment(repo_id=repo_id, repo_path=repo_path or None, commit_sha="HEAD")
+        open_data = _sdk_to_dict(
+            client.open_environment(repo_id=repo_id, repo_path=repo_path or None, commit_sha="HEAD")
+        )
         fid = open_data["fingerprint_id"]
-        session_data = client.create_session(fingerprint_id=fid)
+        session_data = _sdk_to_dict(client.create_session(fingerprint_id=fid))
         return {
             "session_id": session_data["session_id"],
             "environment_fingerprint": open_data.get("fingerprint", env),
             "status": "initialized",
         }
 
-    def retrieve_context(state: ObligationRuntimeState) -> dict:
+    def retrieve_context(state: ObligationRuntimeState) -> dict[str, Any]:
         return {"status": "retrieving_context"}
 
-    def draft_candidate(state: ObligationRuntimeState) -> dict:
+    def draft_candidate(state: ObligationRuntimeState) -> dict[str, Any]:
         return {"status": "drafting"}
 
-    def interactive_check(state: ObligationRuntimeState) -> dict:
+    def interactive_check(state: ObligationRuntimeState) -> dict[str, Any]:
         sid = state.get("session_id")
         if not sid:
             return {"status": "failed"}
@@ -55,32 +66,37 @@ def create_node_handlers(
             client.apply_patch(session_id=sid, files=current_patch)
         target_files = state.get("target_files") or []
         file_path = target_files[0] if target_files else "Main.lean"
-        result = client.interactive_check(session_id=sid, file_path=file_path)
+        result = _sdk_to_dict(client.interactive_check(session_id=sid, file_path=file_path))
         return {"interactive_result": result, "status": "checking_interactive"}
 
-    def batch_verify(state: ObligationRuntimeState) -> dict:
+    def batch_verify(state: ObligationRuntimeState) -> dict[str, Any]:
         sid = state.get("session_id")
         if not sid:
             return {"status": "failed"}
         target_declarations = state.get("target_declarations") or []
         target_files = state.get("target_files") or []
-        result = client.batch_verify(
-            session_id=sid,
-            target_files=target_files,
-            target_declarations=target_declarations,
+        result = _sdk_to_dict(
+            client.batch_verify(
+                session_id=sid,
+                target_files=target_files,
+                target_declarations=target_declarations,
+            )
         )
-        return {"batch_result": result, "status": "batch_verifying", "trust_level": result.get("trust_level")}
+        return {
+            "batch_result": result,
+            "status": "batch_verifying",
+            "trust_level": result.get("trust_level"),
+        }
 
-    def audit_trust(state: ObligationRuntimeState) -> dict:
+    def audit_trust(state: ObligationRuntimeState) -> dict[str, Any]:
         return {"status": "auditing"}
 
-    def evaluate_protocol(state: ObligationRuntimeState) -> dict:
+    def evaluate_protocol(state: ObligationRuntimeState) -> dict[str, Any]:
         events = state.get("protocol_events") or []
         if not events:
             return {}
-        pack_name = (
-            state.get("policy_pack_name")
-            or os.environ.get("OBR_POLICY_PACK", "single_owner_handoff_v1")
+        pack_name = state.get("policy_pack_name") or os.environ.get(
+            "OBR_POLICY_PACK", "single_owner_handoff_v1"
         )
         try:
             pack = load_pack(pack_name)
@@ -109,7 +125,7 @@ def create_node_handlers(
                 }
         return {}
 
-    def policy_review(state: ObligationRuntimeState) -> dict:
+    def policy_review(state: ObligationRuntimeState) -> dict[str, Any]:
         existing = state.get("policy_decision") or {}
         if existing.get("decision") in ("rejected", "blocked"):
             return {"status": "auditing"}
@@ -133,6 +149,7 @@ def create_node_handlers(
         patch_meta = {
             "protected_paths_touched": summary["protected_paths_touched"],
             "imports_changed": summary["imports_changed"],
+            "changed_files": list(summary.get("changed_files") or []),
         }
         decision = policy_engine.evaluate(
             obligation=state.get("obligation", {}),
@@ -146,7 +163,7 @@ def create_node_handlers(
             "status": "auditing",
         }
 
-    def interrupt_for_approval(state: ObligationRuntimeState) -> dict:
+    def interrupt_for_approval(state: ObligationRuntimeState) -> dict[str, Any]:
         thread_id = state.get("thread_id") or ""
         obligation = state.get("obligation") or {}
         policy = obligation.get("policy") or {}
@@ -156,7 +173,11 @@ def create_node_handlers(
         review_payload = {
             "thread_id": thread_id,
             "obligation_id": state.get("obligation_id") or "",
-            "obligation_summary": {"obligation": obligation, "target_files": state.get("target_files"), "target_declarations": state.get("target_declarations")},
+            "obligation_summary": {
+                "obligation": obligation,
+                "target_files": state.get("target_files"),
+                "target_declarations": state.get("target_declarations"),
+            },
             "environment_summary": state.get("environment_fingerprint") or {},
             "patch_metadata": {
                 "current_patch": state.get("current_patch"),
@@ -174,13 +195,25 @@ def create_node_handlers(
             "reasons": (state.get("policy_decision") or {}).get("reasons", []),
             "status": "awaiting_review",
         }
+        pd = state.get("policy_decision") or {}
+        if isinstance(pd, dict) and (
+            pd.get("resolved_rules") is not None or pd.get("policy_pack_name")
+        ):
+            review_payload["policy_audit"] = {
+                "policy_pack_name": pd.get("policy_pack_name") or "",
+                "policy_pack_version": pd.get("policy_pack_version") or "",
+                "resolved_rules": pd.get("resolved_rules") or [],
+            }
         try:
-            client.create_pending_review(review_payload)
+            from obligation_runtime_schemas.review import ReviewPayload
+
+            validated = ReviewPayload.model_validate(review_payload)
+            client.create_pending_review(validated.model_dump(mode="json"))
         except Exception:
             pass
         return {"approval_required": True, "status": "awaiting_approval"}
 
-    def finalize(state: ObligationRuntimeState) -> dict:
+    def finalize(state: ObligationRuntimeState) -> dict[str, Any]:
         from obligation_runtime_schemas.common import new_id
         from obligation_runtime_schemas.environment import EnvironmentFingerprint
         from obligation_runtime_schemas.interactive import InteractiveCheckResult
@@ -189,28 +222,50 @@ def create_node_handlers(
 
         env = state.get("environment_fingerprint") or {}
         inter = state.get("interactive_result") or {}
-        batch = state.get("batch_result") or {}
+        batch_raw = state.get("batch_result")
+        from obligation_runtime_schemas.witness import AcceptanceSummary
+
+        try:
+            acceptance = (
+                AcceptanceSummary.model_validate(batch_raw) if batch_raw else AcceptanceSummary()
+            )
+        except Exception:
+            acceptance = AcceptanceSummary()
         policy = state.get("policy_decision") or {}
         try:
             env_fp = EnvironmentFingerprint.model_validate(env) if isinstance(env, dict) else env
         except Exception:
-            env_fp = EnvironmentFingerprint(repo_id="", commit_sha="", lean_toolchain="", lakefile_hash="", **{k: v for k, v in (env or {}).items() if k in ["repo_id", "commit_sha", "lean_toolchain", "lakefile_hash"]})
+            env_fp = EnvironmentFingerprint(
+                repo_id="",
+                commit_sha="",
+                lean_toolchain="",
+                lakefile_hash="",
+                **{
+                    k: v
+                    for k, v in (env or {}).items()
+                    if k in ["repo_id", "commit_sha", "lean_toolchain", "lakefile_hash"]
+                },
+            )
         try:
-            inter_result = InteractiveCheckResult.model_validate(inter) if isinstance(inter, dict) else inter
+            inter_result = (
+                InteractiveCheckResult.model_validate(inter) if isinstance(inter, dict) else inter
+            )
         except Exception:
             inter_result = InteractiveCheckResult(ok=True, diagnostics=[], goals=[])
         try:
-            policy_dec = PolicyDecision.model_validate(policy) if isinstance(policy, dict) else policy
+            policy_dec = (
+                PolicyDecision.model_validate(policy) if isinstance(policy, dict) else policy
+            )
         except Exception:
             policy_dec = PolicyDecision(decision="accepted", trust_level="clean", reasons=[])
         approval_val = state.get("approval_decision")
-        approval_dict: dict = approval_val if isinstance(approval_val, dict) else {}
+        approval_dict: dict[str, Any] = approval_val if isinstance(approval_val, dict) else {}
         bundle = WitnessBundle(
             bundle_id=new_id("wit"),
             obligation_id=state.get("obligation_id", ""),
             environment_fingerprint=env_fp,
             interactive=inter_result,
-            acceptance=batch,
+            acceptance=acceptance,
             policy=policy_dec,
             approval=approval_dict,
             trace={},
@@ -219,15 +274,18 @@ def create_node_handlers(
         artifacts.append({"kind": "witness_bundle", "bundle": bundle.model_dump(mode="json")})
         return {"status": "accepted", "artifacts": artifacts}
 
-    def repair_from_diagnostics(state: ObligationRuntimeState) -> dict:
+    def repair_from_diagnostics(state: ObligationRuntimeState) -> dict[str, Any]:
         return {"status": "repairing"}
 
-    def repair_from_goals(state: ObligationRuntimeState) -> dict:
+    def repair_from_goals(state: ObligationRuntimeState) -> dict[str, Any]:
         return {"status": "repairing"}
 
-    def resume_with_approval(state: ObligationRuntimeState) -> dict:
+    def resume_with_approval(state: ObligationRuntimeState) -> dict[str, Any]:
         decision = state.get("approval_decision") or "rejected"
-        return {"approval_required": False, "status": "accepted" if decision == "approved" else "rejected"}
+        return {
+            "approval_required": False,
+            "status": "accepted" if decision == "approved" else "rejected",
+        }
 
     return {
         "init_environment": init_environment,

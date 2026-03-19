@@ -36,12 +36,15 @@ jobs:
         run: |
           make install-dev-full
           pip install "langgraph-checkpoint-postgres[postgres]" "psycopg[binary]>=3"
+          pip install "mypy>=1.8" "ruff>=0.4"
       - name: Full check
         run: make check-full
       - name: Gateway-orchestrator boundary (no orchestrator imports in gateway API)
         run: pytest tests/unit/test_gateway_orchestrator_boundary.py -v
       - name: Contract parity (catalog, MCP, SDK, gateway error envelope)
         run: pytest tests/contract/test_surface_parity.py -v
+      - name: OpenAPI schema field contracts
+        run: pytest tests/contract/test_openapi_contract_paths.py tests/contract/test_openapi_schema_snapshots.py -v
       - name: Production tracer (mock) tests
         run: pytest tests/unit/test_production_tracer.py -v
       - name: Postgres review store and checkpointer tests
@@ -67,6 +70,8 @@ jobs:
       - name: TypeScript SDK surface verification
         run: |
           cd packages/sdk-ts && npm install && npm run test
+      - name: OpenAPI and SDK TS codegen drift gate
+        run: make verify-openapi-sdk-contract
 
   postgres:
     runs-on: ubuntu-latest

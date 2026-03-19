@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 # Set in middleware; read by formatter so every log line can include request_id.
 request_id_ctx: ContextVar[str] = ContextVar("request_id", default="")
 
+
 def _log_level() -> int:
     raw = os.environ.get("OBR_LOG_LEVEL") or os.environ.get("LOG_LEVEL", "INFO")
     return getattr(logging, str(raw).upper(), logging.INFO)

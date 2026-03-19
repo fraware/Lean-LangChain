@@ -8,7 +8,7 @@
 
 ## minimal_sdk_gateway.py
 
-Opens an environment, creates a session, and runs batch-verify. No graph, no CLI; just the SDK and the Gateway API.
+Opens an environment, creates a session, and runs batch-verify. No graph, no CLI; just the SDK and the Gateway API. The Python SDK returns **Pydantic models** (e.g. `open_resp.fingerprint_id`, `batch_data.trust_level`), not plain dicts.
 
 **Run:** Start the Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app`), then:
 

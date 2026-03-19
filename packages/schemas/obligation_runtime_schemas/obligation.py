@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import Field
 
@@ -36,6 +36,6 @@ class Obligation(VersionedRecord):
     status: Literal["pending", "proved", "refuted", "blocked", "needs_review", "failed"] = "pending"
     target: ObligationTarget
     claim: str
-    inputs: dict
+    inputs: dict[str, Any]
     environment_fingerprint: EnvironmentFingerprint
     policy: ObligationPolicy

@@ -2,7 +2,12 @@ from __future__ import annotations
 
 from typing import Literal
 
-from obligation_runtime_schemas.batch import BatchVerifyResult, BatchBuildResult, AxiomAuditResult, FreshCheckerResult
+from obligation_runtime_schemas.batch import (
+    BatchVerifyResult,
+    BatchBuildResult,
+    AxiomAuditResult,
+    FreshCheckerResult,
+)
 
 REASON_STRICT_REQUIRES_REAL_AXIOM = "acceptance_strict_requires_real_axiom_audit"
 REASON_STRICT_REQUIRES_REAL_FRESH = "acceptance_strict_requires_real_fresh_checker"

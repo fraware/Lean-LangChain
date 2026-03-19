@@ -16,6 +16,7 @@ def test_list_packs_includes_expected() -> None:
     assert "protected_module_review_v1" in names
     assert "single_owner_handoff_v1" in names
     assert "reviewer_gated_execution_v1" in names
+    assert "loose_imports_v1" in names
 
 
 def test_load_single_owner_handoff_v1() -> None:

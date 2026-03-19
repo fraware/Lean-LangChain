@@ -10,7 +10,9 @@ class FingerprintService:
     def hash_file(self, path: Path) -> str:
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
-    def build_from_repo(self, repo_root: Path, repo_id: str, commit_sha: str, repo_url: str | None = None) -> EnvironmentFingerprint:
+    def build_from_repo(
+        self, repo_root: Path, repo_id: str, commit_sha: str, repo_url: str | None = None
+    ) -> EnvironmentFingerprint:
         toolchain_path = repo_root / "lean-toolchain"
         lake_toml = repo_root / "lakefile.toml"
         lake_lean = repo_root / "lakefile.lean"

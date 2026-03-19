@@ -50,9 +50,7 @@ def _run(
     )
 
 
-def _parse_run_output(
-    raw: str, context: str
-) -> tuple[dict | None, str | None]:
+def _parse_run_output(raw: str, context: str) -> tuple[dict | None, str | None]:
     """Parse JSON from subprocess stdout. Returns (data, error_message)."""
     if not (raw or "").strip():
         return None, f"{context}: empty stdout"
@@ -176,17 +174,14 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data1, parse_err = _parse_run_output(
-        out1.stdout, "run-patch-obligation (step 1)"
-    )
+    data1, parse_err = _parse_run_output(out1.stdout, "run-patch-obligation (step 1)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
     assert data1 is not None
     if data1.get("status") != STATUS_ACCEPTED:
         print(
-            f"Step 1 failed: expected {STATUS_ACCEPTED!r}, got "
-            f"{data1.get('status')!r}",
+            f"Step 1 failed: expected {STATUS_ACCEPTED!r}, got " f"{data1.get('status')!r}",
             file=sys.stderr,
         )
         return 1
@@ -231,17 +226,14 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data2, parse_err = _parse_run_output(
-        out2.stdout, "run-patch-obligation (step 2)"
-    )
+    data2, parse_err = _parse_run_output(out2.stdout, "run-patch-obligation (step 2)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
     assert data2 is not None
     if data2.get("status") != STATUS_ACCEPTED:
         print(
-            f"Step 2 failed: expected {STATUS_ACCEPTED!r}, got "
-            f"{data2.get('status')!r}",
+            f"Step 2 failed: expected {STATUS_ACCEPTED!r}, got " f"{data2.get('status')!r}",
             file=sys.stderr,
         )
         return 1
@@ -283,9 +275,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data3, parse_err = _parse_run_output(
-        out3.stdout, "run-patch-obligation (step 3)"
-    )
+    data3, parse_err = _parse_run_output(out3.stdout, "run-patch-obligation (step 3)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
@@ -332,9 +322,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data4, parse_err = _parse_run_output(
-        out4.stdout, "run-patch-obligation (step 4)"
-    )
+    data4, parse_err = _parse_run_output(out4.stdout, "run-patch-obligation (step 4)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
@@ -349,10 +337,7 @@ def main() -> int:
     print("Step 4 passed: false theorem rejected")
 
     # --- Steps 5a, 5b, 6 require Postgres checkpointer ---
-    need_pg = (
-        os.environ.get("CHECKPOINTER") != "postgres"
-        or not os.environ.get("DATABASE_URL")
-    )
+    need_pg = os.environ.get("CHECKPOINTER") != "postgres" or not os.environ.get("DATABASE_URL")
     if need_pg:
         print(
             "Skipped: steps 5-6 require CHECKPOINTER=postgres and DATABASE_URL",
@@ -396,9 +381,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data5a, parse_err = _parse_run_output(
-        out5a.stdout, "run-patch-obligation (step 5a)"
-    )
+    data5a, parse_err = _parse_run_output(out5a.stdout, "run-patch-obligation (step 5a)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
@@ -433,8 +416,7 @@ def main() -> int:
 
     if status5a != STATUS_ACCEPTED:
         print(
-            f"Step 5a failed: expected {STATUS_ACCEPTED} after resume, "
-            f"got {status5a!r}",
+            f"Step 5a failed: expected {STATUS_ACCEPTED} after resume, " f"got {status5a!r}",
             file=sys.stderr,
         )
         return 1
@@ -471,9 +453,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    data5b, parse_err = _parse_run_output(
-        out5b.stdout, "run-patch-obligation (step 5b)"
-    )
+    data5b, parse_err = _parse_run_output(out5b.stdout, "run-patch-obligation (step 5b)")
     if parse_err:
         print(parse_err, file=sys.stderr)
         return 1
@@ -494,16 +474,13 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        data_resume_b, _ = _parse_run_output(
-            out_resume_b.stdout, "resume (step 5b)"
-        )
+        data_resume_b, _ = _parse_run_output(out_resume_b.stdout, "resume (step 5b)")
         if data_resume_b:
             status5b = data_resume_b.get("status", status5b)
 
     if status5b != STATUS_REJECTED:
         print(
-            f"Step 5b failed: expected {STATUS_REJECTED} after resume, "
-            f"got {status5b!r}",
+            f"Step 5b failed: expected {STATUS_REJECTED} after resume, " f"got {status5b!r}",
             file=sys.stderr,
         )
         return 1
@@ -550,9 +527,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    has_witness = any(
-        isinstance(a, dict) and a.get("kind") == "witness_bundle" for a in artifacts
-    )
+    has_witness = any(isinstance(a, dict) and a.get("kind") == "witness_bundle" for a in artifacts)
     if not has_witness:
         print(
             "Step 6 failed: no witness_bundle in artifacts",

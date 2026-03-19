@@ -32,8 +32,14 @@ See [architecture/README.md](architecture/README.md) for an index. Main entries:
 
 ## Runbooks (advanced)
 
+- **[operations/runtime-capabilities.md](operations/runtime-capabilities.md)** — Gateway and orchestrator capability endpoints, degraded reason codes, env flags, suggested alerts.
 - **[runbooks/evaluation.md](runbooks/evaluation.md)** — LangSmith experiments and regression corpus.
 - **[runbooks/observability.md](runbooks/observability.md)** — Prometheus metrics, alerts, minimal dashboard.
+
+## Contracts and generated artifacts
+
+- **[contracts/openapi/lean-gateway.json](../contracts/openapi/lean-gateway.json)** — Gateway OpenAPI snapshot; regenerate with `make export-openapi`. The TypeScript SDK types under `packages/sdk-ts/src/generated/` are derived from this file; `make check-full` fails if they drift.
+- **Exported JSON schemas** — Produced by `make export-schemas` into `packages/schemas/obligation_runtime_schemas/generated/`.
 
 ## For maintainers
 

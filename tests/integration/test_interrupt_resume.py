@@ -28,6 +28,7 @@ from tests.integration.conftest import make_testclient_request_adapter
 def _memory_saver():
     try:
         from langgraph.checkpoint.memory import MemorySaver
+
         return MemorySaver()
     except ImportError:
         return None
@@ -66,7 +67,10 @@ def test_resume_in_same_process_with_memory_saver(gateway_tc) -> None:
     initial = make_initial_state(
         thread_id=thread_id,
         obligation_id="obl_rsp",
-        obligation={"target": {"repo_id": "lean-mini"}, "policy": {"protected_paths": [protected_path]}},
+        obligation={
+            "target": {"repo_id": "lean-mini"},
+            "policy": {"protected_paths": [protected_path]},
+        },
         target_files=[protected_path],
         current_patch={protected_path: "def x := 1\n"},
         repo_path=repo_path,
@@ -81,10 +85,7 @@ def test_resume_in_same_process_with_memory_saver(gateway_tc) -> None:
     }
     result2 = graph.invoke(resume_state, config=config)
     assert result2.get("status") == "accepted"
-    assert any(
-        a.get("kind") == "witness_bundle"
-        for a in result2.get("artifacts", [])
-    )
+    assert any(a.get("kind") == "witness_bundle" for a in result2.get("artifacts", []))
 
 
 @pytest.mark.skipif(StateGraph is None, reason="langgraph not installed")
@@ -95,7 +96,12 @@ def test_resume_with_approval_continues_to_finalize(obr_graph) -> None:
         "thread_id": "thr_resume",
         "obligation_id": "obl_resume",
         "session_id": "sess-resume-test-1",
-        "environment_fingerprint": {"repo_id": "r", "commit_sha": "c", "lean_toolchain": "t", "lakefile_hash": "h"},
+        "environment_fingerprint": {
+            "repo_id": "r",
+            "commit_sha": "c",
+            "lean_toolchain": "t",
+            "lakefile_hash": "h",
+        },
         "obligation": {},
         "target_files": [],
         "target_declarations": [],
@@ -121,16 +127,14 @@ def test_resume_with_approval_continues_to_finalize(obr_graph) -> None:
     result = obr_graph.invoke(resume_state, config={"configurable": {"thread_id": "thr_resume"}})
     assert result.get("status") == "accepted"
     assert result.get("approval_required") is False
-    assert any(
-        a.get("kind") == "witness_bundle"
-        for a in result.get("artifacts", [])
-    )
+    assert any(a.get("kind") == "witness_bundle" for a in result.get("artifacts", []))
 
 
 @pytest.mark.skipif(StateGraph is None, reason="langgraph not installed")
 def test_graph_stream_emits_events_with_minimal_state(gateway_tc) -> None:
     """Graph streams at least one event when invoked with minimal state (open env + session via adapter)."""
     from tests.integration.conftest import make_testclient_request_adapter
+
     tc = gateway_tc
     adapter = make_testclient_request_adapter(tc)
     client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)

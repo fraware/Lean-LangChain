@@ -28,6 +28,7 @@ from obligation_runtime_lean_gateway.server.worker_runner import run_with_timeou
 
 def test_run_with_timeout_aborts_on_expiry() -> None:
     """run_with_timeout raises TimeoutError when fn exceeds limit."""
+
     def slow() -> str:
         time.sleep(2.0)
         return "done"
@@ -109,9 +110,7 @@ def test_container_run_args_with_memory_and_cpus() -> None:
 
 def test_container_run_args_with_runtime_runsc() -> None:
     """_container_run_args with runtime=runsc adds --runtime runsc."""
-    args = _container_run_args(
-        Path("/ws"), "img", ["lake", "build"], runtime="runsc"
-    )
+    args = _container_run_args(Path("/ws"), "img", ["lake", "build"], runtime="runsc")
     idx = args.index("--runtime")
     assert args[idx + 1] == "runsc"
     assert "run" in args
@@ -120,9 +119,7 @@ def test_container_run_args_with_runtime_runsc() -> None:
 
 def test_microvm_runner_runsc_builds_docker_with_runtime() -> None:
     """_container_run_args with runtime=runsc produces --runtime runsc (used by MicroVMRunner)."""
-    args = _container_run_args(
-        Path("/ws"), "lean:test", ["lake", "build"], runtime="runsc"
-    )
+    args = _container_run_args(Path("/ws"), "lean:test", ["lake", "build"], runtime="runsc")
     assert "--runtime" in args
     assert "runsc" in args
 
@@ -181,18 +178,15 @@ def test_get_runner_microvm_firecracker_returns_firecracker_runner() -> None:
 def test_firecracker_runner_parses_json_output(tmp_path: Path) -> None:
     """FirecrackerRunner runs script and parses JSON stdout into (stdout, stderr, returncode)."""
     import sys
+
     script = tmp_path / "fake_runner.py"
     script.write_text(
         "import sys, json\n"
-        "d = {\"stdout\": \"hello\", \"stderr\": \"warn\", \"returncode\": 0}\n"
+        'd = {"stdout": "hello", "stderr": "warn", "returncode": 0}\n'
         "print(json.dumps(d))\n"
     )
-    runner = FirecrackerRunner(
-        script_path=[sys.executable, str(script)]
-    )
-    out, err, code, _ = runner.run(
-        tmp_path, ["echo", "hi"], timeout_seconds=10.0
-    )
+    runner = FirecrackerRunner(script_path=[sys.executable, str(script)])
+    out, err, code, _ = runner.run(tmp_path, ["echo", "hi"], timeout_seconds=10.0)
     assert out == "hello"
     assert err == "warn"
     assert code == 0
@@ -201,12 +195,9 @@ def test_firecracker_runner_parses_json_output(tmp_path: Path) -> None:
 def test_firecracker_runner_script_failure_returns_stderr(tmp_path: Path) -> None:
     """When script exits non-zero, FirecrackerRunner returns script stderr."""
     import sys
+
     script = tmp_path / "fail.py"
-    script.write_text(
-        "import sys\n"
-        "print('not json', file=sys.stderr)\n"
-        "sys.exit(1)\n"
-    )
+    script.write_text("import sys\n" "print('not json', file=sys.stderr)\n" "sys.exit(1)\n")
     runner = FirecrackerRunner(script_path=[sys.executable, str(script)])
     _, err, code, _ = runner.run(tmp_path, ["true"], timeout_seconds=5.0)
     assert code == 1

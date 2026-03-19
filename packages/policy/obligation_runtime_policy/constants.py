@@ -6,6 +6,8 @@ and terminal decisions are consistent and discoverable.
 
 from __future__ import annotations
 
+from typing import Literal
+
 # --- Reason codes (policy_decision.reasons) ---
 REASON_DELEGATE_WITHOUT_PRIOR_CLAIM = "delegate_without_prior_claim"
 REASON_OWNER_MISMATCH = "owner_mismatch"
@@ -18,16 +20,20 @@ REASON_SIDE_EFFECT_UNAUTHORIZED = "side_effect_unauthorized"
 REASON_EVIDENCE_INCOMPLETE = "evidence_incomplete"
 
 # --- Terminal decisions (policy_decision.decision) ---
-DECISION_ACCEPTED = "accepted"
-DECISION_REJECTED = "rejected"
-DECISION_BLOCKED = "blocked"
-DECISION_NEEDS_REVIEW = "needs_review"
-DECISION_FAILED = "failed"
+DecisionLiteral = Literal[
+    "accepted", "rejected", "blocked", "needs_review", "lower_trust", "failed"
+]
+DECISION_ACCEPTED: DecisionLiteral = "accepted"
+DECISION_REJECTED: DecisionLiteral = "rejected"
+DECISION_BLOCKED: DecisionLiteral = "blocked"
+DECISION_NEEDS_REVIEW: DecisionLiteral = "needs_review"
+DECISION_FAILED: DecisionLiteral = "failed"
 
 # --- Trust levels ---
-TRUST_CLEAN = "clean"
-TRUST_WARNING = "warning"
-TRUST_BLOCKED = "blocked"
+TrustLiteral = Literal["clean", "warning", "blocked"]
+TRUST_CLEAN: TrustLiteral = "clean"
+TRUST_WARNING: TrustLiteral = "warning"
+TRUST_BLOCKED: TrustLiteral = "blocked"
 
 # --- Approval token values (state.approval_decision) ---
 APPROVAL_APPROVED = "approved"

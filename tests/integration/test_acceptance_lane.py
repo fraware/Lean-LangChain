@@ -18,6 +18,7 @@ os.environ.setdefault("OBR_BUILD_TIMEOUT", "10")
 
 import pytest
 
+from tests.integration.api_stubs import STUB_INTERACTIVE_CHECK_SORRY
 from tests.integration.conftest import make_testclient_request_adapter
 
 
@@ -132,7 +133,8 @@ def test_acceptance_lane_full_flow_with_lsp(gateway_client) -> None:
     )
     assert open_resp.status_code == 200
     session_resp = client.post(
-        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]},
+        "/v1/sessions",
+        json={"fingerprint_id": open_resp.json()["fingerprint_id"]},
     )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
@@ -151,7 +153,9 @@ def test_acceptance_lane_full_flow_with_lsp(gateway_client) -> None:
     data = batch_resp.json()
     assert "ok" in data and "trust_level" in data
     assert "build" in data and "axiom_audit" in data
-    assert data["build"].get("command") == ["lake", "build"] or "lake" in str(data["build"].get("command", []))
+    assert data["build"].get("command") == ["lake", "build"] or "lake" in str(
+        data["build"].get("command", [])
+    )
 
 
 @pytest.mark.skipif(
@@ -167,7 +171,9 @@ def test_acceptance_lane_real_axiom_audit(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     batch_resp = client.post(
         f"/v1/sessions/{session_resp.json()['session_id']}/batch-verify",
@@ -208,9 +214,9 @@ def test_acceptance_lane_axiom_producer_dependencies_non_empty(gateway_client) -
     data = batch_resp.json()
     assert "axiom_audit" in data
     assert "dependencies" in data["axiom_audit"]
-    assert len(data["axiom_audit"]["dependencies"]) >= 1, (
-        "Producer should output declaration lines when workspace has axiom_list (e.g. lean-mini)"
-    )
+    assert (
+        len(data["axiom_audit"]["dependencies"]) >= 1
+    ), "Producer should output declaration lines when workspace has axiom_list (e.g. lean-mini)"
 
 
 @pytest.mark.skipif(
@@ -228,7 +234,9 @@ def test_acceptance_lane_container_runner_batch_verify(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     batch_resp = client.post(
@@ -259,7 +267,9 @@ def test_acceptance_lane_microvm_runner_batch_verify(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     session_id = session_resp.json()["session_id"]
     batch_resp = client.post(
@@ -316,7 +326,7 @@ def test_acceptance_lane_theorem_using_sorry(gateway_tc) -> None:
 
     def adapter(method: str, path: str, body: object) -> dict:
         if method == "POST" and "interactive-check" in path:
-            return {"ok": False, "diagnostics": [{"message": "sorry"}], "goals": []}
+            return dict(STUB_INTERACTIVE_CHECK_SORRY)
         return base(method, path, body)
 
     client = ObligationRuntimeClient(base_url="http://testserver", request_adapter=adapter)
@@ -394,7 +404,12 @@ def test_acceptance_lane_interactive_pass_batch_fail(gateway_tc) -> None:
                     "trust_level": "blocked",
                     "reasons": ["build_failed"],
                     "build": {"ok": False},
-                    "axiom_audit": {"ok": True, "trust_level": "clean", "blocked_reasons": [], "dependencies": []},
+                    "axiom_audit": {
+                        "ok": True,
+                        "trust_level": "clean",
+                        "blocked_reasons": [],
+                        "dependencies": [],
+                    },
                     "fresh_checker": {"ok": False},
                 }
         return base(method, path, body)
@@ -416,6 +431,7 @@ def test_acceptance_lane_interactive_pass_batch_fail(gateway_tc) -> None:
 def _fresh_checker_available() -> bool:
     """True if lean4checker is in PATH or OBR_FRESH_CHECK_CMD points at an existing executable."""
     import shutil
+
     if shutil.which("lean4checker"):
         return True
     cmd = os.environ.get("OBR_FRESH_CHECK_CMD", "")
@@ -442,7 +458,9 @@ def test_acceptance_lane_real_fresh_checker(gateway_client) -> None:
         json={"repo_id": "lean-mini", "repo_path": str(repo_path), "commit_sha": "head"},
     )
     assert open_resp.status_code == 200
-    session_resp = client.post("/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]})
+    session_resp = client.post(
+        "/v1/sessions", json={"fingerprint_id": open_resp.json()["fingerprint_id"]}
+    )
     assert session_resp.status_code == 200
     batch_resp = client.post(
         f"/v1/sessions/{session_resp.json()['session_id']}/batch-verify",

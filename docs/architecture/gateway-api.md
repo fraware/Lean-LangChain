@@ -52,9 +52,11 @@ CORS is configurable via `OBR_CORS_ORIGINS` (comma-separated origins). When set,
 - **POST /v1/reviews/{thread_id}/reject** — Submit rejection decision.
 - **POST /v1/reviews/{thread_id}/resume** — Resume the graph after approve/reject; requires a decision already set and a checkpointer (CHECKPOINTER=postgres and DATABASE_URL, or in-process MemorySaver). Returns `{ ok, thread_id, status, artifacts_count }` or 503 if checkpointer/orchestrator unavailable.
 
-## OpenAPI
+## OpenAPI and client alignment
 
 When the Gateway is running, OpenAPI docs: `http://localhost:8000/docs` (Swagger UI), `http://localhost:8000/redoc`, `http://localhost:8000/openapi.json`.
+
+A checked-in snapshot lives at `contracts/openapi/lean-gateway.json` (`make export-openapi`). The **Python SDK** validates responses with Pydantic models derived from the same surface (`obligation_runtime_schemas.gateway_api`, `batch`, etc.). The **TypeScript SDK** (`@lean-langchain/sdk`) types are generated from that JSON (`packages/sdk-ts`: `npm run generate:types`). Monorepo `make check-full` runs **`verify-openapi-sdk-contract`** so the snapshot and generated TS file cannot drift without an intentional regen.
 
 ## Error handling
 

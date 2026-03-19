@@ -49,7 +49,9 @@ def main() -> int:
         print("Skipped: invalid JSON from open-environment", file=sys.stderr)
         return 0
 
-    out2 = subprocess.run(cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10)
+    out2 = subprocess.run(
+        cli + ["create-session", fid], cwd=cwd, env=env, capture_output=True, text=True, timeout=10
+    )
     if out2.returncode != 0:
         print("Skipped: create-session failed", file=sys.stderr)
         return 0

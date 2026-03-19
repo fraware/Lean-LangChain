@@ -1,6 +1,6 @@
 # Integration starters
 
-Production-grade templates for extending or embedding the Obligation Runtime. Use these as copy-paste bases for your own integrations. Prerequisites: from repo root, `make install-dev-full` and a running Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app`). See [docs/running.md](../../docs/running.md) for the builder configuration table.
+Production-grade templates for extending or embedding the Obligation Runtime. Use these as copy-paste bases for your own integrations. Prerequisites: from repo root, `make install-dev-full` (installs all packages plus dev tools via the root `[dev]` extra) and a running Gateway (`uvicorn obligation_runtime_lean_gateway.api.app:app`). See [docs/running.md](../../docs/running.md) for the builder configuration table.
 
 ## Cookbook (copy-paste)
 

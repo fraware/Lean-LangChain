@@ -1,5 +1,52 @@
 {
   "$defs": {
+    "AcceptanceSummary": {
+      "additionalProperties": false,
+      "description": "Typed summary of batch (acceptance lane) verification for WitnessBundle.acceptance.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "ok": {
+          "default": true,
+          "title": "Ok",
+          "type": "boolean"
+        },
+        "trust_level": {
+          "default": "clean",
+          "title": "Trust Level",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "build": {
+          "title": "Build",
+          "type": "object"
+        },
+        "axiom_audit": {
+          "title": "Axiom Audit",
+          "type": "object"
+        },
+        "fresh_checker": {
+          "title": "Fresh Checker",
+          "type": "object"
+        }
+      },
+      "title": "AcceptanceSummary",
+      "type": "object"
+    },
     "Diagnostic": {
       "additionalProperties": false,
       "properties": {
@@ -328,6 +375,23 @@
           },
           "title": "Reasons",
           "type": "array"
+        },
+        "policy_pack_name": {
+          "default": "",
+          "title": "Policy Pack Name",
+          "type": "string"
+        },
+        "policy_pack_version": {
+          "default": "",
+          "title": "Policy Pack Version",
+          "type": "string"
+        },
+        "resolved_rules": {
+          "items": {
+            "$ref": "#/$defs/PolicyResolvedRule"
+          },
+          "title": "Resolved Rules",
+          "type": "array"
         }
       },
       "required": [
@@ -335,6 +399,48 @@
         "trust_level"
       ],
       "title": "PolicyDecision",
+      "type": "object"
+    },
+    "PolicyResolvedRule": {
+      "additionalProperties": false,
+      "description": "One evaluated policy rule for audit trails.",
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "source_pack": {
+          "title": "Source Pack",
+          "type": "string"
+        },
+        "matched": {
+          "title": "Matched",
+          "type": "boolean"
+        },
+        "effect": {
+          "enum": [
+            "none",
+            "needs_review",
+            "rejected",
+            "blocked",
+            "accepted"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "reason_code": {
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source_pack",
+        "matched",
+        "effect",
+        "reason_code"
+      ],
+      "title": "PolicyResolvedRule",
       "type": "object"
     }
   },
@@ -365,20 +471,16 @@
       "$ref": "#/$defs/InteractiveCheckResult"
     },
     "acceptance": {
-      "additionalProperties": true,
-      "title": "Acceptance",
-      "type": "object"
+      "$ref": "#/$defs/AcceptanceSummary"
     },
     "policy": {
       "$ref": "#/$defs/PolicyDecision"
     },
     "approval": {
-      "additionalProperties": true,
       "title": "Approval",
       "type": "object"
     },
     "trace": {
-      "additionalProperties": true,
       "title": "Trace",
       "type": "object"
     }
@@ -388,6 +490,7 @@
     "obligation_id",
     "environment_fingerprint",
     "interactive",
+    "acceptance",
     "policy"
   ],
   "title": "WitnessBundle",

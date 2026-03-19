@@ -25,7 +25,7 @@ Some tests skip when required tooling or services are unavailable. This is inten
 |-------|-----------------|-----------------|
 | **Postgres** | `test_checkpointer_postgres.py`, `test_review_store_postgres.py`, and any test that uses `@pytest.mark.skipif(not database_url)` | Set `DATABASE_URL` (and `CHECKPOINTER=postgres`, `REVIEW_STORE=postgres` where needed). CI main job runs with a Postgres service. |
 | **Lean / LSP** | Acceptance-lane tests that need real `lake` or LSP; axiom producer (`test_axiom_producer_lean.py`) | Set `OBR_USE_LEAN_LSP=1` or `OBR_USE_REAL_FRESH_CHECKER=1` and have `lean` / `lake` / `lean4checker` in PATH. Axiom producer test runs when `lake` is in PATH and skips when build fails. See `docs/ci.md` (lean, fresh jobs); `make test-axiom-producer`. |
-| **Docker** | Container runner and microVM tests in acceptance lane and worker isolation | Set `OBR_WORKER_RUNNER=container` (or `microvm`) and have Docker in PATH. See `docs/tests-and-ci.md` (container job). |
+| **Docker** | Container runner and microVM tests in acceptance lane and worker isolation | Set `OBR_WORKER_RUNNER=container` (or `microvm`) and have Docker in PATH. See [docs/tests-and-ci.md](../docs/tests-and-ci.md) (container job). |
 | **OTLP / tracer E2E** | `test_tracer_e2e_otlp.py` | Requires `obligation-runtime-telemetry[otlp]`. Local: `make test-tracer-e2e`. CI **telemetry-e2e** job runs it with continue-on-error. |
 | **MCP stdio** | `test_mcp_server_stdio.py` | Skips when MCP server or stdio transport not available in env. |
 
@@ -45,6 +45,8 @@ Some tests skip when required tooling or services are unavailable. This is inten
 | test_full_demo.py | Full demo scenarios at graph level: valid proof edit accepted, sorry/false-theorem rejected, protected approve/reject, fixture existence; real lake build for demo patches when lake in PATH |
 | test_full_demo_script.py | Full demo script: --help, gateway unreachable skips, -v and --ui-resume flags |
 
-Integration tests use shared fixtures from `tests/conftest.py` and `tests/integration/conftest.py` (`gateway_app`, `gateway_client`, `gateway_tc`, `sdk_client`, `obr_graph`).
+Integration tests use shared fixtures from `tests/conftest.py` and `tests/integration/conftest.py` (`gateway_app`, `gateway_client`, `gateway_tc`, `sdk_client`, `obr_graph`). Stubs that bypass HTTP but must satisfy SDK validation (e.g. interactive-check with diagnostics) live in `tests/integration/api_stubs.py`.
+
+**Contract tests** (`tests/contract/`) assert catalog/MCP/SDK/gateway surface parity and OpenAPI field contracts; CI runs them in addition to `make check-full`.
 
 **See also:** [docs/workflow.md](../docs/workflow.md), [docs/tests-and-ci.md](../docs/tests-and-ci.md), [docs/running.md](../docs/running.md).

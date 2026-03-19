@@ -19,11 +19,13 @@ import sys
 def main() -> None:
     if len(sys.argv) < 4:
         print(
-            json.dumps({
-                "stdout": "",
-                "stderr": "Usage: script workspace_path timeout_seconds cmd...",
-                "returncode": -1,
-            })
+            json.dumps(
+                {
+                    "stdout": "",
+                    "stderr": "Usage: script workspace_path timeout_seconds cmd...",
+                    "returncode": -1,
+                }
+            )
         )
         sys.exit(0)
     workspace_path = sys.argv[1]
@@ -31,21 +33,25 @@ def main() -> None:
         timeout_seconds = int(sys.argv[2])
     except ValueError:
         print(
-            json.dumps({
-                "stdout": "",
-                "stderr": "Invalid timeout_seconds",
-                "returncode": -1,
-            })
+            json.dumps(
+                {
+                    "stdout": "",
+                    "stderr": "Invalid timeout_seconds",
+                    "returncode": -1,
+                }
+            )
         )
         sys.exit(0)
     command = sys.argv[3:]
     if not command:
         print(
-            json.dumps({
-                "stdout": "",
-                "stderr": "No command provided",
-                "returncode": -1,
-            })
+            json.dumps(
+                {
+                    "stdout": "",
+                    "stderr": "No command provided",
+                    "returncode": -1,
+                }
+            )
         )
         sys.exit(0)
     try:
@@ -56,28 +62,34 @@ def main() -> None:
             text=True,
             timeout=timeout_seconds,
         )
-        out = json.dumps({
-            "stdout": result.stdout or "",
-            "stderr": result.stderr or "",
-            "returncode": result.returncode,
-        })
+        out = json.dumps(
+            {
+                "stdout": result.stdout or "",
+                "stderr": result.stderr or "",
+                "returncode": result.returncode,
+            }
+        )
         print(out)
     except subprocess.TimeoutExpired:
         print(
-            json.dumps({
-                "stdout": "",
-                "stderr": f"Command exceeded {timeout_seconds}s",
-                "returncode": -1,
-            })
+            json.dumps(
+                {
+                    "stdout": "",
+                    "stderr": f"Command exceeded {timeout_seconds}s",
+                    "returncode": -1,
+                }
+            )
         )
         sys.exit(0)
     except OSError as e:
         print(
-            json.dumps({
-                "stdout": "",
-                "stderr": str(e),
-                "returncode": -1,
-            })
+            json.dumps(
+                {
+                    "stdout": "",
+                    "stderr": str(e),
+                    "returncode": -1,
+                }
+            )
         )
         sys.exit(0)
 

@@ -19,6 +19,7 @@ def gateway_tc(gateway_app):
 
 def make_testclient_request_adapter(tc: TestClient) -> RequestAdapter:
     """Build a RequestAdapter that forwards POST/GET to a Starlette TestClient. Used for in-process tests."""
+
     def adapter(method: str, path: str, body: Any) -> dict:
         if method == "POST":
             r = tc.post(path, json=body if body is not None else {})
@@ -26,6 +27,7 @@ def make_testclient_request_adapter(tc: TestClient) -> RequestAdapter:
             r = tc.get(path)
         r.raise_for_status()
         return r.json()
+
     return adapter
 
 
@@ -42,4 +44,5 @@ def sdk_client(gateway_app) -> Any:
 def obr_graph(sdk_client: ObligationRuntimeClient) -> Any:
     """Patch-admissibility graph built with sdk_client. Use in integration tests that invoke the graph."""
     from obligation_runtime_orchestrator.runtime.graph import build_patch_admissibility_graph
+
     return build_patch_admissibility_graph(client=sdk_client)
